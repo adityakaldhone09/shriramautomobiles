@@ -15,7 +15,9 @@ import type { Booking, BookingInput, ContactInput, Part, Service } from '@worksp
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import NotFound from '@/pages/not-found';
+import { useTranslation } from 'react-i18next';
 
 const queryClient = new QueryClient();
 
@@ -36,7 +38,8 @@ function Logo() {
 function Nav() {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
-  const links = [['/', 'Home'], ['/book-service', 'Book service'], ['/contact', 'Find us']];
+  const { t } = useTranslation();
+  const links = [['/', t('navbar.home')], ['/book-service', t('navbar.bookService')], ['/contact', t('navbar.contact')]];
   return (
     <header className="sticky top-0 z-40 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.92)] backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
@@ -49,10 +52,11 @@ function Nav() {
           ))}
         </nav>
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher />
           <a href="tel:+919876543210" data-testid="link-call-header" className="mono-font flex items-center gap-2 text-[11px] font-bold text-[hsl(var(--secondary))]"><Phone size={14} /> +91 98765 43210</a>
           <Link href="/book-service" data-testid="link-book-header" className="group flex items-center gap-2 rounded-lg bg-[hsl(var(--secondary))] px-4 py-2.5 text-sm font-bold text-[hsl(var(--background))] transition-transform hover:-translate-y-0.5">Book a visit <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link>
         </div>
-        <button type="button" onClick={() => setOpen(!open)} aria-label="Toggle navigation" data-testid="button-toggle-nav" className="rounded-lg border border-[hsl(var(--border))] p-2 md:hidden">{open ? <X size={20} /> : <Menu size={20} />}</button>
+        <div className="flex items-center gap-2 md:hidden"><LanguageSwitcher /><button type="button" onClick={() => setOpen(!open)} aria-label="Toggle navigation" data-testid="button-toggle-nav" className="rounded-lg border border-[hsl(var(--border))] p-2">{open ? <X size={20} /> : <Menu size={20} />}</button></div>
       </div>
       {open && <nav className="border-t border-[hsl(var(--border))] px-5 py-4 md:hidden" aria-label="Mobile navigation">
         <div className="flex flex-col gap-1">

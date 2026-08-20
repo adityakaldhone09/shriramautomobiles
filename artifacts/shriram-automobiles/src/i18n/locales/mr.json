@@ -1,0 +1,219 @@
+{
+  "navbar": {
+    "home": "मुख्यपृष्ठ",
+    "about": "आमच्याबद्दल",
+    "services": "सेवा",
+    "spareParts": "बिस्पार्ट्स",
+    "brands": "ब्रॅंड्स",
+    "bookService": "सेवा बुक करा",
+    "contact": "संपर्क करा",
+    "language": "भाषा"
+  },
+  "hero": {
+    "title": "आपल्या दुचाकीसाठी संपूर्ण देखभाल",
+    "subtitle": "गुणवत्तेचे बिस्पार्ट्स, सर्व्हिसिंग, दुरुस्तीचे आणि रक्षणाचे काम एक जागी.",
+    "bookNow": "सेवा बुक करा",
+    "browseServices": "सेवा पहा",
+    "whyChooseUs": "आमचा निवड का करा?"
+  },
+  "home": {
+    "servicesSection": "आमची सेवा",
+    "browseAllServices": "सर्व सेवा पहा",
+    "spareParts": "प्रीमियम बिस्पार्ट्स",
+    "exploreSpares": "बिस्पार्ट्स शोधा",
+    "supportedBrands": "समर्थित ब्रॅंड्स",
+    "viewAllBrands": "सर्व ब्रॅंड्स पहा",
+    "whyChooseSection": "श्रीराम ऑटोमोबाइल्सचा निवड का करा",
+    "reasons": {
+      "expertise": {
+        "title": "विशेषज्ञ संघ",
+        "description": "वर्षांच्या अनुभवासह कुशल तंत्रज्ञ"
+      },
+      "quality": {
+        "title": "गुणवत्तेचे बिस्पार्ट्स",
+        "description": "विश्वासार्ह निर्मात्यांकडून असली बिस्पार्ट्स"
+      },
+      "affordable": {
+        "title": "सोयीस्कर किंमत",
+        "description": "गुणवत्तेत कोणतीही तडजोड न करता प्रतिस्पर्धी किंमत"
+      },
+      "timely": {
+        "title": "वेळेवर सेवा",
+        "description": "जलद काम आणि सुविधाजनक बुकिंग"
+      }
+    },
+    "testimonials": "आमचे ग्राहक काय म्हणतात",
+    "faq": "वारंवार विचारले जाणारे प्रश्न",
+    "contactCta": "अजूनही प्रश्न आहेत?",
+    "contactCtaDesc": "अधिक माहितीसाठी आमच्याशी संपर्क करा"
+  },
+  "services": {
+    "title": "आमची सेवा",
+    "description": "आपल्या दुचाकीसाठी संपूर्ण सर्व्हिसिंग आणि दुरुस्ती समाधान",
+    "duration": "अंदाजे वेळ",
+    "startingPrice": "सुरुवातीची किंमत",
+    "bookNow": "आता बुक करा",
+    "noServices": "कोणतीही सेवा उपलब्ध नाही"
+  },
+  "spareParts": {
+    "title": "बिस्पार्ट्स",
+    "description": "बिस्पार्ट्स पहा आणि शोधा",
+    "search": "बिस्पार्ट्स शोधा...",
+    "filterByBrand": "ब्रॅंडनुसार फिल्टर करा",
+    "filterByCategory": "श्रेणीनुसार फिल्टर करा",
+    "allBrands": "सर्व ब्रॅंड्स",
+    "allCategories": "सर्व श्रेणी",
+    "availability": "उपलब्धता",
+    "inStock": "स्टॉकमध्ये",
+    "outOfStock": "स्टॉकबाहेर",
+    "price": "किंमत",
+    "noParts": "कोणतीही बिस्पार्ट्स सापडली नाहीत",
+    "categories": {
+      "brakes": "ब्रेक्स",
+      "engine": "इंजिन",
+      "electrical": "विद्युत",
+      "suspension": "सस्पेंशन",
+      "tires": "टायर",
+      "battery": "बॅटरी",
+      "cooling": "कूलिंग",
+      "fuel": "इंधन प्रणाली"
+    }
+  },
+  "brands": {
+    "title": "समर्थित ब्रॅंड्स",
+    "description": "आम्ही भारतातील सर्व लोकप्रिय दुचाकी ब्रॅंड्सचे समर्थन करतो",
+    "noBrands": "कोणतीही ब्रॅंड उपलब्ध नाही"
+  },
+  "booking": {
+    "title": "सेवा बुक करा",
+    "step1": "ग्राहक माहिती",
+    "step2": "वाहन माहिती",
+    "step3": "सेवा निवडा",
+    "step4": "तारीख व वेळ निवडा",
+    "step5": "आपल्या समस्येचे वर्णन करा",
+    "step6": "पुष्टिकरण",
+    "next": "पुढे",
+    "previous": "मागे",
+    "submit": "बुकिंग पुष्टि करा",
+    "cancel": "रद्द करा",
+    "fullName": "पूर्ण नाव",
+    "phone": "फोन क्रमांक",
+    "email": "ईमेल पत्ता",
+    "brand": "वाहन ब्रॅंड",
+    "model": "मॉडेल",
+    "vehicleType": "वाहन प्रकार",
+    "registrationNumber": "नोंदणी क्रमांक",
+    "vehicleAge": "वाहनाचे वय (वर्षांत)",
+    "selectServices": "सेवा निवडा (आपण अनेक निवडू शकता)",
+    "appointmentDate": "अपॉइंटमेंट तारीख",
+    "timeSlot": "वेळ स्लॉट",
+    "problemDescription": "आपल्या समस्येचे वर्णन करा",
+    "uploadImage": "वाहनाची प्रतिमा अपलोड करा (पर्यायी)",
+    "selectBrand": "ब्रॅंड निवडा",
+    "selectModel": "मॉडेल निवडा",
+    "selectVehicleType": "वाहन प्रकार निवडा",
+    "selectServices": "कमीत कमी एक सेवा निवडा",
+    "selectDate": "अपॉइंटमेंट तारीख निवडा",
+    "selectSlot": "वेळ स्लॉट निवडा",
+    "enterProblem": "कृपया समस्येचे वर्णन करा",
+    "availableSlots": "उपलब्ध स्लॉट्स",
+    "noSlotsAvailable": "या तारखेला कोणतीही स्लॉट उपलब्ध नाही"
+  },
+  "bookingConfirmation": {
+    "title": "बुकिंग पुष्ट झाली",
+    "bookingId": "बुकिंग आयडी",
+    "bookingDetails": "बुकिंग तपशील",
+    "customerName": "ग्राहकाचे नाव",
+    "vehicleDetails": "वाहन तपशील",
+    "appointmentDetails": "अपॉइंटमेंट तपशील",
+    "status": "बुकिंग स्थिती",
+    "statusPending": "प्रलंबित",
+    "statusConfirmed": "पुष्ट",
+    "statusInProgress": "प्रक्रियेत",
+    "statusCompleted": "पूर्ण",
+    "statusCancelled": "रद्द",
+    "viewMoreDetails": "संपूर्ण तपशील पहा",
+    "returnHome": "मुख्यपृष्ठावर परत या",
+    "trackBooking": "आपली बुकिंग ट्रॅक करा"
+  },
+  "contact": {
+    "title": "आमच्याशी संपर्क करा",
+    "description": "कोणत्याही प्रश्नांसाठी आमच्याशी संपर्क करा",
+    "name": "पूर्ण नाव",
+    "email": "ईमेल पत्ता",
+    "phone": "फोन क्रमांक",
+    "subject": "विषय",
+    "message": "संदेश",
+    "sendMessage": "संदेश पाठवा",
+    "contactInfo": "संपर्क माहिती",
+    "whatsapp": "व्हाट्सअँप",
+    "address": "पत्ता",
+    "workingHours": "कार्य वेळ",
+    "mapPlaceholder": "नकाशा एकीकरण प्लेसहोल्डर"
+  },
+  "footer": {
+    "quickLinks": "त्वरित लिंक्स",
+    "aboutUs": "आमच्याबद्दल",
+    "services": "सेवा",
+    "spareParts": "बिस्पार्ट्स",
+    "contact": "संपर्क करा",
+    "followUs": "आमचे अनुसरण करा",
+    "copyright": "© 2026 श्रीराम ऑटोमोबाइल्स. सर्व हक्क राखीव.",
+    "privacyPolicy": "गोपनीयता धोरण",
+    "termsOfService": "सेवेच्या अटी"
+  },
+  "buttons": {
+    "continue": "सुरू ठेवा",
+    "back": "मागे",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "delete": "हटवा",
+    "edit": "संपादित करा",
+    "view": "पहा",
+    "more": "आणखी",
+    "less": "कमी",
+    "loading": "लोड होत आहे...",
+    "submit": "सादर करा",
+    "reset": "रीसेट करा"
+  },
+  "common": {
+    "welcome": "स्वागत आहे",
+    "success": "यश",
+    "error": "त्रुटी",
+    "warning": "सावधानी",
+    "info": "माहिती",
+    "loading": "लोड होत आहे",
+    "noData": "कोणताही डेटा उपलब्ध नाही",
+    "tryAgain": "पुन्हा प्रयत्न करा",
+    "goBack": "मागे जा",
+    "close": "बंद करा",
+    "open": "उघडा"
+  },
+  "validation": {
+    "required": "हे क्षेत्र आवश्यक आहे",
+    "invalidEmail": "कृपया वैध ईमेल प्रविष्ट करा",
+    "invalidPhone": "कृपया वैध फोन क्रमांक प्रविष्ट करा",
+    "minLength": "किमान {{min}} वर्ण असणे आवश्यक आहे",
+    "maxLength": "{{max}} वर्णांपेक्षा जास्त असू शकत नाही",
+    "noMatch": "मूल्य मिळत नाहीत",
+    "invalidDate": "कृपया वैध तारीख निवडा",
+    "pastDate": "भूतकाळातील तारीख निवडू शकत नाहीत"
+  },
+  "errors": {
+    "bookingFailed": "बुकिंग पूर्ण होऊ शकली नाही. कृपया पुन्हा प्रयत्न करा.",
+    "loadingFailed": "डेटा लोड करण्यात अपयश. कृपया रीफ्रेश करा आणि पुन्हा प्रयत्न करा.",
+    "serverError": "सर्व्हर त्रुटी. कृपया नंतर पुन्हा प्रयत्न करा.",
+    "networkError": "नेटवर्क त्रुटी. कृपया आपले कनेक्शन तपासा.",
+    "invalidInput": "कृपया आपली इनपुट तपासा आणि पुन्हा प्रयत्न करा.",
+    "unauthorized": "अनुमती नाही.",
+    "notFound": "संसाधन सापडले नाही."
+  },
+  "messages": {
+    "bookingSuccess": "बुकिंग यशस्वीरित्या तयार केली गेली!",
+    "contactSuccess": "संदेश यशस्वीरित्या पाठविला गेला!",
+    "updateSuccess": "अपडेट यशस्वी!",
+    "deleteSuccess": "यशस्वीरित्या हटविले!",
+    "pleaseWait": "कृपया प्रतीक्षा करा...",
+    "loading": "लोड होत आहे..."
+  }
+}
