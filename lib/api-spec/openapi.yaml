@@ -1,0 +1,222 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: services
+    description: Service catalogue
+  - name: parts
+    description: Spare parts catalogue
+  - name: bookings
+    description: Online service bookings
+  - name: contact
+    description: Contact enquiries
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /services:
+    get:
+      operationId: listServices
+      tags: [services]
+      summary: List service offerings
+      responses:
+        "200":
+          description: Service offerings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+  /parts:
+    get:
+      operationId: listParts
+      tags: [parts]
+      summary: Search spare parts
+      parameters:
+        - in: query
+          name: search
+          schema:
+            type: string
+        - in: query
+          name: brand
+          schema:
+            type: string
+        - in: query
+          name: vehicleType
+          schema:
+            type: string
+        - in: query
+          name: category
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Matching spare parts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Part"
+  /bookings:
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Create a service booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Created booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: Invalid booking
+    get:
+      operationId: listBookings
+      tags: [bookings]
+      summary: List bookings for future admin use
+      responses:
+        "200":
+          description: Bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+  /contact:
+    post:
+      operationId: createContactInquiry
+      tags: [contact]
+      summary: Send a contact enquiry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ContactInput"
+      responses:
+        "201":
+          description: Created enquiry
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactInquiry"
+        "400":
+          description: Invalid enquiry
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    Service:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        estimatedDuration: { type: string }
+        startingPrice: { type: string }
+        icon: { type: string }
+      required: [id, name, description, estimatedDuration, startingPrice, icon]
+    Part:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        category: { type: string }
+        brand: { type: string }
+        vehicleTypes:
+          type: array
+          items: { type: string }
+        description: { type: string }
+        availability: { type: string }
+      required: [id, name, category, brand, vehicleTypes, description, availability]
+    BookingInput:
+      type: object
+      properties:
+        fullName: { type: string, minLength: 2 }
+        phone: { type: string, minLength: 10 }
+        email: { type: string }
+        vehicleBrand: { type: string, minLength: 1 }
+        vehicleModel: { type: string, minLength: 1 }
+        vehicleType: { type: string, minLength: 1 }
+        registrationNumber: { type: string, minLength: 1 }
+        vehicleAge: { type: string }
+        selectedServices:
+          type: array
+          minItems: 1
+          items: { type: string }
+        appointmentDate: { type: string, minLength: 1 }
+        timeSlot: { type: string, minLength: 1 }
+        problemDescription: { type: string }
+      required:
+        - fullName
+        - phone
+        - email
+        - vehicleBrand
+        - vehicleModel
+        - vehicleType
+        - registrationNumber
+        - vehicleAge
+        - selectedServices
+        - appointmentDate
+        - timeSlot
+        - problemDescription
+    Booking:
+      allOf:
+        - $ref: "#/components/schemas/BookingInput"
+        - type: object
+          properties:
+            id: { type: string }
+            bookingId: { type: string }
+            status: { type: string }
+            createdAt: { type: string }
+          required: [id, bookingId, status, createdAt]
+    ContactInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 2 }
+        phone: { type: string, minLength: 10 }
+        subject: { type: string, minLength: 2 }
+        message: { type: string, minLength: 5 }
+      required: [name, phone, subject, message]
+    ContactInquiry:
+      allOf:
+        - $ref: "#/components/schemas/ContactInput"
+        - type: object
+          properties:
+            id: { type: string }
+            createdAt: { type: string }
+          required: [id, createdAt]
+

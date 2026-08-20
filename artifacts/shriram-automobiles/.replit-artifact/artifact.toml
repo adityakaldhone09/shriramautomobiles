@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Shriram Automobiles"
+description = "A premium, mobile-first website for Shriram Automobiles with service discovery, searchable two-wheeler spare parts, multi-brand support, and online appointment booking."
+version = "1.0.0"
+id = "artifacts/shriram-automobiles"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24929
+
+[services.development]
+run = "pnpm --filter @workspace/shriram-automobiles run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/shriram-automobiles", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/shriram-automobiles/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24929"
+BASE_PATH = "/"
