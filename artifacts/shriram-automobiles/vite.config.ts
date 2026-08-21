@@ -27,6 +27,9 @@ if (!basePath) {
   );
 }
 
+const apiUrl = process.env.VITE_API_URL ?? 'http://localhost:5001/api';
+const apiOrigin = new URL(apiUrl).origin;
+
 export default defineConfig({
   base: basePath,
   plugins: [
@@ -67,6 +70,12 @@ export default defineConfig({
   server: {
     port,
     strictPort: true,
+    proxy: {
+      '/api': {
+        target: apiOrigin,
+        changeOrigin: true,
+      },
+    },
     host: '0.0.0.0',
     allowedHosts: true,
     fs: {

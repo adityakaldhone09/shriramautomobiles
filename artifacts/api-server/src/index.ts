@@ -15,11 +15,18 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-app.listen(port, (err) => {
-  if (err) {
-    logger.error({ err }, "Error listening on port");
+const server = app.listen(port, "0.0.0.0", () => {
+  logger.info({ port, environment: process.env.NODE_ENV ?? "development" }, "API server running");
+});
+
+server.on("error", (error: NodeJS.ErrnoException) => {
+  if (error.code === "EADDRINUSE") {
+    console.error(`Cannot start API server: port ${port} is already in use.`);
+    console.error("Run: lsof -nP -iTCP:" + port + " -sTCP:LISTEN");
+    console.error("Change PORT in the root .env file and restart the server.");
     process.exit(1);
   }
 
-  logger.info({ port }, "Server listening");
+  logger.error({ err: error }, "Error listening on port");
+  process.exit(1);
 });
