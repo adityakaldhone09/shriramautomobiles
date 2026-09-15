@@ -1,0 +1,31 @@
+{
+  "name": "@shriram/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@shriram/shared": "workspace:*",
+    "cors": "^2.8.5",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "^0.8.3",
+    "express": "^4.21.2",
+    "pg": "^8.22.0",
+    "pg-mem": "^3.0.14",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "catalog:",
+    "@types/pg": "^8.11.11",
+    "drizzle-kit": "^0.30.5",
+    "tsx": "catalog:",
+    "typescript": "~5.9.3"
+  }
+}
