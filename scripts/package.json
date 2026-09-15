@@ -3,8 +3,15 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@workspace/db": "workspace:*",
+    "drizzle-orm": "catalog:"
+  },
   "scripts": {
     "hello": "tsx ./src/hello.ts",
+    "seed-vehicles": "tsx ./src/seed-vehicles.ts",
+    "seed-service-catalog": "tsx ./src/seed-service-catalog.ts",
+    "test:service-intelligence": "tsx ./src/test-service-intelligence.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
