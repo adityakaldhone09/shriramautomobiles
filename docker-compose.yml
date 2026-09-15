@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shriram-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      POSTGRES_DB: shriram_automobiles
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: shriram-api
+    restart: unless-stopped
+    ports:
+      - '5001:5001'
+    environment:
+      PORT: 5001
+      NODE_ENV: production
+      DATABASE_URL: postgresql://postgres:postgrespassword@postgres:5432/shriram_automobiles
+      AUTH_SECRET: shriram-prod-secret-key-2026
+    depends_on:
+      - postgres
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    container_name: shriram-web
+    restart: unless-stopped
+    ports:
+      - '5173:80'
+    environment:
+      VITE_API_URL: http://localhost:5001/api
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

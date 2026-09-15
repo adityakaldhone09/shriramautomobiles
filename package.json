@@ -1,19 +1,26 @@
 {
-  "name": "workspace",
-  "version": "0.0.0",
-  "license": "MIT",
-  "scripts": {
-    "preinstall": "sh -c 'rm -f package-lock.json yarn.lock; case \"$npm_config_user_agent\" in pnpm/*) ;; *) echo \"Use pnpm instead\" >&2; exit 1 ;; esac'",
-    "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck",
-    "db:seed-vehicles": "pnpm --filter @workspace/scripts run seed-vehicles",
-    "db:seed-service-catalog": "pnpm --filter @workspace/scripts run seed-service-catalog",
-    "test:service-intelligence": "pnpm --filter @workspace/scripts run test:service-intelligence"
-  },
+  "name": "shriram-automobiles",
+  "version": "1.0.0",
   "private": true,
-  "dependencies": {
-    "@replit/connectors-sdk": "^0.4.1"
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm run dev:api & pnpm run dev:web",
+    "dev:web": "pnpm --filter @shriram/web run dev",
+    "dev:api": "pnpm --filter @shriram/api run dev",
+    "build": "pnpm --filter @shriram/shared run build && pnpm --filter @shriram/api-client run build && pnpm -r --if-present run build",
+    "typecheck": "pnpm -r run typecheck",
+    "lint": "prettier --check .",
+    "test": "pnpm --filter @shriram/scripts exec tsx ../tests/unit/shared.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/health.test.ts && pnpm --filter @shriram/scripts run validate:csv && pnpm --filter @shriram/scripts run validate:helmets",
+    "check:env": "pnpm --filter @shriram/scripts run check:env",
+    "check:ports": "pnpm --filter @shriram/scripts run check:ports",
+    "db:migrate": "pnpm --filter @shriram/scripts run db:migrate",
+    "db:seed": "pnpm --filter @shriram/scripts run seed:all",
+    "db:seed:vehicles": "pnpm --filter @shriram/scripts run seed:vehicles",
+    "db:seed:parts": "pnpm --filter @shriram/scripts run seed:parts",
+    "db:seed:services": "pnpm --filter @shriram/scripts run seed:services",
+    "db:seed:helmets": "pnpm --filter @shriram/scripts run seed:helmets",
+    "validate:csv": "pnpm --filter @shriram/scripts run validate:csv",
+    "validate:helmets": "pnpm --filter @shriram/scripts run validate:helmets"
   },
   "devDependencies": {
     "prettier": "^3.9.6",
