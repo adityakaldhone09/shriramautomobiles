@@ -1,0 +1,232 @@
+{
+  "navbar": {
+    "home": "मुख्यपृष्ठ",
+    "about": "आमच्याबद्दल",
+    "services": "सेवा",
+    "spareParts": "बिस्पार्ट्स",
+    "brands": "ब्रॅंड्स",
+    "bookService": "सेवा बुक करा",
+    "contact": "संपर्क करा",
+    "language": "भाषा"
+  },
+  "hero": {
+    "title": "आपल्या दुचाकीसाठी संपूर्ण देखभाल",
+    "subtitle": "गुणवत्तेचे बिस्पार्ट्स, सर्व्हिसिंग, दुरुस्तीचे आणि रक्षणाचे काम एक जागी.",
+    "bookNow": "सेवा बुक करा",
+    "browseServices": "सेवा पहा",
+    "whyChooseUs": "आमचा निवड का करा?"
+  },
+  "home": {
+    "servicesSection": "आमची सेवा",
+    "browseAllServices": "सर्व सेवा पहा",
+    "spareParts": "प्रीमियम बिस्पार्ट्स",
+    "exploreSpares": "बिस्पार्ट्स शोधा",
+    "supportedBrands": "समर्थित ब्रॅंड्स",
+    "viewAllBrands": "सर्व ब्रॅंड्स पहा",
+    "whyChooseSection": "श्रीराम ऑटोमोबाइल्सचा निवड का करा",
+    "reasons": {
+      "expertise": {
+        "title": "विशेषज्ञ संघ",
+        "description": "वर्षांच्या अनुभवासह कुशल तंत्रज्ञ"
+      },
+      "quality": {
+        "title": "गुणवत्तेचे बिस्पार्ट्स",
+        "description": "विश्वासार्ह निर्मात्यांकडून असली बिस्पार्ट्स"
+      },
+      "affordable": {
+        "title": "सोयीस्कर किंमत",
+        "description": "गुणवत्तेत कोणतीही तडजोड न करता प्रतिस्पर्धी किंमत"
+      },
+      "timely": {
+        "title": "वेळेवर सेवा",
+        "description": "जलद काम आणि सुविधाजनक बुकिंग"
+      }
+    },
+    "testimonials": "आमचे ग्राहक काय म्हणतात",
+    "faq": "वारंवार विचारले जाणारे प्रश्न",
+    "contactCta": "अजूनही प्रश्न आहेत?",
+    "contactCtaDesc": "अधिक माहितीसाठी आमच्याशी संपर्क करा"
+  },
+  "services": {
+    "title": "आमची सेवा",
+    "description": "आपल्या दुचाकीसाठी संपूर्ण सर्व्हिसिंग आणि दुरुस्ती समाधान",
+    "duration": "अंदाजे वेळ",
+    "startingPrice": "सुरुवातीची किंमत",
+    "bookNow": "आता बुक करा",
+    "noServices": "कोणतीही सेवा उपलब्ध नाही"
+  },
+  "spareParts": {
+    "title": "बिस्पार्ट्स",
+    "description": "बिस्पार्ट्स पहा आणि शोधा",
+    "search": "बिस्पार्ट्स शोधा...",
+    "filterByBrand": "ब्रॅंडनुसार फिल्टर करा",
+    "filterByCategory": "श्रेणीनुसार फिल्टर करा",
+    "allBrands": "सर्व ब्रॅंड्स",
+    "allCategories": "सर्व श्रेणी",
+    "availability": "उपलब्धता",
+    "inStock": "स्टॉकमध्ये",
+    "outOfStock": "स्टॉकबाहेर",
+    "price": "किंमत",
+    "noParts": "कोणतीही बिस्पार्ट्स सापडली नाहीत",
+    "categories": {
+      "brakes": "ब्रेक्स",
+      "engine": "इंजिन",
+      "electrical": "विद्युत",
+      "suspension": "सस्पेंशन",
+      "tires": "टायर",
+      "battery": "बॅटरी",
+      "cooling": "कूलिंग",
+      "fuel": "इंधन प्रणाली"
+    }
+  },
+  "brands": {
+    "title": "समर्थित ब्रॅंड्स",
+    "description": "आम्ही भारतातील सर्व लोकप्रिय दुचाकी ब्रॅंड्सचे समर्थन करतो",
+    "noBrands": "कोणतीही ब्रॅंड उपलब्ध नाही"
+  },
+  "booking": {
+    "title": "सेवा बुक करा",
+    "step1": "ग्राहक माहिती",
+    "step2": "वाहन माहिती",
+    "step3": "सेवा निवडा",
+    "step4": "तारीख व वेळ निवडा",
+    "step5": "आपल्या समस्येचे वर्णन करा",
+    "step6": "पुष्टिकरण",
+    "next": "पुढे",
+    "previous": "मागे",
+    "submit": "बुकिंग पुष्टि करा",
+    "cancel": "रद्द करा",
+    "fullName": "पूर्ण नाव",
+    "phone": "फोन क्रमांक",
+    "email": "ईमेल पत्ता",
+    "brand": "वाहन ब्रॅंड",
+    "model": "मॉडेल",
+    "vehicleType": "वाहन प्रकार",
+    "registrationNumber": "नोंदणी क्रमांक",
+    "vehicleAge": "वाहनाचे वय (वर्षांत)",
+    "selectServices": "सेवा निवडा (आपण अनेक निवडू शकता)",
+    "appointmentDate": "अपॉइंटमेंट तारीख",
+    "timeSlot": "वेळ स्लॉट",
+    "problemDescription": "आपल्या समस्येचे वर्णन करा",
+    "uploadImage": "वाहनाची प्रतिमा अपलोड करा (पर्यायी)",
+    "selectBrand": "ब्रॅंड निवडा",
+    "selectModel": "मॉडेल निवडा",
+    "selectVehicleType": "वाहन प्रकार निवडा",
+    "selectServices": "कमीत कमी एक सेवा निवडा",
+    "selectDate": "अपॉइंटमेंट तारीख निवडा",
+    "selectSlot": "वेळ स्लॉट निवडा",
+    "enterProblem": "कृपया समस्येचे वर्णन करा",
+    "availableSlots": "उपलब्ध स्लॉट्स",
+    "noSlotsAvailable": "या तारखेला कोणतीही स्लॉट उपलब्ध नाही"
+  },
+  "bookingConfirmation": {
+    "title": "बुकिंग पुष्ट झाली",
+    "bookingId": "बुकिंग आयडी",
+    "bookingDetails": "बुकिंग तपशील",
+    "customerName": "ग्राहकाचे नाव",
+    "vehicleDetails": "वाहन तपशील",
+    "appointmentDetails": "अपॉइंटमेंट तपशील",
+    "status": "बुकिंग स्थिती",
+    "statusPending": "प्रलंबित",
+    "statusConfirmed": "पुष्ट",
+    "statusInProgress": "प्रक्रियेत",
+    "statusCompleted": "पूर्ण",
+    "statusCancelled": "रद्द",
+    "viewMoreDetails": "संपूर्ण तपशील पहा",
+    "returnHome": "मुख्यपृष्ठावर परत या",
+    "trackBooking": "आपली बुकिंग ट्रॅक करा"
+  },
+  "contact": {
+    "title": "आमच्याशी संपर्क करा",
+    "description": "कोणत्याही प्रश्नांसाठी आमच्याशी संपर्क करा",
+    "name": "पूर्ण नाव",
+    "email": "ईमेल पत्ता",
+    "phone": "फोन क्रमांक",
+    "subject": "विषय",
+    "message": "संदेश",
+    "sendMessage": "संदेश पाठवा",
+    "contactInfo": "संपर्क माहिती",
+    "whatsapp": "व्हाट्सअँप",
+    "address": "पत्ता",
+    "workingHours": "कार्य वेळ",
+    "mapPlaceholder": "नकाशा एकीकरण प्लेसहोल्डर"
+  },
+  "footer": {
+    "quickLinks": "त्वरित लिंक्स",
+    "aboutUs": "आमच्याबद्दल",
+    "services": "सेवा",
+    "spareParts": "बिस्पार्ट्स",
+    "contact": "संपर्क करा",
+    "followUs": "आमचे अनुसरण करा",
+    "copyright": "© 2026 श्रीराम ऑटोमोबाइल्स. सर्व हक्क राखीव.",
+    "privacyPolicy": "गोपनीयता धोरण",
+    "termsOfService": "सेवेच्या अटी"
+  },
+  "buttons": {
+    "continue": "सुरू ठेवा",
+    "back": "मागे",
+    "cancel": "रद्द करा",
+    "save": "जतन करा",
+    "delete": "हटवा",
+    "edit": "संपादित करा",
+    "view": "पहा",
+    "more": "आणखी",
+    "less": "कमी",
+    "loading": "लोड होत आहे...",
+    "submit": "सादर करा",
+    "reset": "रीसेट करा"
+  },
+  "common": {
+    "welcome": "स्वागत आहे",
+    "success": "यश",
+    "error": "त्रुटी",
+    "warning": "सावधानी",
+    "info": "माहिती",
+    "loading": "लोड होत आहे",
+    "noData": "कोणताही डेटा उपलब्ध नाही",
+    "tryAgain": "पुन्हा प्रयत्न करा",
+    "goBack": "मागे जा",
+    "close": "बंद करा",
+    "open": "उघडा"
+  },
+  "validation": {
+    "required": "हे क्षेत्र आवश्यक आहे",
+    "invalidEmail": "कृपया वैध ईमेल प्रविष्ट करा",
+    "invalidPhone": "कृपया वैध फोन क्रमांक प्रविष्ट करा",
+    "minLength": "किमान {{min}} वर्ण असणे आवश्यक आहे",
+    "maxLength": "{{max}} वर्णांपेक्षा जास्त असू शकत नाही",
+    "noMatch": "मूल्य मिळत नाहीत",
+    "invalidDate": "कृपया वैध तारीख निवडा",
+    "pastDate": "भूतकाळातील तारीख निवडू शकत नाहीत"
+  },
+  "errors": {
+    "bookingFailed": "बुकिंग पूर्ण होऊ शकली नाही. कृपया पुन्हा प्रयत्न करा.",
+    "loadingFailed": "डेटा लोड करण्यात अपयश. कृपया रीफ्रेश करा आणि पुन्हा प्रयत्न करा.",
+    "serverError": "सर्व्हर त्रुटी. कृपया नंतर पुन्हा प्रयत्न करा.",
+    "networkError": "नेटवर्क त्रुटी. कृपया आपले कनेक्शन तपासा.",
+    "invalidInput": "कृपया आपली इनपुट तपासा आणि पुन्हा प्रयत्न करा.",
+    "unauthorized": "अनुमती नाही.",
+    "notFound": "संसाधन सापडले नाही."
+  },
+  "messages": {
+    "bookingSuccess": "बुकिंग यशस्वीरित्या तयार केली गेली!",
+    "contactSuccess": "संदेश यशस्वीरित्या पाठविला गेला!",
+    "updateSuccess": "अपडेट यशस्वी!",
+    "deleteSuccess": "यशस्वीरित्या हटविले!",
+    "pleaseWait": "कृपया प्रतीक्षा करा...",
+    "loading": "लोड होत आहे..."
+  },
+  "business": { "kicker": "सर्व दुचाकी स्पेअर पार्ट्स उपलब्ध", "shopName": "श्रीराम ऑटोमोबाइल्स", "partsTitle": "अस्सल आणि सुसंगत पार्ट्स", "description": "प्रमुख मोटरसायकल आणि स्कूटर ब्रँड्ससाठी अस्सल व सुसंगत रिप्लेसमेंट पार्ट्स तसेच सर्व्हिस आणि दुरुस्तीची मदत उपलब्ध.", "address": "मिरज रोड, रेल्वे गेटजवळ, सांगोला – 413307" },
+  "hero": { "title": "दुचाकी स्पेअर पार्ट्स आणि सर्व्हिसचे संपूर्ण ठिकाण", "subtitle": "प्रमुख दुचाकी ब्रँड्ससाठी अस्सल आणि सुसंगत स्पेअर पार्ट्स मिळवा. इंजिन पार्ट्स आणि इलेक्ट्रिकल्सपासून टायर, बॅटरी, ब्रेक, ल्युब्रिकंट्स आणि अॅक्सेसरीजपर्यंत.", "exploreParts": "स्पेअर पार्ट्स पहा", "bookService": "सर्व्हिस बुक करा", "trust": "रिटेल आणि होलसेल दुचाकी पार्ट्स उपलब्ध", "retailWholesale": "पार्ट्स, सर्व्हिस आणि दुरुस्ती एकाच ठिकाणी" },
+  "wholesale": { "kicker": "होलसेल ऑर्डर्स उपलब्ध", "title": "मोठ्या खरेदीसाठी विश्वासू ठिकाण.", "description": "दुचाकी स्पेअर पार्ट्स मोठ्या प्रमाणात घ्यायचे आहेत? आमच्या होलसेल गोडाऊनला — श्रीराम ऑटोपार्ट्स — भेट द्या.", "godownLabel": "होलसेल गोडाऊन", "godownName": "श्रीराम ऑटोपार्ट्स", "address": "आदर्श स्कूलजवळ, व्हाइट हाऊस, सांगोला – 413307", "callButton": "होलसेलसाठी कॉल करा", "directionsButton": "गोडाऊनचा मार्ग" },
+  "parts": { "kicker": "संपूर्ण पार्ट्स डेस्क", "title": "दररोजच्या प्रवासासाठी पार्ट्स.", "description": "इंजिन पार्ट्स, इलेक्ट्रिकल्स, ब्रेकिंग सिस्टम, टायर, ट्यूब, बॅटरी, फिल्टर्स, ल्युब्रिकंट्स, चेन, लाइटिंग, सस्पेंशन आणि अॅक्सेसरीज.", "categories": { "engine": "इंजिन पार्ट्स", "electrical": "इलेक्ट्रिकल्स", "braking": "ब्रेकिंग पार्ट्स", "tyres": "टायर आणि ट्यूब", "batteries": "बॅटरी", "filters": "फिल्टर्स", "lubricants": "ल्युब्रिकंट्स", "chains": "चेन आणि स्प्रोकेट", "lighting": "लाइटिंग", "suspension": "सस्पेंशन", "accessories": "अॅक्सेसरीज" } },
+  "brands": { "title": "आम्ही समर्थन करत असलेले ब्रँड्स", "description": "प्रमुख दुचाकी ब्रँड्सचे पार्ट्स उपलब्ध. ब्रँड नावे फक्त सुसंगततेच्या संदर्भासाठी असून अधिकृत भागीदारी किंवा मान्यतेचा दावा नाही.", "kicker": "प्रमुख दुचाकी ब्रँड्सचे पार्ट्स", "vehicleLabel": "वाहन ब्रँड्स", "vehicleDescription": "मोटरसायकल, स्कूटर आणि ईव्हीसाठी विश्वासू पार्ट्स डेस्क.", "componentsKicker": "विश्वसनीय कंपोनेंट ब्रँड्स", "componentsTitle": "विश्वासू नावांसह.", "componentsDescription": "इलेक्ट्रिकल्स, ब्रेक, ड्राइव्ह सिस्टम, टायर, बॅटरी, फिल्टर्स आणि इंजिन ऑइलच्या कंपोनेंट्सबद्दल विचारा.", "vehicle": { "hero": "Hero MotoCorp", "bajaj": "Bajaj Auto", "tvs": "TVS Motor Company", "honda": "Honda Motorcycle & Scooter", "yamaha": "Yamaha", "suzuki": "Suzuki", "royalEnfield": "Royal Enfield", "ktm": "KTM", "jawa": "Jawa", "yezdi": "Yezdi", "bsa": "BSA", "mahindra": "Mahindra", "vida": "Vida EV", "chetak": "Chetak", "iqube": "iQube" }, "components": { "minda": "Spark Minda / Minda Corporation", "unoMinda": "UNO Minda", "rolon": "Rolon", "rane": "Rane Group", "rico": "RICO Auto Industries", "bosch": "Bosch", "fiem": "FIEM", "lumax": "Lumax", "varroc": "Varroc", "flash": "Flash Electronics", "mrf": "MRF", "ceat": "CEAT", "tvsEurogrip": "TVS Eurogrip", "apollo": "Apollo Tyres", "jkTyre": "JK Tyre", "brembo": "Brembo", "bybre": "ByBre", "kbx": "KBX / Chassis Brakes International", "exide": "Exide", "amaron": "Amaron", "mann": "Mann+Hummel", "purolator": "Purolator", "elofic": "Elofic", "castrol": "Castrol", "motul": "Motul", "gulf": "Gulf Oil", "servo": "Servo" } },
+  "contact": { "kicker": "रिटेल आणि होलसेल ठिकाणे", "callNow": "आता कॉल करा", "bookService": "सर्व्हिस बुक करा", "getDirections": "मार्ग पहा", "retailShop": "रिटेल दुकान", "wholesaleGodown": "होलसेल गोडाऊन", "mapTitle": "श्रीराम ऑटोमोबाइल्स शोधा", "inquiryKicker": "व्हॉट्सअॅप पार्ट्स डेस्क", "inquiryText": "तुमच्या बाइकचे मॉडेल किंवा पार्टची गरज पाठवा; योग्य पर्याय शोधण्यात आम्ही मदत करू.", "whatsapp": "व्हॉट्सअॅप" },
+  "booking": { "ctaTitle": "सर्व्हिसही हवी आहे? तुमच्यासाठी स्लॉट उपलब्ध आहे." },
+  "shop": { "nav": "पार्ट्स खरेदी", "kicker": "ऑनलाइन पार्ट्स डेस्क", "title": "योग्य पार्ट शोधा.", "description": "ब्रँड किंवा श्रेणीनुसार पार्ट्स शोधा आणि दुकानातून घ्या किंवा फिटमेंटसाठी विचारा.", "search": "प्रोडक्ट शोधा", "brand": "ब्रँड", "category": "पार्ट श्रेणी", "allBrands": "सर्व ब्रँड", "allCategories": "सर्व श्रेणी", "compatibility": "तुमच्या वाहनासाठी सुसंगतता आम्हाला विचारा.", "add": "कार्टमध्ये जोडा" },
+  "cart": { "kicker": "तुमची पार्ट्स टोपली", "title": "शॉपिंग कार्ट", "empty": "तुमची कार्ट रिकामी आहे.", "summary": "ऑर्डर सारांश", "total": "एकूण", "checkout": "चेकआउट करा" },
+  "account": { "nav": "माझे खाते", "kicker": "ग्राहक खाते", "welcome": "तुमचा गॅरेज डेस्क.", "description": "तुमची वाहने, सर्विस आणि पार्ट्स ऑर्डर एका सोप्या ठिकाणी सांभाळा.", "vehicles": "माझी वाहने", "services": "सर्विस बुक करा", "orders": "माझ्या ऑर्डर्स", "history": "सर्विस इतिहास" },
+  "checkout": { "kicker": "ऑर्डर तपशील", "title": "तुम्ही तयार असाल तेव्हा.", "delivery": "घ्या किंवा पोहोचवा", "pickup": "दुकानातून घ्या", "pickupAddress": "मिरज रोड, रेल्वे गेटजवळ, सांगोला", "deliveryHome": "घरी डिलिव्हरी", "payment": "पेमेंट पद्धत", "cash": "पिकअपवेळी रोख", "cod": "डिलिव्हरीवेळी रोख", "onlinePending": "ऑनलाइन पेमेंट (लवकरच)", "place": "ऑर्डर द्या", "loginRequired": "ऑर्डर देण्यापूर्वी लॉग इन करा.", "error": "ऑर्डर देता आली नाही.", "pending": "ऑर्डर मिळाली. दुकानाच्या पुष्टीपर्यंत पेमेंट प्रलंबित राहील." },
+  "auth": { "kicker": "ग्राहक खाते", "login": "पुन्हा स्वागत आहे.", "register": "तुमचे खाते तयार करा.", "name": "पूर्ण नाव", "phone": "मोबाइल नंबर", "identifier": "फोन किंवा ईमेल", "email": "ईमेल", "password": "पासवर्ड", "create": "खाते तयार करा", "submit": "लॉग इन", "newAccount": "नवीन खाते तयार करा", "haveAccount": "माझे खाते आधीच आहे", "error": "विनंती पूर्ण करता आली नाही." },
+  "vehicles": { "kicker": "तुमचा गॅरेज", "title": "माझी वाहने.", "add": "वाहन जोडा", "brand": "ब्रँड", "model": "मॉडेल", "registration": "रजिस्ट्रेशन नंबर", "save": "वाहन सेव्ह करा", "empty": "अजून कोणतेही वाहन सेव्ह केलेले नाही.", "added": "वाहन सेव्ह झाले.", "error": "वाहन सेव्ह करता आले नाही." }
+}
