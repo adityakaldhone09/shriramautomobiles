@@ -31,16 +31,20 @@ function parseCsv(content: string): Record<string, string>[] {
 
 function resolveCsvSync(fileName: string): string | null {
   const metaDir = typeof import.meta !== 'undefined' && import.meta.dirname ? import.meta.dirname : '';
-  const possible = [
-    path.resolve(process.cwd(), 'data/csv', fileName),
-    path.resolve(process.cwd(), '../data/csv', fileName),
-    path.resolve(process.cwd(), '../../data/csv', fileName),
-    path.resolve('/Users/adityak/Projects/ShriramAutomobiles/data/csv', fileName),
-    metaDir ? path.resolve(metaDir, '../../../../data/csv', fileName) : '',
-    metaDir ? path.resolve(metaDir, '../../../data/csv', fileName) : '',
+  const subdirs = ['vehicles', 'parts', 'services', 'helmets', 'csv', ''];
+  const baseDirs = [
+    process.cwd(),
+    path.resolve(process.cwd(), '..'),
+    path.resolve(process.cwd(), '../..'),
+    metaDir ? path.resolve(metaDir, '../../../../') : '',
+    metaDir ? path.resolve(metaDir, '../../../') : '',
   ].filter(Boolean);
-  for (const p of possible) {
-    if (fs.existsSync(p)) return p;
+
+  for (const base of baseDirs) {
+    for (const sub of subdirs) {
+      const p = sub ? path.resolve(base, 'data', sub, fileName) : path.resolve(base, 'data', fileName);
+      if (fs.existsSync(p)) return p;
+    }
   }
   return null;
 }
