@@ -1,21 +1,31 @@
 {
-  "name": "@workspace/scripts",
+  "name": "@shriram/scripts",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "dependencies": {
-    "@workspace/db": "workspace:*",
-    "drizzle-orm": "catalog:"
+    "@shriram/api": "workspace:*",
+    "@shriram/shared": "workspace:*",
+    "drizzle-orm": "catalog:",
+    "zod": "catalog:"
   },
   "scripts": {
-    "hello": "tsx ./src/hello.ts",
-    "seed-vehicles": "tsx ./src/seed-vehicles.ts",
-    "seed-service-catalog": "tsx ./src/seed-service-catalog.ts",
-    "test:service-intelligence": "tsx ./src/test-service-intelligence.ts",
+    "seed:vehicles": "tsx ./seed/seed-vehicles.ts",
+    "seed:parts": "tsx ./seed/seed-parts.ts",
+    "seed:services": "tsx ./seed/seed-services.ts",
+    "seed:helmets": "tsx ./seed/seed-helmets.ts",
+    "seed:all": "tsx ./seed/seed-vehicles.ts && tsx ./seed/seed-parts.ts && tsx ./seed/seed-services.ts && tsx ./seed/seed-helmets.ts",
+    "db:migrate": "tsx ./database/migrate.ts",
+    "db:reset": "tsx ./database/reset.ts",
+    "validate:csv": "tsx ./data/validate-csv.ts",
+    "validate:helmets": "tsx ./data/validate-helmets.ts",
+    "check:env": "tsx ./development/check-env.ts",
+    "check:ports": "tsx ./development/check-ports.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "catalog:",
-    "tsx": "catalog:"
+    "tsx": "catalog:",
+    "typescript": "~5.9.3"
   }
 }
