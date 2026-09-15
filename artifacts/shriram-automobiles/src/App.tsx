@@ -1,10 +1,10 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Link, Route, Switch, useLocation, useSearch } from 'wouter';
 import {
   ArrowRight, ArrowUpRight, Bike, CalendarDays, Check, ChevronLeft, ChevronRight,
   Clock3, CircleAlert, CircleCheck, ClipboardList, Facebook, Instagram, LocateFixed,
-  MapPin, Menu, MessageSquare, Phone, ShieldCheck, Sparkles, ToolCase,
+  MapPin, Menu, MessageSquare, Phone, Search, ShoppingCart, ShieldCheck, Sparkles, ToolCase,
   Wrench, X, Zap
 } from 'lucide-react';
 import {
@@ -18,6 +18,10 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { LanguageSwitcher } from '@/components/layout/LanguageSwitcher';
 import NotFound from '@/pages/not-found';
 import { useTranslation } from 'react-i18next';
+
+import { ServiceBookingWizard } from '@/components/booking/ServiceBookingWizard';
+import { CustomerDashboard } from '@/components/account/CustomerDashboard';
+import { CompatiblePartsShop } from '@/components/shop/CompatiblePartsShop';
 
 const queryClient = new QueryClient();
 
@@ -39,7 +43,7 @@ function Nav() {
   const [open, setOpen] = useState(false);
   const [location] = useLocation();
   const { t } = useTranslation();
-  const links = [['/', t('navbar.home')], ['/book-service', t('navbar.bookService')], ['/contact', t('navbar.contact')]];
+  const links = [['/', t('navbar.home')], ['/shop', t('shop.nav')], ['/book-service', t('navbar.bookService')], ['/contact', t('navbar.contact')]];
   return (
     <header className="sticky top-0 z-40 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.92)] backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8">
@@ -53,14 +57,17 @@ function Nav() {
         </nav>
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
+          <Link href="/account/dashboard" aria-label={t('account.nav')} className="rounded-lg border border-[hsl(var(--border))] p-2 text-[hsl(var(--secondary))]"><Bike size={17} /></Link>
+          <Link href="/cart" aria-label={t('cart.title')} className="rounded-lg border border-[hsl(var(--border))] p-2 text-[hsl(var(--secondary))]"><ShoppingCart size={17} /></Link>
           <a href="tel:+919876543210" data-testid="link-call-header" className="mono-font flex items-center gap-2 text-[11px] font-bold text-[hsl(var(--secondary))]"><Phone size={14} /> +91 98765 43210</a>
           <Link href="/book-service" data-testid="link-book-header" className="group flex items-center gap-2 rounded-lg bg-[hsl(var(--secondary))] px-4 py-2.5 text-sm font-bold text-[hsl(var(--background))] transition-transform hover:-translate-y-0.5">Book a visit <ArrowUpRight size={15} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" /></Link>
         </div>
-        <div className="flex items-center gap-2 md:hidden"><LanguageSwitcher /><button type="button" onClick={() => setOpen(!open)} aria-label="Toggle navigation" data-testid="button-toggle-nav" className="rounded-lg border border-[hsl(var(--border))] p-2">{open ? <X size={20} /> : <Menu size={20} />}</button></div>
+        <div className="flex items-center gap-2 md:hidden"><LanguageSwitcher /><Link href="/cart" aria-label={t('cart.title')} className="rounded-lg border border-[hsl(var(--border))] p-2"><ShoppingCart size={18} /></Link><button type="button" onClick={() => setOpen(!open)} aria-label="Toggle navigation" data-testid="button-toggle-nav" className="rounded-lg border border-[hsl(var(--border))] p-2">{open ? <X size={20} /> : <Menu size={20} />}</button></div>
       </div>
       {open && <nav className="border-t border-[hsl(var(--border))] px-5 py-4 md:hidden" aria-label="Mobile navigation">
         <div className="flex flex-col gap-1">
           {links.map(([href, label]) => <Link key={href} onClick={() => setOpen(false)} href={href} data-testid={`link-mobile-${label.replace(' ', '-')}`} className="rounded-lg px-3 py-3 text-sm font-bold hover:bg-[hsl(var(--muted))]">{label}</Link>)}
+          <Link href="/account/dashboard" onClick={() => setOpen(false)} className="rounded-lg px-3 py-3 text-sm font-bold hover:bg-[hsl(var(--muted))]">{t('account.nav')}</Link>
         </div>
       </nav>}
     </header>
@@ -249,8 +256,93 @@ function BookingRow({ booking }: { booking: Booking }) {
   return <div className="grid gap-3 border-b border-[hsl(var(--border))] px-5 py-5 last:border-0 md:grid-cols-[1fr_1fr_150px_130px] md:items-center" data-testid={`row-booking-${booking.id}`}><div><p className="font-bold">{booking.fullName}</p><p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">{booking.phone}</p></div><div><p className="font-bold">{booking.vehicleBrand} {booking.vehicleModel}</p><p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">{booking.selectedServices.join(', ')}</p></div><div><p className="text-sm font-bold">{booking.appointmentDate}</p><p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">{booking.timeSlot}</p></div><span className="w-fit rounded-full bg-[hsl(var(--primary)/.25)] px-3 py-1 text-[10px] font-bold uppercase text-[hsl(var(--secondary))]">{booking.status}</span></div>;
 }
 
+type CartLine = { part: Part; quantity: number };
+const cartKey = 'shriram-cart';
+const partPrice = (part: Part) => 350 + (Number(part.id) || 1) * 125;
+
+function ShopPage() {
+  const { t } = useTranslation();
+  const partsQuery = useListParts(undefined, { query: { queryKey: getListPartsQueryKey() } });
+  const [search, setSearch] = useState('');
+  const [brand, setBrand] = useState('');
+  const [category, setCategory] = useState('');
+  const [cart, setCart] = useState<CartLine[]>(() => JSON.parse(localStorage.getItem(cartKey) || '[]'));
+  const parts = (partsQuery.data ?? []).filter((part) => part.name.toLowerCase().includes(search.toLowerCase()) && (!brand || part.brand === brand) && (!category || part.category === category));
+  const brands = [...new Set((partsQuery.data ?? []).map((part) => part.brand))];
+  const categories = [...new Set((partsQuery.data ?? []).map((part) => part.category))];
+  const add = (part: Part) => { const next = cart.some((line) => line.part.id === part.id) ? cart.map((line) => line.part.id === part.id ? { ...line, quantity: line.quantity + 1 } : line) : [...cart, { part, quantity: 1 }]; setCart(next); localStorage.setItem(cartKey, JSON.stringify(next)); };
+  return <Shell><main className="page-grid mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20"><div className="flex flex-col justify-between gap-6 border-b border-[hsl(var(--border))] pb-10 md:flex-row md:items-end"><div><SectionKicker>{t('shop.kicker')}</SectionKicker><h1 className="display-font text-6xl font-bold uppercase leading-[.88]">{t('shop.title')}</h1><p className="mt-5 max-w-xl text-sm leading-6 text-[hsl(var(--muted-foreground))]">{t('shop.description')}</p></div><Link href="/cart" className="inline-flex items-center gap-2 rounded-lg bg-[hsl(var(--secondary))] px-4 py-3 text-sm font-bold text-[hsl(var(--background))]"><ShoppingCart size={16} /> {t('cart.title')} ({cart.length})</Link></div><div className="mt-8 grid gap-3 md:grid-cols-[1fr_180px_180px]"><label className="relative"><Search size={17} className="absolute left-3 top-3.5 text-[hsl(var(--muted-foreground))]" /><input aria-label={t('shop.search')} value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('shop.search')} className={`${inputClass} mt-0 pl-10`} /></label><select aria-label={t('shop.brand')} value={brand} onChange={(event) => setBrand(event.target.value)} className={`${inputClass} mt-0`}><option value="">{t('shop.allBrands')}</option>{brands.map((item) => <option key={item}>{item}</option>)}</select><select aria-label={t('shop.category')} value={category} onChange={(event) => setCategory(event.target.value)} className={`${inputClass} mt-0`}><option value="">{t('shop.allCategories')}</option>{categories.map((item) => <option key={item}>{item}</option>)}</select></div><div className="mt-10"><QueryState loading={partsQuery.isLoading} error={partsQuery.isError} empty={!partsQuery.isLoading && parts.length === 0} retry={() => partsQuery.refetch()}><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{parts.map((part) => <article key={part.id} className="overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]" data-testid={`card-shop-part-${part.id}`}><div className="flex h-36 items-center justify-center bg-[hsl(var(--secondary))] text-[hsl(var(--primary))]"><Bike size={66} strokeWidth={1.2} /></div><div className="p-5"><div className="flex items-start justify-between gap-3"><h2 className="font-bold">{part.name}</h2><span className="mono-font whitespace-nowrap text-sm font-bold">₹{partPrice(part).toLocaleString('en-IN')}</span></div><p className="mt-2 text-xs text-[hsl(var(--muted-foreground))]">{part.brand} · {part.category}</p><p className="mt-3 min-h-10 text-sm leading-5 text-[hsl(var(--muted-foreground))]">{part.description || t('shop.compatibility')}</p><div className="mt-5 flex items-center justify-between gap-3"><span className="flex items-center gap-1.5 text-xs font-bold text-[hsl(var(--accent))]"><CircleCheck size={15} /> {part.availability}</span><button type="button" onClick={() => add(part)} className="inline-flex items-center gap-2 rounded-lg bg-[hsl(var(--accent))] px-3 py-2.5 text-xs font-bold text-[hsl(var(--accent-foreground))]"><ShoppingCart size={14} /> {t('shop.add')}</button></div></div></article>)}</div></QueryState></div></main></Shell>;
+}
+
+function CartPage() {
+  const { t } = useTranslation();
+  const [cart, setCart] = useState<CartLine[]>(() => JSON.parse(localStorage.getItem(cartKey) || '[]'));
+  const update = (id: string, quantity: number) => { const next = cart.map((line) => line.part.id === id ? { ...line, quantity } : line).filter((line) => line.quantity > 0); setCart(next); localStorage.setItem(cartKey, JSON.stringify(next)); };
+  const total = cart.reduce((sum, line) => sum + partPrice(line.part) * line.quantity, 0);
+  return <Shell><main className="mx-auto max-w-5xl px-5 py-14 lg:px-8 lg:py-20"><SectionKicker>{t('cart.kicker')}</SectionKicker><h1 className="display-font text-6xl font-bold uppercase">{t('cart.title')}</h1>{cart.length === 0 ? <div className="mt-10 rounded-2xl border border-dashed border-[hsl(var(--border))] p-12 text-center"><ShoppingCart className="mx-auto mb-4 text-[hsl(var(--muted-foreground))]" /><p className="font-bold">{t('cart.empty')}</p><Link href="/shop" className="mt-5 inline-flex rounded-lg bg-[hsl(var(--secondary))] px-4 py-3 text-sm font-bold text-[hsl(var(--background))]">{t('shop.title')}</Link></div> : <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_300px]"><div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5">{cart.map((line) => <div key={line.part.id} className="flex items-center justify-between gap-4 border-b border-[hsl(var(--border))] py-5 last:border-0"><div><p className="font-bold">{line.part.name}</p><p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">₹{partPrice(line.part).toLocaleString('en-IN')} each</p></div><div className="flex items-center gap-3"><input aria-label={`${line.part.name} quantity`} type="number" min="0" value={line.quantity} onChange={(event) => update(line.part.id, Number(event.target.value))} className="w-16 rounded-lg border border-[hsl(var(--border))] px-2 py-2 text-center text-sm" /><span className="w-20 text-right font-bold">₹{(partPrice(line.part) * line.quantity).toLocaleString('en-IN')}</span></div></div>)}</div><aside className="h-fit rounded-2xl bg-[hsl(var(--secondary))] p-6 text-[hsl(var(--background))]"><p className="mono-font text-[10px] uppercase tracking-[.16em] text-[hsl(var(--primary))]">{t('cart.summary')}</p><div className="mt-5 flex justify-between border-t border-[hsl(var(--background)/.15)] pt-5"><span>{t('cart.total')}</span><strong>₹{total.toLocaleString('en-IN')}</strong></div><Link href="/checkout" className="mt-6 flex items-center justify-center gap-2 rounded-lg bg-[hsl(var(--primary))] px-4 py-3 text-sm font-bold text-[hsl(var(--secondary))]">{t('cart.checkout')} <ArrowRight size={15} /></Link></aside></div>}</main></Shell>;
+}
+
+function AccountPage() {
+  const { t } = useTranslation();
+  return <Shell><main className="page-grid mx-auto max-w-7xl px-5 py-14 lg:px-8 lg:py-20"><SectionKicker>{t('account.kicker')}</SectionKicker><h1 className="display-font text-6xl font-bold uppercase">{t('account.welcome')}</h1><p className="mt-5 max-w-xl text-sm leading-6 text-[hsl(var(--muted-foreground))]">{t('account.description')}</p><div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[[Bike, t('account.vehicles'), '/account/vehicles'], [CalendarDays, t('account.services'), '/book-service'], [ShoppingCart, t('account.orders'), '/cart'], [ClipboardList, t('account.history'), '/admin/bookings']].map(([Icon, label, href]) => <Link key={label as string} href={href as string} className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition-transform hover:-translate-y-1"><span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[hsl(var(--primary)/.25)]"><Icon size={21} /></span><span className="mt-8 block font-bold">{label as string}</span><ArrowUpRight size={16} className="mt-3 text-[hsl(var(--accent))]" /></Link>)}</div></main></Shell>;
+}
+
+function CheckoutPage() {
+  const { t } = useTranslation();
+  const [cart] = useState<CartLine[]>(() => JSON.parse(localStorage.getItem(cartKey) || '[]'));
+  const [deliveryMethod, setDeliveryMethod] = useState('PICKUP');
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
+  const [message, setMessage] = useState('');
+  const [orderNumber, setOrderNumber] = useState('');
+  const submit = async () => {
+    const response = await fetch('/api/orders', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ deliveryMethod, paymentMethod, items: cart.map((line) => ({ productId: Number(line.part.id), quantity: line.quantity })) }) });
+    const result = await response.json();
+    if (!response.ok) { setMessage(result.message || t('checkout.error')); return; }
+    setOrderNumber(result.data.orderNumber); localStorage.removeItem(cartKey); setMessage(t('checkout.pending'));
+  };
+  return <Shell><main className="mx-auto max-w-4xl px-5 py-14 lg:px-8 lg:py-20"><SectionKicker>{t('checkout.kicker')}</SectionKicker><h1 className="display-font text-6xl font-bold uppercase">{t('checkout.title')}</h1><div className="mt-10 grid gap-8 lg:grid-cols-[1fr_300px]"><div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6"><h2 className="display-font text-3xl font-bold uppercase">{t('checkout.delivery')}</h2><div className="mt-5 grid gap-3 sm:grid-cols-2"><button type="button" onClick={() => setDeliveryMethod('PICKUP')} className={`rounded-xl border p-4 text-left font-bold ${deliveryMethod === 'PICKUP' ? 'border-[hsl(var(--accent))] bg-[hsl(var(--primary)/.16)]' : 'border-[hsl(var(--border))]'}`}>{t('checkout.pickup')}<span className="mt-1 block text-xs font-normal text-[hsl(var(--muted-foreground))]">{t('checkout.pickupAddress')}</span></button><button type="button" onClick={() => setDeliveryMethod('DELIVERY')} className={`rounded-xl border p-4 text-left font-bold ${deliveryMethod === 'DELIVERY' ? 'border-[hsl(var(--accent))] bg-[hsl(var(--primary)/.16)]' : 'border-[hsl(var(--border))]'}`}>{t('checkout.deliveryHome')}</button></div><h2 className="display-font mt-9 text-3xl font-bold uppercase">{t('checkout.payment')}</h2><select value={paymentMethod} onChange={(event) => setPaymentMethod(event.target.value)} className={inputClass}><option value="CASH">{t('checkout.cash')}</option><option value="COD">{t('checkout.cod')}</option><option value="ONLINE">{t('checkout.onlinePending')}</option></select><button type="button" disabled={!cart.length || Boolean(orderNumber)} onClick={submit} className="mt-8 w-full rounded-lg bg-[hsl(var(--accent))] px-4 py-3 text-sm font-bold text-[hsl(var(--accent-foreground))] disabled:opacity-40">{t('checkout.place')}</button>{message && <p className="mt-5 rounded-lg bg-[hsl(var(--muted))] p-4 text-sm font-bold">{message}{orderNumber && <span className="mt-2 block font-mono">{orderNumber}</span>}</p>}</div><aside className="h-fit rounded-2xl bg-[hsl(var(--secondary))] p-6 text-[hsl(var(--background))]"><p className="mono-font text-[10px] uppercase tracking-[.16em] text-[hsl(var(--primary))]">{t('cart.summary')}</p><div className="mt-5 space-y-3 text-sm">{cart.map((line) => <div key={line.part.id} className="flex justify-between gap-3"><span>{line.part.name} × {line.quantity}</span><span>₹{(partPrice(line.part) * line.quantity).toLocaleString('en-IN')}</span></div>)}</div></aside></div></main></Shell>;
+}
+
+function LoginPage() {
+  const { t } = useTranslation();
+  const [, setLocation] = useLocation();
+  const [register, setRegister] = useState(false);
+  const [form, setForm] = useState({ name: '', identifier: '', email: '', password: '' });
+  const [message, setMessage] = useState('');
+  const submit = async () => { const endpoint = register ? '/api/auth/register' : '/api/auth/login'; const body = register ? { name: form.name, phone: form.identifier, email: form.email, password: form.password } : { identifier: form.identifier, password: form.password }; const response = await fetch(endpoint, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); const result = await response.json(); if (!response.ok) { setMessage(result.message || t('auth.error')); return; } setLocation('/account/dashboard'); };
+  return <Shell><main className="mx-auto max-w-lg px-5 py-14 lg:px-8 lg:py-20"><SectionKicker>{t('auth.kicker')}</SectionKicker><h1 className="display-font text-6xl font-bold uppercase">{register ? t('auth.register') : t('auth.login')}</h1><div className="mt-8 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">{register && <Field label={t('auth.name')} name="auth-name" value={form.name} onChange={(value) => setForm({ ...form, name: value })} required />}<Field label={register ? t('auth.phone') : t('auth.identifier')} name="auth-identifier" value={form.identifier} onChange={(value) => setForm({ ...form, identifier: value })} required />{register && <Field label={t('auth.email')} name="auth-email" type="email" value={form.email} onChange={(value) => setForm({ ...form, email: value })} required />}<Field label={t('auth.password')} name="auth-password" type="password" value={form.password} onChange={(value) => setForm({ ...form, password: value })} required /><button type="button" onClick={submit} className="mt-7 w-full rounded-lg bg-[hsl(var(--accent))] px-4 py-3 text-sm font-bold text-[hsl(var(--accent-foreground))]">{register ? t('auth.create') : t('auth.submit')}</button>{message && <p className="mt-4 text-sm font-bold text-[hsl(var(--destructive))]">{message}</p>}<button type="button" onClick={() => setRegister(!register)} className="mt-5 text-sm font-bold text-[hsl(var(--accent))]">{register ? t('auth.haveAccount') : t('auth.newAccount')}</button></div></main></Shell>;
+}
+
+function VehiclesPage() {
+  const { t } = useTranslation();
+  const [vehicles, setVehicles] = useState<Array<{ id: number; brand: string; model: string; registrationNumber: string; vehicleType: string }>>([]);
+  const [form, setForm] = useState({ brand: '', model: '', vehicleType: 'Motorcycle', registrationNumber: '' });
+  const [message, setMessage] = useState('');
+  const load = () => fetch('/api/account/vehicles', { credentials: 'include' }).then((response) => response.json()).then((result) => setVehicles(result.data || []));
+  useEffect(() => { load(); }, []);
+  const add = async () => { const response = await fetch('/api/account/vehicles', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form) }); const result = await response.json(); if (!response.ok) { setMessage(result.message || t('vehicles.error')); return; } setForm({ brand: '', model: '', vehicleType: 'Motorcycle', registrationNumber: '' }); setMessage(t('vehicles.added')); load(); };
+  return <Shell><main className="mx-auto max-w-5xl px-5 py-14 lg:px-8 lg:py-20"><SectionKicker>{t('vehicles.kicker')}</SectionKicker><h1 className="display-font text-6xl font-bold uppercase">{t('vehicles.title')}</h1><div className="mt-10 grid gap-8 lg:grid-cols-[1fr_300px]"><div className="space-y-3">{vehicles.map((vehicle) => <div key={vehicle.id} className="flex items-center justify-between rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5"><div><p className="font-bold">{vehicle.brand} {vehicle.model}</p><p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">{vehicle.registrationNumber} · {vehicle.vehicleType}</p></div><Bike className="text-[hsl(var(--accent))]" /></div>)}{!vehicles.length && <p className="rounded-2xl border border-dashed border-[hsl(var(--border))] p-8 text-sm text-[hsl(var(--muted-foreground))]">{t('vehicles.empty')}</p>}</div><div className="rounded-2xl bg-[hsl(var(--secondary))] p-6 text-[hsl(var(--background))]"><h2 className="display-font text-3xl font-bold uppercase">{t('vehicles.add')}</h2><Field label={t('vehicles.brand')} name="vehicle-brand" value={form.brand} onChange={(value) => setForm({ ...form, brand: value })} required /><Field label={t('vehicles.model')} name="vehicle-model" value={form.model} onChange={(value) => setForm({ ...form, model: value })} required /><Field label={t('vehicles.registration')} name="vehicle-registration" value={form.registrationNumber} onChange={(value) => setForm({ ...form, registrationNumber: value })} required /><button type="button" onClick={add} className="mt-6 w-full rounded-lg bg-[hsl(var(--primary))] px-4 py-3 text-sm font-bold text-[hsl(var(--secondary))]">{t('vehicles.save')}</button>{message && <p className="mt-4 text-sm">{message}</p>}</div></div></main></Shell>;
+}
+
 function Router() {
-  return <ErrorBoundary><Switch><Route path="/" component={EnhancedHome} /><Route path="/book-service" component={BookingPage} /><Route path="/contact" component={EnhancedContactPage} /><Route path="/admin/bookings" component={AdminPage} /><Route component={NotFound} /></Switch></ErrorBoundary>;
+  return (
+    <ErrorBoundary>
+      <Switch>
+        <Route path="/" component={EnhancedHome} />
+        <Route path="/shop" component={CompatiblePartsShop} />
+        <Route path="/cart" component={CartPage} />
+        <Route path="/checkout" component={CheckoutPage} />
+        <Route path="/account/login" component={LoginPage} />
+        <Route path="/account/dashboard" component={CustomerDashboard} />
+        <Route path="/account/vehicles" component={VehiclesPage} />
+        <Route path="/book-service" component={ServiceBookingWizard} />
+        <Route path="/service/book" component={ServiceBookingWizard} />
+        <Route path="/contact" component={EnhancedContactPage} />
+        <Route path="/admin/bookings" component={AdminPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </ErrorBoundary>
+  );
 }
 function App() {
   return <QueryClientProvider client={queryClient}><TooltipProvider><Router /><Toaster /></TooltipProvider></QueryClientProvider>;
