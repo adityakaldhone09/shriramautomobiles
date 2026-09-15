@@ -1,0 +1,11 @@
+{
+  "name": "@shriram/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./typescript": "./typescript/base.json",
+    "./eslint": "./eslint/index.js",
+    "./prettier": "./prettier/index.js"
+  }
+}
