@@ -1,0 +1,13 @@
+name,slug,description,vehicle_type,typical_duration_minutes,starting_price,active
+Periodic Service,periodic-service,Comprehensive multi-point inspection oil change filter cleanup and chain/brake adjustments,All,90,499.00,true
+Engine Oil Service,engine-oil-service,Engine oil drain replacement oil filter cleaning and engine idle speed check,All,30,199.00,true
+Brake Service,brake-service,Front and rear brake inspection shoe/pad cleaning drum sanding and fluid top-up,All,45,249.00,true
+Chain & Sprocket Service,chain-sprocket-service,Drive chain tensioning deep degreasing lubricating and sprocket wear analysis,Motorcycle,40,199.00,true
+Scooter CVT Service,scooter-cvt-service,CVT casing opening clutch shoe cleaning variator roller de-glazing and belt inspection,Scooter,60,349.00,true
+Battery & Electrical Check,battery-electrical-check,Battery load test alternator charging output fuse health and wiring inspection,All,30,149.00,true
+Tyre Service,tyre-service,Tyre pressure calibration tread depth check puncture inspection and wheel alignment,All,30,129.00,true
+Full Bike Inspection,full-bike-inspection,End-to-end 32-point mechanical and electrical fitness health check with diagnosis report,All,75,399.00,true
+Engine Tune-Up,engine-tune-up,Carburetor/EFI throttle body tuning spark plug gap calibration and tappet clearance adjustment,All,60,399.00,true
+Front Suspension Service,front-suspension-service,Telescopic fork dismantling oil seal renewal fresh hydraulic oil damping check,All,90,449.00,true
+Wheel & Bearing Service,wheel-bearing-service,Front and rear wheel hub inspection bearing degrease repack or replacement,All,60,299.00,true
+Pickup / Performance Diagnosis,pickup-performance-diagnosis,Engine compression check fuel-air mixture CVT/clutch slip diagnosis and road test,All,45,299.00,true

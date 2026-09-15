@@ -1,0 +1,119 @@
+model_slug,part_sku,fitment_confidence,notes,active
+honda-activa-110,PART-ENG-OIL-10W30,COMMON,Manufacturer recommended viscosity for Honda engines,true
+honda-activa-110,PART-AIR-FLT-SCOOT,MODEL_SPECIFIC,OEM fitment for Honda Activa 110/6G,true
+honda-activa-110,PART-CVT-FLT,MODEL_SPECIFIC,CVT cooling intake foam filter,true
+honda-activa-110,PART-SPK-PLG-RES,MODEL_SPECIFIC,NGK CPR7EA-9 recommended by Honda,true
+honda-activa-110,PART-CVT-BLT,MODEL_SPECIFIC,Genuine size transmission belt for Activa 110,true
+honda-activa-110,PART-CVT-RLR-SET,MODEL_SPECIFIC,Factory weight variator rollers,true
+honda-activa-110,PART-BRK-SHOE-F,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic based on Drum/Disc variant,true
+honda-activa-110,PART-BRK-SHOE-R,MODEL_SPECIFIC,Standard rear drum brake shoe,true
+honda-activa-110,PART-BAT-12V4AH,COMMON,Standard 4Ah battery for electric start,true
+honda-activa-110,PART-TYR-F-9090,MODEL_SPECIFIC,Standard 12 inch front wheel fitment,true
+honda-activa-110,PART-TYR-R-9090,MODEL_SPECIFIC,Standard 10/12 inch rear fitment,true
+honda-activa-110,PART-BULB-HL-HS1,COMMON,Standard 35W headlight bulb,true
+honda-activa-110,PART-BULB-TL-12V,COMMON,Standard tail lamp bulb,true
+honda-activa-110,PART-IND-BLB,COMMON,Standard 10W indicator bulb,true
+honda-activa-110,PART-HORN-12V,COMMON,Universal 12V horn,true
+honda-activa-110,PART-FUSE-SET,COMMON,Standard blade fuse box replacement,true
+honda-activa-110,PART-STEER-BRG,MODEL_SPECIFIC,Scooter steering cone set,true
+honda-activa-110,PART-WHL-BRG-6201,MODEL_SPECIFIC,Front wheel bearing,true
+honda-activa-110,PART-LVR-BRK,MODEL_SPECIFIC,Left/Right brake lever for combi-brake system,true
+honda-activa-6g,PART-ENG-OIL-10W30,COMMON,Honda recommended 10W-30 grade,true
+honda-activa-6g,PART-AIR-FLT-SCOOT,MODEL_SPECIFIC,Activa 6G high flow air filter,true
+honda-activa-6g,PART-CVT-FLT,MODEL_SPECIFIC,CVT filter element,true
+honda-activa-6g,PART-SPK-PLG-RES,MODEL_SPECIFIC,Resistor plug for fuel injection,true
+honda-activa-6g,PART-CVT-BLT,MODEL_SPECIFIC,Activa 6G variable transmission belt,true
+honda-activa-6g,PART-CVT-RLR-SET,MODEL_SPECIFIC,Roller weights for 6G variator,true
+honda-activa-6g,PART-BRK-SHOE-F,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic.,true
+honda-activa-6g,PART-BRK-SHOE-R,MODEL_SPECIFIC,Rear brake shoe,true
+honda-activa-6g,PART-BAT-12V4AH,COMMON,4Ah MF battery,true
+honda-activa-6g,PART-TYR-F-9090,MODEL_SPECIFIC,90/90-12 tubeless front,true
+honda-activa-6g,PART-TYR-R-9090,MODEL_SPECIFIC,90/100-10 or 90/90-12 tubeless rear,true
+hero-splendor-plus,PART-ENG-OIL-10W30,COMMON,Hero 4T 10W-30 JASO MA,true
+hero-splendor-plus,PART-ENG-OIL-20W40,COMMON,Suitable 20W-40 for high temperature operation,true
+hero-splendor-plus,PART-AIR-FLT-COMM,MODEL_SPECIFIC,Splendor/Passion foam & paper air filter,true
+hero-splendor-plus,PART-SPK-PLG-PLUG,MODEL_SPECIFIC,Standard M10 commuter plug,true
+hero-splendor-plus,PART-CHN-SPRK-SET,MODEL_SPECIFIC,428-size chain and sprocket set for 100cc Hero,true
+hero-splendor-plus,PART-CLT-PLT-SET,MODEL_SPECIFIC,4-plate clutch set for 100cc engine,true
+hero-splendor-plus,PART-CLT-CBL,MODEL_SPECIFIC,Splendor clutch cable,true
+hero-splendor-plus,PART-ACC-CBL,MODEL_SPECIFIC,Splendor throttle cable,true
+hero-splendor-plus,PART-BRK-SHOE-F,MODEL_SPECIFIC,Front drum brake shoe set,true
+hero-splendor-plus,PART-BRK-SHOE-R,MODEL_SPECIFIC,Rear drum brake shoe set,true
+hero-splendor-plus,PART-BAT-12V4AH,COMMON,Maintenance-free 4Ah battery,true
+hero-splendor-plus,PART-TYR-F-27518,MODEL_SPECIFIC,Front 2.75-18 ribbed commuter tyre,true
+hero-splendor-plus,PART-TYR-R-30018,MODEL_SPECIFIC,Rear 3.00-18 heavy load commuter tyre,true
+hero-splendor-plus,PART-TUBE-18,COMMON,18 inch tube for spoke/alloy rims,true
+hero-splendor-plus,PART-BULB-HL-HS1,COMMON,HS1 35/35W halogen headlight bulb,true
+hero-splendor-plus,PART-BULB-TL-12V,COMMON,Standard dual filament tail lamp,true
+hero-splendor-plus,PART-IND-BLB,COMMON,Amber turn indicator bulb,true
+hero-splendor-plus,PART-HORN-12V,COMMON,12V disc horn,true
+hero-splendor-plus,PART-FUSE-SET,COMMON,Main and auxiliary blade fuse,true
+hero-splendor-plus,PART-FORK-SEAL,MODEL_SPECIFIC,30mm fork oil seal kit,true
+hero-splendor-plus,PART-STEER-BRG,MODEL_SPECIFIC,Steering ball race set,true
+hero-splendor-plus,PART-WHL-BRG-6201,MODEL_SPECIFIC,Front wheel bearing,true
+hero-splendor-plus,PART-WHL-BRG-6301,MODEL_SPECIFIC,Rear wheel drive bearing,true
+hero-splendor-plus,PART-LVR-BRK,MODEL_SPECIFIC,Front brake lever,true
+hero-splendor-plus,PART-LVR-CLT,MODEL_SPECIFIC,Clutch lever,true
+bajaj-pulsar-150,PART-ENG-OIL-20W40,COMMON,Recommended 20W-40 4T DTS-i oil,true
+bajaj-pulsar-150,PART-AIR-FLT-COMM,MODEL_SPECIFIC,Pulsar 150 twin spark air filter,true
+bajaj-pulsar-150,PART-SPK-PLG-RES,MODEL_SPECIFIC,Twin spark plug set,true
+bajaj-pulsar-150,PART-CHN-SPRK-SET,MODEL_SPECIFIC,Heavy duty 428H 15/44T chain sprocket kit,true
+bajaj-pulsar-150,PART-CLT-PLT-SET,MODEL_SPECIFIC,5-plate wet clutch kit for Pulsar 150,true
+bajaj-pulsar-150,PART-CLT-CBL,MODEL_SPECIFIC,Pulsar 150 clutch cable,true
+bajaj-pulsar-150,PART-ACC-CBL,MODEL_SPECIFIC,Pulsar accelerator cable,true
+bajaj-pulsar-150,PART-BRK-PAD-F,MODEL_SPECIFIC,Front Bybre disc brake pads,true
+bajaj-pulsar-150,PART-BRK-SHOE-R,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic based on Rear Drum or Disc variant,true
+bajaj-pulsar-150,PART-BRK-PAD-R,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic based on Rear Disc variant,true
+bajaj-pulsar-150,PART-BRK-FLD-DOT4,COMMON,DOT 4 brake fluid for front/rear disc,true
+bajaj-pulsar-150,PART-BAT-12V5AH,MODEL_SPECIFIC,5Ah battery for powerful self-start,true
+bajaj-pulsar-150,PART-BULB-HL-HS1,COMMON,HS1 headlight bulb,true
+bajaj-pulsar-150,PART-FORK-SEAL,MODEL_SPECIFIC,31mm front fork seal kit,true
+bajaj-pulsar-150,PART-WHL-BRG-6201,MODEL_SPECIFIC,Front wheel bearing,true
+bajaj-pulsar-150,PART-WHL-BRG-6301,MODEL_SPECIFIC,Rear wheel bearing,true
+bajaj-pulsar-150,PART-LVR-BRK,MODEL_SPECIFIC,Front disc brake lever,true
+bajaj-pulsar-150,PART-LVR-CLT,MODEL_SPECIFIC,Clutch lever,true
+tvs-jupiter-110,PART-ENG-OIL-10W30,COMMON,TVS Tru4 synthetic blend 10W-30,true
+tvs-jupiter-110,PART-AIR-FLT-SCOOT,MODEL_SPECIFIC,TVS Jupiter 110 viscous air filter,true
+tvs-jupiter-110,PART-CVT-FLT,MODEL_SPECIFIC,Jupiter CVT case filter,true
+tvs-jupiter-110,PART-SPK-PLG-RES,MODEL_SPECIFIC,Resistor plug for Jupiter,true
+tvs-jupiter-110,PART-CVT-BLT,MODEL_SPECIFIC,CVT drive belt for TVS Jupiter,true
+tvs-jupiter-110,PART-CVT-RLR-SET,MODEL_SPECIFIC,TVS variator roller set,true
+tvs-jupiter-110,PART-BRK-SHOE-F,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic.,true
+tvs-jupiter-110,PART-BRK-SHOE-R,MODEL_SPECIFIC,Rear drum brake shoe,true
+tvs-jupiter-110,PART-BAT-12V4AH,COMMON,4Ah battery,true
+tvs-jupiter-110,PART-TYR-F-9090,MODEL_SPECIFIC,90/90-12 front tyre,true
+tvs-jupiter-110,PART-TYR-R-9090,MODEL_SPECIFIC,90/90-12 rear tyre,true
+royal-enfield-classic-350,PART-ENG-OIL-15W50,MODEL_SPECIFIC,Royal Enfield J-Series 15W-50 semi-synthetic,true
+royal-enfield-classic-350,PART-AIR-FLT-COMM,VERIFY_BEFORE_ORDER,Verify exact air filter model between UCE and J-Series,true
+royal-enfield-classic-350,PART-SPK-PLG-RES,MODEL_SPECIFIC,Long thread dual plug / single plug,true
+royal-enfield-classic-350,PART-CHN-SPRK-SET,MODEL_SPECIFIC,520 pitch heavy duty chain sprocket kit,true
+royal-enfield-classic-350,PART-CLT-PLT-SET,MODEL_SPECIFIC,Multiplate wet clutch set for 350cc,true
+royal-enfield-classic-350,PART-CLT-CBL,MODEL_SPECIFIC,Classic 350 heavy duty clutch cable,true
+royal-enfield-classic-350,PART-ACC-CBL,MODEL_SPECIFIC,Classic 350 accelerator cable,true
+royal-enfield-classic-350,PART-BRK-PAD-F,MODEL_SPECIFIC,Front Bybre caliper brake pads,true
+royal-enfield-classic-350,PART-BRK-PAD-R,MODEL_SPECIFIC,Rear Bybre disc pads,true
+royal-enfield-classic-350,PART-BRK-FLD-DOT4,COMMON,DOT 4 high temp fluid,true
+royal-enfield-classic-350,PART-BAT-12V5AH,MODEL_SPECIFIC,Heavy duty starting battery,true
+royal-enfield-classic-350,PART-BULB-HL-HS1,COMMON,Halogen headlight bulb,true
+royal-enfield-classic-350,PART-FORK-SEAL,MODEL_SPECIFIC,35mm fork oil seal kit,true
+suzuki-access-125,PART-ENG-OIL-10W30,COMMON,Suzuki 10W-30 engine oil,true
+suzuki-access-125,PART-AIR-FLT-SCOOT,MODEL_SPECIFIC,Access 125 air filter,true
+suzuki-access-125,PART-CVT-BLT,MODEL_SPECIFIC,Access 125 CVT drive belt,true
+suzuki-access-125,PART-CVT-RLR-SET,MODEL_SPECIFIC,Access 125 variator roller kit,true
+suzuki-access-125,PART-BRK-SHOE-F,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic.,true
+suzuki-access-125,PART-BRK-SHOE-R,MODEL_SPECIFIC,Rear drum shoe,true
+suzuki-access-125,PART-BAT-12V4AH,COMMON,12V 4Ah battery,true
+suzuki-access-125,PART-TYR-F-9090,MODEL_SPECIFIC,90/90-12 front tyre,true
+honda-shine-125,PART-ENG-OIL-10W30,COMMON,Honda 10W-30 engine oil,true
+honda-shine-125,PART-AIR-FLT-COMM,MODEL_SPECIFIC,Shine 125 air filter element,true
+honda-shine-125,PART-SPK-PLG-RES,MODEL_SPECIFIC,NGK CPR7EA-9 spark plug,true
+honda-shine-125,PART-CHN-SPRK-SET,MODEL_SPECIFIC,Chain sprocket kit for Shine 125 428-118L,true
+honda-shine-125,PART-CLT-PLT-SET,MODEL_SPECIFIC,Shine 125 clutch plates set,true
+honda-shine-125,PART-CLT-CBL,MODEL_SPECIFIC,Shine 125 clutch cable,true
+honda-shine-125,PART-ACC-CBL,MODEL_SPECIFIC,Shine accelerator cable,true
+honda-shine-125,PART-BRK-SHOE-F,VARIANT_DEPENDENT,Compatibility will be confirmed by our mechanic based on Drum or Disc variant,true
+honda-shine-125,PART-BRK-PAD-F,VARIANT_DEPENDENT,Front disc pads for Shine Disc variant,true
+honda-shine-125,PART-BRK-SHOE-R,MODEL_SPECIFIC,Rear drum brake shoe,true
+honda-shine-125,PART-BAT-12V4AH,COMMON,12V 4Ah battery,true
+honda-shine-125,PART-TYR-F-27518,MODEL_SPECIFIC,80/100-18 or 2.75-18 front tyre,true
+honda-shine-125,PART-TYR-R-30018,MODEL_SPECIFIC,80/100-18 rear tyre,true

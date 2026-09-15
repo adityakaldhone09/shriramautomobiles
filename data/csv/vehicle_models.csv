@@ -1,0 +1,34 @@
+brand_name,brand_slug,model_name,model_slug,vehicle_type,engine_class,active
+Hero,hero,Splendor Plus,hero-splendor-plus,Motorcycle,97.2cc,true
+Hero,hero,HF Deluxe,hero-hf-deluxe,Motorcycle,97.2cc,true
+Hero,hero,Glamour 125,hero-glamour-125,Motorcycle,124.7cc,true
+Hero,hero,Passion Pro,hero-passion-pro,Motorcycle,113.2cc,true
+Hero,hero,Xtreme 160R,hero-xtreme-160r,Motorcycle,163cc,true
+Honda,honda,Activa 110,honda-activa-110,Scooter,109.5cc,true
+Honda,honda,Activa 6G,honda-activa-6g,Scooter,109.51cc,true
+Honda,honda,Activa 125,honda-activa-125,Scooter,124cc,true
+Honda,honda,Dio 110,honda-dio-110,Scooter,109.51cc,true
+Honda,honda,Shine 125,honda-shine-125,Motorcycle,123.94cc,true
+Honda,honda,SP 125,honda-sp-125,Motorcycle,123.94cc,true
+Honda,honda,Unicorn 160,honda-unicorn-160,Motorcycle,162.7cc,true
+Bajaj,bajaj,Pulsar 150,bajaj-pulsar-150,Motorcycle,149.5cc,true
+Bajaj,bajaj,Pulsar 125,bajaj-pulsar-125,Motorcycle,124.4cc,true
+Bajaj,bajaj,Platina 100,bajaj-platina-100,Motorcycle,102cc,true
+Bajaj,bajaj,Platina 110,bajaj-platina-110,Motorcycle,115.45cc,true
+Bajaj,bajaj,Chetak Electric,bajaj-chetak-electric,ElectricScooter,Electric,true
+TVS,tvs,Jupiter 110,tvs-jupiter-110,Scooter,109.7cc,true
+TVS,tvs,Jupiter 125,tvs-jupiter-125,Scooter,124.8cc,true
+TVS,tvs,Ntorq 125,tvs-ntorq-125,Scooter,124.8cc,true
+TVS,tvs,Apache RTR 160,tvs-apache-rtr-160,Motorcycle,159.7cc,true
+TVS,tvs,XL 100,tvs-xl-100,Moped,99.7cc,true
+TVS,tvs,iQube,tvs-iqube,ElectricScooter,Electric,true
+Royal Enfield,royal-enfield,Classic 350,royal-enfield-classic-350,Motorcycle,349cc,true
+Royal Enfield,royal-enfield,Bullet 350,royal-enfield-bullet-350,Motorcycle,349cc,true
+Royal Enfield,royal-enfield,Hunter 350,royal-enfield-hunter-350,Motorcycle,349cc,true
+Royal Enfield,royal-enfield,Meteor 350,royal-enfield-meteor-350,Motorcycle,349cc,true
+Yamaha,yamaha,FZ-S V3,yamaha-fz-s-v3,Motorcycle,149cc,true
+Yamaha,yamaha,RayZR 125,yamaha-rayzr-125,Scooter,125cc,true
+Yamaha,yamaha,MT-15,yamaha-mt-15,Motorcycle,155cc,true
+Suzuki,suzuki,Access 125,suzuki-access-125,Scooter,124cc,true
+Suzuki,suzuki,Burgman Street 125,suzuki-burgman-street-125,Scooter,124cc,true
+Suzuki,suzuki,Gixxer 150,suzuki-gixxer-150,Motorcycle,155cc,true

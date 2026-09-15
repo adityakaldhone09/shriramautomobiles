@@ -1,0 +1,39 @@
+sku,name,category,sub_category,description,part_type,price,purchase_price,stock_quantity,low_stock_threshold,supplier,active
+PART-ENG-OIL-10W30,Engine Oil 4T 10W-30 (1L),Lubricants,Engine Oil,Premium mineral motorcycle and scooter 4-stroke engine oil,Consumable,380.00,260.00,45,10,Castrol India,true
+PART-ENG-OIL-20W40,Engine Oil 4T 20W-40 (1L),Lubricants,Engine Oil,Heavy duty 4-stroke engine oil for commuter motorcycles,Consumable,360.00,240.00,38,10,Motul,true
+PART-ENG-OIL-15W50,Engine Oil 4T 15W-50 Synthetic (2.5L),Lubricants,Engine Oil,High performance synthetic oil for Royal Enfield and higher cc bikes,Consumable,1150.00,820.00,20,5,Motul,true
+PART-AIR-FLT-COMM,Air Filter (Commuter Bike),Filters,Air Filter,High density paper element air filter for 100cc-125cc motorcycles,Replacement,180.00,110.00,32,8,Elofic,true
+PART-AIR-FLT-SCOOT,Air Filter (Scooter Activa/Jupiter),Filters,Air Filter,Viscous paper air filter for 110cc-125cc scooters,Replacement,220.00,135.00,40,10,Honda Genuine,true
+PART-CVT-FLT,CVT Case Air Filter,Filters,Air Filter,Foam CVT air filter for cooling belt drive in scooters,Replacement,120.00,65.00,28,6,Elofic,true
+PART-SPK-PLG-RES,Spark Plug Resistor Type (CPR7EA-9),Electrical,Ignition,Standard nickel alloy spark plug for smooth combustion,Replacement,145.00,85.00,50,15,NGK Spark Plugs,true
+PART-SPK-PLG-PLUG,Spark Plug M10 Commuter (Champion),Electrical,Ignition,Reliable spark plug for 100cc-110cc Hero and Bajaj bikes,Replacement,120.00,70.00,60,15,Bosch,true
+PART-BRK-SHOE-F,Front Brake Shoe Set,Braking,Brake Shoes,Non-asbestos high friction front brake shoes for drum brakes,Replacement,260.00,160.00,25,6,KBX / Uno Minda,true
+PART-BRK-SHOE-R,Rear Brake Shoe Set,Braking,Brake Shoes,Heavy duty rear brake shoes for drum brakes,Replacement,280.00,170.00,30,8,KBX / Uno Minda,true
+PART-BRK-PAD-F,Front Disc Brake Pad Set,Braking,Brake Pads,Semi-metallic front disc brake pads for sharp stopping power,Replacement,380.00,230.00,22,6,Bybre / Brembo,true
+PART-BRK-PAD-R,Rear Disc Brake Pad Set,Braking,Brake Pads,High durability rear disc brake pads,Replacement,420.00,260.00,14,4,Bybre / Brembo,true
+PART-BRK-FLD-DOT4,Brake Fluid DOT 4 (250ml),Lubricants,Brake Fluid,High boiling point hydraulic brake fluid for disc systems,Consumable,160.00,95.00,24,6,Bosch,true
+PART-CLT-PLT-SET,Clutch Plate Set (Friction & Steel),Engine,Clutch,Complete clutch plate pack for wet multiplate clutches,Replacement,750.00,490.00,16,4,Rico Auto,true
+PART-CLT-CBL,Clutch Cable Assembly,Cables,Clutch Cable,Teflon lined low-friction clutch wire assembly,Replacement,160.00,90.00,25,6,Uno Minda,true
+PART-ACC-CBL,Accelerator / Throttle Cable,Cables,Throttle Cable,Smooth throttle response pull cable,Replacement,150.00,85.00,20,5,Uno Minda,true
+PART-CHN-SPRK-SET,Chain & Sprocket Kit,Drive,Chain Sprocket,Heavy duty drive chain and front/rear sprocket kit,Replacement,1250.00,840.00,18,4,Rolon,true
+PART-CVT-BLT,CVT Drive Belt,Drive,CVT,Reinforced aramid cord variable drive belt for automatic scooters,Replacement,580.00,380.00,22,5,Bando / Gates,true
+PART-CVT-RLR-SET,CVT Roller Weights Set (6 pcs),Drive,CVT,Precision weight variator rollers for scooter acceleration,Replacement,280.00,160.00,20,5,Honda Genuine / Uno Minda,true
+PART-BAT-12V4AH,Battery 12V 4Ah Maintenance Free,Electrical,Battery,Factory charged VRLA maintenance free battery,Replacement,1150.00,820.00,15,4,Exide,true
+PART-BAT-12V5AH,Battery 12V 5Ah Maintenance Free,Electrical,Battery,Heavy duty VRLA battery for self start bikes & scooters,Replacement,1350.00,960.00,12,3,Amaron,true
+PART-TYR-F-9090,Front Tyre 90/90-12 Tubeless,Tyres,Tyre,All-weather grip front tubeless scooter tyre,Replacement,1450.00,1100.00,10,3,CEAT,true
+PART-TYR-R-9090,Rear Tyre 90/90-12 Tubeless,Tyres,Tyre,High mileage rear scooter tyre,Replacement,1550.00,1180.00,12,3,MRF Tyres,true
+PART-TYR-F-27518,Front Tyre 2.75-18 Tube Type,Tyres,Tyre,Commuter motorcycle front tyre with directional tread,Replacement,1350.00,980.00,8,2,MRF Tyres,true
+PART-TYR-R-30018,Rear Tyre 3.00-18 Tube Type,Tyres,Tyre,High durability rear commuter motorcycle tyre,Replacement,1650.00,1220.00,10,2,CEAT,true
+PART-TUBE-18,Inner Tube 18 Inch,Tyres,Tube,Butyl rubber puncture-resistant inner tube,Replacement,280.00,170.00,25,5,CEAT,true
+PART-BULB-HL-HS1,Headlamp Bulb HS1 12V 35/35W,Lighting,Headlamp,Halogen vibration resistant main headlight bulb,Replacement,140.00,75.00,35,8,Philips / Lumax,true
+PART-BULB-TL-12V,Tail Lamp Bulb 12V 21/5W,Lighting,Tail Lamp,Dual filament stop and tail lamp bulb,Replacement,45.00,20.00,50,10,Lumax,true
+PART-IND-BLB,Indicator Bulb 12V 10W Amber,Lighting,Indicator,Turn signal replacement bulb,Replacement,30.00,12.00,60,15,Lumax,true
+PART-HORN-12V,Horn 12V Dual Tone / Disc,Electrical,Horn,Loud clear warning horn for two-wheelers,Replacement,240.00,140.00,15,4,Minda,true
+PART-FUSE-SET,Blade Fuse Assorted Set (10A/15A/20A),Electrical,Fuse,Fast acting automotive blade fuses pack of 5,Replacement,50.00,20.00,40,10,Flash,true
+PART-COOLANT-1L,Engine Coolant Premix (1L),Lubricants,Coolant,Anti-corrosion long life ethylene glycol coolant,Consumable,260.00,165.00,12,4,Castrol,true
+PART-FORK-SEAL,Front Fork Oil Seal & Dust Seal Kit,Suspension,Fork Seal,Double lip oil seals and dust caps pair,Replacement,290.00,160.00,16,4,Endurance,true
+PART-STEER-BRG,Steering Cone & Ball Bearing Set,Steering,Bearing,Hardened steel races and caged balls for steering head,Replacement,340.00,195.00,14,3,NBC / SKF,true
+PART-WHL-BRG-6201,Wheel Bearing 6201-2RS Sealed,Wheel,Bearing,Deep groove precision sealed ball bearing,Replacement,130.00,70.00,30,6,SKF,true
+PART-WHL-BRG-6301,Wheel Bearing 6301-2RS Sealed,Wheel,Bearing,Rear wheel heavy load sealed bearing,Replacement,150.00,85.00,30,6,SKF,true
+PART-LVR-BRK,Brake Lever (Alloy),Body,Lever,Ergonomic cast aluminum brake lever,Replacement,140.00,75.00,20,5,Uno Minda,true
+PART-LVR-CLT,Clutch Lever (Alloy),Body,Lever,Direct replacement alloy clutch lever,Replacement,140.00,75.00,20,5,Uno Minda,true
