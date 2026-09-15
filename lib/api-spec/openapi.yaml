@@ -110,6 +110,66 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Booking"
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/RegisterRequest" }
+      responses:
+        "201": { description: Account created, content: { application/json: { schema: { $ref: "#/components/schemas/AuthResponse" } } } }
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/LoginRequest" }
+      responses:
+        "200": { description: Login successful, content: { application/json: { schema: { $ref: "#/components/schemas/AuthResponse" } } } }
+  /auth/logout:
+    post: { operationId: logout, tags: [auth], responses: { "200": { description: Logged out } } }
+  /auth/refresh:
+    post: { operationId: refresh, tags: [auth], responses: { "200": { description: Session refreshed } } }
+  /auth/forgot-password:
+    post: { operationId: forgotPassword, tags: [auth], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [email], properties: { email: { type: string, format: email } } } } } }, responses: { "200": { description: Recovery requested } } }
+  /auth/reset-password:
+    post: { operationId: resetPassword, tags: [auth], requestBody: { required: true, content: { application/json: { schema: { type: object, required: [token, password], properties: { token: { type: string }, password: { type: string, minLength: 8 } } } } } }, responses: { "200": { description: Password reset } } }
+  /account/profile:
+    get: { operationId: getProfile, tags: [account], responses: { "200": { description: Profile, content: { application/json: { schema: { $ref: "#/components/schemas/User" } } } } } }
+    put: { operationId: updateProfile, tags: [account], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/ProfileRequest" } } } }, responses: { "200": { description: Updated } } }
+  /account/vehicles:
+    get: { operationId: listVehicles, tags: [vehicles], responses: { "200": { description: Vehicles, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Vehicle" } } } } } } }
+    post: { operationId: createVehicle, tags: [vehicles], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/VehicleRequest" } } } }, responses: { "201": { description: Created } } }
+  /vehicle-brands:
+    get: { operationId: listVehicleBrands, tags: [vehicles], responses: { "200": { description: Brands } } }
+  /vehicle-models:
+    get: { operationId: listVehicleModels, tags: [vehicles], parameters: [{ in: query, name: brandId, schema: { type: integer } }], responses: { "200": { description: Models } } }
+  /mechanics:
+    get: { operationId: listMechanics, tags: [mechanics], responses: { "200": { description: Available mechanics } } }
+  /cart:
+    get: { operationId: getCart, tags: [cart], responses: { "200": { description: Cart } } }
+  /cart/items:
+    post: { operationId: addCartItem, tags: [cart], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/CartItemRequest" } } } }, responses: { "201": { description: Added } } }
+  /orders:
+    post: { operationId: createOrder, tags: [orders], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/OrderRequest" } } } }, responses: { "201": { description: Created } } }
+  /account/orders:
+    get: { operationId: listOrders, tags: [orders], responses: { "200": { description: Orders } } }
+  /account/bookings:
+    get: { operationId: listAccountBookings, tags: [bookings], responses: { "200": { description: Bookings } } }
+  /account/notifications:
+    get: { operationId: listNotifications, tags: [notifications], responses: { "200": { description: Notifications } } }
+  /wholesale/quotes:
+    post: { operationId: createWholesaleQuote, tags: [wholesale], requestBody: { required: true, content: { application/json: { schema: { $ref: "#/components/schemas/WholesaleQuoteRequest" } } } }, responses: { "201": { description: Created } } }
+  /parts/categories:
+    get: { operationId: listPartCategories, tags: [parts], responses: { "200": { description: Categories } } }
+  /parts/compatible/{vehicleId}:
+    get: { operationId: listCompatibleParts, tags: [parts], parameters: [{ in: path, name: vehicleId, required: true, schema: { type: integer } }], responses: { "200": { description: Compatible parts } } }
   /contact:
     post:
       operationId: createContactInquiry
@@ -132,6 +192,54 @@ paths:
           description: Invalid enquiry
 components:
   schemas:
+    RegisterRequest:
+      type: object
+      required: [name, phone, email, password]
+      properties:
+        name: { type: string, minLength: 2 }
+        phone: { type: string, minLength: 10 }
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+    LoginRequest:
+      type: object
+      required: [identifier, password]
+      properties:
+        identifier: { type: string }
+        password: { type: string }
+    AuthResponse:
+      type: object
+      properties: { success: { type: boolean }, data: { type: object } }
+    User:
+      type: object
+      properties: { id: { type: integer }, name: { type: string }, phone: { type: string }, email: { type: string }, role: { type: string } }
+    ProfileRequest:
+      type: object
+      required: [name, phone, email]
+      properties: { name: { type: string }, phone: { type: string }, email: { type: string, format: email } }
+    VehicleRequest:
+      type: object
+      required: [brand, model, vehicleType, registrationNumber]
+      properties: { brand: { type: string }, model: { type: string }, vehicleType: { type: string }, registrationNumber: { type: string }, vehicleAge: { type: integer } }
+    Vehicle:
+      allOf:
+        - $ref: "#/components/schemas/VehicleRequest"
+        - type: object
+          properties: { id: { type: integer } }
+    CartItemRequest:
+      type: object
+      required: [productId, quantity]
+      properties: { productId: { type: integer }, quantity: { type: integer, minimum: 1 } }
+    OrderRequest:
+      type: object
+      required: [items]
+      properties:
+        items: { type: array, items: { $ref: "#/components/schemas/CartItemRequest" } }
+        deliveryMethod: { type: string, enum: [PICKUP, DELIVERY] }
+        paymentMethod: { type: string, enum: [CASH, COD, ONLINE] }
+    WholesaleQuoteRequest:
+      type: object
+      required: [name, phone, requiredProducts]
+      properties: { name: { type: string }, phone: { type: string }, businessName: { type: string }, requiredProducts: { type: array, items: { type: object } }, message: { type: string } }
     HealthStatus:
       type: object
       properties:
