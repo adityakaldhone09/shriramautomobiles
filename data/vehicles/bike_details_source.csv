@@ -1,0 +1,6 @@
+source_id,brand,model,year,displacement,fuel_type,cooling_system,transmission
+SRC-001,Hero,Splendor Plus,2023,97.2cc,Petrol,Air Cooled,4-speed manual
+SRC-002,Honda,Activa 6G,2023,109.5cc,Petrol,Fan Cooled,CVT Automatic
+SRC-003,Bajaj,Pulsar 150,2022,149.5cc,Petrol,Air Cooled,5-speed manual
+SRC-004,TVS,Jupiter 110,2023,109.7cc,Petrol,Air Cooled,CVT Automatic
+SRC-005,Royal Enfield,Classic 350,2023,349cc,Petrol,Air-Oil Cooled,5-speed manual
