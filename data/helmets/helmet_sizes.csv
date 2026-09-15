@@ -1,0 +1,5 @@
+size_id,code,label,head_circumference_cm
+HS-001,S,Small,55-56 cm
+HS-002,M,Medium,57-58 cm
+HS-003,L,Large,59-60 cm
+HS-004,XL,Extra Large,61-62 cm

@@ -1,0 +1,6 @@
+variant_id,product_id,color,finish,visor_type,mrp
+HV-001,HP-001,Matt Black,Matte,Smoke,2099.00
+HV-002,HP-001,Glossy Red,Gloss,Clear,1999.00
+HV-003,HP-002,Gloss Black,Gloss,Mirror,1750.00
+HV-004,HP-003,White,Gloss,Clear,1350.00
+HV-005,HP-004,Neon Yellow Graphics,Matte,Pinlock Ready Clear,5299.00

@@ -1,0 +1,6 @@
+product_id,brand_slug,type_slug,name,slug,base_price,description
+HP-001,steelbird,full-face,Steelbird SBA-7 7Wings,steelbird-sba-7,1899.00,High-impact composite shell with breathable padding
+HP-002,studds,full-face,Studds Thunder D1,studds-thunder-d1,1650.00,Aerodynamic design with UV resistant paint finish
+HP-003,vega,open-face,Vega Cruiser Open Face,vega-cruiser,1299.00,Lightweight classic open face helmet with clear visor
+HP-004,axor,full-face,Axor Apex Venomous,axor-apex-venomous,4999.00,Dual certified premium touring helmet with pinlock visor
+HP-005,steelbird,modular,Steelbird SBA-2 Flip-Up,steelbird-sba-2,2499.00,Flip-up helmet with quick release micro-metric buckle
