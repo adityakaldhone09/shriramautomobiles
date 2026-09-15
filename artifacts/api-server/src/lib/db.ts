@@ -1,6 +1,6 @@
-import { db } from '@workspace/db';
+import { db, initDbPromise } from '@workspace/db';
 
-export { db };
+export { db, initDbPromise };
 
 export async function testDatabaseConnection() {
   try {

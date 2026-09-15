@@ -1,7 +1,7 @@
 import { eq, and } from 'drizzle-orm';
 import type { Request, Response } from 'express';
 import { db } from '../lib/db';
-import { sparePartsTable, insertSparePartSchema } from '@workspace/db/schema';
+import { productVehicleModelsTable, sparePartsTable, insertSparePartSchema, vehicleModelsTable } from '@workspace/db/schema';
 import { createResponse } from '../utils/helpers';
 
 export async function getSpareParts(req: Request, res: Response) {
@@ -58,6 +58,36 @@ export async function getSparePartById(req: Request, res: Response) {
       createResponse(false, 'Failed to fetch spare part', undefined, 'INTERNAL_ERROR')
     );
   }
+}
+
+export async function getCategories(_req: Request, res: Response) {
+  const categories = await db.selectDistinct({ category: sparePartsTable.category }).from(sparePartsTable).where(eq(sparePartsTable.isActive, true));
+  return res.json(createResponse(true, 'Part categories fetched', categories.map((entry) => entry.category)));
+}
+
+export async function getCompatibleParts(req: Request, res: Response) {
+  const vehicleModelId = Number(req.params.vehicleId);
+  const parts = await db
+    .select({
+      id: sparePartsTable.id,
+      sku: sparePartsTable.sku,
+      name: sparePartsTable.name,
+      category: sparePartsTable.category,
+      subCategory: sparePartsTable.subCategory,
+      description: sparePartsTable.description,
+      brand: sparePartsTable.brand,
+      partType: sparePartsTable.partType,
+      price: sparePartsTable.price,
+      availability: sparePartsTable.availability,
+      stockQuantity: sparePartsTable.stockQuantity,
+      fitmentConfidence: productVehicleModelsTable.fitmentConfidence,
+      notes: productVehicleModelsTable.notes,
+    })
+    .from(productVehicleModelsTable)
+    .innerJoin(sparePartsTable, eq(productVehicleModelsTable.partId, sparePartsTable.id))
+    .innerJoin(vehicleModelsTable, eq(productVehicleModelsTable.vehicleModelId, vehicleModelsTable.id))
+    .where(and(eq(productVehicleModelsTable.vehicleModelId, vehicleModelId), eq(sparePartsTable.isActive, true)));
+  return res.json(createResponse(true, 'Compatible parts fetched', parts));
 }
 
 export async function createSparePart(req: Request, res: Response) {
