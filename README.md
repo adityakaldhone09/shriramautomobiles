@@ -1,78 +1,88 @@
 # Shriram Automobiles (श्रीराम ऑटोमोबाइल्स)
 
-> Two-Wheeler Genuine Spare Parts, Expert Servicing & Service Intelligence Platform.
+> Production-ready full-stack platform for Two-Wheeler Genuine Spare Parts, Expert Servicing, Helmets & Gear, and Service Intelligence.
 > Located at **Miraj Road, Sangola, Maharashtra (PIN: 413307)**.
 
 ---
 
 ## 📌 Overview
 
-**Shriram Automobiles** is a trusted two-wheeler spare parts dealership and service center based in Sangola. Serving both individual two-wheeler owners and wholesale commercial garages, Shriram Automobiles operates two dedicated facilities:
+**Shriram Automobiles** is a premier two-wheeler spare parts dealership, helmet distributor, and service center based in Sangola, Maharashtra. The business operates two specialized facilities:
 
-1. **Retail Store**: Direct counter sales for bike and scooter owners, routine service booking, diagnostics, and genuine replacement parts.
-2. **Wholesale Godown**: Bulk spare parts inventory, wholesale order fulfillment, and distribution network for local mechanics and workshops.
+1. **Retail Workshop & Counter**: Direct walk-in sales for bike and scooter owners, routine servicing, computer diagnostics, helmet fittings, and genuine OEM/OES replacement parts.
+2. **Wholesale Godown**: Bulk spare parts inventory, wholesale order fulfillment, and distribution network supplying local workshops, mechanics, and garages across the region.
 
-This repository contains the complete digital platform for Shriram Automobiles, including a responsive multilingual customer web portal, an intelligent service booking engine, a parts compatibility catalog, a RESTful API backend, database schemas, and seed automation tools.
-
----
-
-## ✨ Key Features
-
-- **🛒 Genuine Spare Parts Catalog & Shop**:
-  - Filter and search components across top brands (Hero, Bajaj, Honda, TVS, Yamaha, Royal Enfield, Suzuki, etc.).
-  - Category-based browsing: Engine parts, brakes, electricals, suspension, transmission, lubricants, and body parts.
-  - Compatibility verification: Check exact fitment against specific vehicle makes and models.
-  - Cart and checkout workflows with in-store pickup or local delivery options.
-
-- **🛠️ Service Intelligence & Smart Booking Wizard**:
-  - Multi-step guided service booking workflow.
-  - Symptom analyzer & diagnosis engine: Select vehicle issues to get recommended service packages and estimated costs.
-  - Mechanic slot scheduling and live job card tracking.
-  - Digital inspection reports and customer estimate approvals.
-
-- **👤 Customer Garage & Account Dashboard**:
-  - Manage multiple two-wheelers (registration, make, model, year).
-  - Service history records and order tracking.
-  - Secure phone/email-based authentication and profile management.
-
-- **🌐 Multilingual Support (i18n)**:
-  - Full localization in **English**, **मराठी (Marathi)**, and **हिंदी (Hindi)**.
-
-- **📦 Wholesale Quote Management**:
-  - Dedicated quote request workflow for garages, workshops, and bulk buyers.
+This monorepo contains the entire digital platform: a React 19 customer-facing web portal, an Express REST API backend, modular Drizzle ORM database schemas, OpenAPI contracts, seed automation tools, comprehensive CSV datasets, and full multilingual support.
 
 ---
 
-## 🏗️ Architecture & Monorepo Structure
+## 🏗️ Monorepo Architecture
 
-The workspace is organized as a modular pnpm monorepo:
-
-```
-ShriramAutomobiles/
-├── artifacts/
-│   ├── shriram-automobiles/       # Modern React 19 customer-facing web application (Vite + TailwindCSS)
-│   ├── api-server/                # Express & TypeScript REST API server
-│   └── mockup-sandbox/            # Prototyping sandbox environment
-├── lib/
-│   ├── api-spec/                  # OpenAPI 3.1 specification contracts (openapi.yaml)
-│   ├── api-zod/                   # Generated Zod validation schemas and TypeScript domain types
-│   ├── api-client-react/          # Generated React Query hooks and custom fetch client
-│   └── db/                        # Drizzle ORM schema, SQL migrations, and in-memory DB provider
-├── data/
-│   └── csv/                       # Seed datasets: vehicle models, service packages, parts, and symptom maps
-├── scripts/                       # Database seeding and service intelligence CLI tools
-├── package.json                   # Root scripts and workspace configuration
-└── pnpm-workspace.yaml            # Monorepo workspace package definitions
+```text
+shriram-automobiles/
+│
+├── apps/
+│   ├── web/                     # Customer Web Application (React 19, Vite, TailwindCSS, Radix UI)
+│   │   ├── src/
+│   │   │   ├── components/      # UI components (booking wizard, parts shop, garage dashboard)
+│   │   │   ├── pages/           # Modular route pages (home, shop, booking, contact, admin)
+│   │   │   ├── i18n/            # Localization (English, Hindi, Marathi)
+│   │   │   └── services/        # Client API integration layer
+│   │   └── vite.config.ts
+│   │
+│   └── api/                     # Backend REST API (Node.js, Express, TypeScript, Drizzle ORM)
+│       ├── src/
+│       │   ├── config/          # Environment and database configuration
+│       │   ├── db/              # Client, bootstrap data, migrations, and modular seeders
+│       │   │   └── schema/      # Modular database domain schemas (vehicles, parts, services, etc.)
+│       │   ├── middleware/      # Auth, error handling, rate limiting, and validation
+│       │   ├── modules/         # Domain modules (auth, vehicles, parts, bookings, helmets, wholesale)
+│       │   └── routes/          # Centralized route orchestration
+│       └── package.json
+│
+├── packages/
+│   ├── shared/                  # Shared TypeScript types, Zod schemas, constants, and utilities
+│   ├── api-client/              # Generated TypeScript API client and React Query hooks
+│   └── config/                  # Shared ESLint, Prettier, and TypeScript base configurations
+│
+├── data/                        # Repository Datasets (Categorized & Validated)
+│   ├── vehicles/                # Vehicle models, manufacturers, and engine classes (CSV)
+│   ├── parts/                   # Spare parts catalog and fitment compatibility matrix (CSV)
+│   ├── services/                # Service packages and symptom diagnostic mapping (CSV)
+│   ├── helmets/                 # Helmet brands, types, products, variants, and certifications (CSV)
+│   ├── seeds/                   # Additional SQL/JSON seed data
+│   └── processed/               # Normalized and pipeline-processed data
+│
+├── scripts/                     # Developer Tools & Maintenance Scripts
+│   ├── seed/                    # Automated database seed runners
+│   ├── database/                # Database migration and reset utilities
+│   ├── data/                    # Dataset validation and vehicle normalization tools
+│   └── development/             # Environment sanity and port collision checks
+│
+├── docs/                        # Complete Technical Documentation
+│   ├── architecture/            # System architecture, request flows, and deployment blueprints
+│   ├── database/                # Schema documentation, ER diagrams, and relationship indexes
+│   ├── api/                     # REST API reference and endpoint specifications
+│   ├── datasets/                # Dataset guide, schemas, and maintenance instructions
+│   └── development/             # Developer setup, guidelines, and project structure
+│
+├── tests/                       # Automated Test Suites
+│   ├── unit/                    # Shared package and utility unit tests
+│   └── api/                     # API sanity and integration checks
+│
+├── docker-compose.yml           # PostgreSQL container setup for local production-like database
+├── pnpm-workspace.yaml          # Monorepo workspace configuration
+└── package.json                 # Unified workspace scripts and dev orchestration
 ```
 
 ---
 
 ## 💻 Tech Stack
 
-- **Frontend**: React 19, TypeScript, Vite, TailwindCSS, Radix UI / Shadcn UI components, Lucide Icons, TanStack Query, Wouter, i18next
-- **Backend**: Node.js, Express, TypeScript, Zod validation
-- **Database & ORM**: PostgreSQL, Drizzle ORM, Drizzle Kit, `pg-mem` (in-memory emulation fallback for zero-dependency local runs)
-- **API Contracts**: OpenAPI 3.1, Orval codegen pipeline
+- **Frontend (`apps/web`)**: React 19, TypeScript, Vite, TailwindCSS, Radix UI, TanStack Query v5, Wouter, Lucide Icons, i18next
+- **Backend (`apps/api`)**: Node.js, Express, TypeScript, Zod validation, CORS, Cookie-session auth
+- **Database & ORM**: PostgreSQL, Drizzle ORM, Drizzle Kit, `pg-mem` (instant in-memory fallback for zero-dependency local development)
+- **Shared Packages (`packages/*`)**: `@shriram/shared`, `@shriram/api-client`, `@shriram/config`
 - **Package Manager**: `pnpm` (Workspace configured)
 
 ---
@@ -83,56 +93,82 @@ ShriramAutomobiles/
 - **Node.js**: `v20.x` or higher
 - **pnpm**: `v9.x` or higher (`corepack enable pnpm` or `npm i -g pnpm`)
 
-### 1. Clone & Install Dependencies
+### 1. Installation
 
 ```bash
+# Clone the repository
 git clone https://github.com/adityakaldhone09/shriramautomobiles.git
 cd ShriramAutomobiles
 
+# Install all workspace dependencies
 pnpm install
 ```
 
-### 2. Seed Vehicle & Service Data
-
-Populate the database with vehicle models, spare parts catalogs, and service packages:
+### 2. Verify Environment & Datasets
 
 ```bash
-# Seed vehicle models and manufacturers
-pnpm db:seed-vehicles
+# Verify environment files and local ports
+pnpm run check:env
+pnpm run check:ports
 
-# Seed service packages and parts catalog
-pnpm db:seed-service-catalog
+# Validate vehicle, parts, services, and helmet CSV datasets
+pnpm run validate:csv
+pnpm run validate:helmets
 ```
 
-### 3. Run Development Servers
+### 3. Seed Database
 
-Start the backend API server and frontend client in development mode:
+The platform automatically falls back to in-memory PostgreSQL (`pg-mem`) if an external database is not running, enabling zero-config development out of the box:
 
 ```bash
-# Terminal 1: Start the API server (Runs on http://localhost:5001)
-pnpm --filter @workspace/api-server run dev
-
-# Terminal 2: Start the Web client (Runs on http://localhost:5173)
-pnpm --filter @workspace/shriram-automobiles run dev
+# Seed all datasets (vehicles, parts, services, helmets)
+pnpm run db:seed
 ```
 
-### 4. Quality Checks & Verification
+Or seed individual domains:
+```bash
+pnpm run db:seed:vehicles
+pnpm run db:seed:parts
+pnpm run db:seed:services
+pnpm run db:seed:helmets
+```
+
+### 4. Start Development Servers
 
 ```bash
-# Run typechecking across all workspace packages
-pnpm run typecheck
+# Start both backend API (Port 5001) and web frontend (Port 5173) concurrently
+pnpm run dev
 
-# Test service intelligence recommendation engine
-pnpm test:service-intelligence
+# Or start individually:
+pnpm run dev:api    # Starts apps/api
+pnpm run dev:web    # Starts apps/web
 ```
 
 ---
 
-## 📍 Store Locations & Contact
+## 🛠️ Developer Commands
 
-- **Retail Store**: Miraj Road, Near Railway Gate, Sangola, Dist. Solapur, Maharashtra – 413307
-- **Wholesale Godown**: Industrial Area / Godown Hub, Sangola, Maharashtra – 413307
-- **Services**: Retail Spare Parts, Wholesale Distribution, Periodic Bike Servicing, Engine Overhauls, and Electrical Diagnostics.
+| Command | Description |
+|---|---|
+| `pnpm run dev` | Starts both the API and Web applications concurrently |
+| `pnpm run build` | Builds all packages, backend API, and Vite web production bundles |
+| `pnpm run typecheck` | Runs TypeScript compiler checks across all workspace packages |
+| `pnpm test` | Runs unit tests and CSV dataset validations |
+| `pnpm run db:seed` | Seeds vehicles, spare parts, service packages, and helmets |
+| `pnpm run validate:csv` | Validates integrity and column structure of all core CSV files |
+| `pnpm run validate:helmets` | Validates helmet brands, models, variants, and inventory |
+| `pnpm run check:env` | Verifies presence and completeness of `.env` configuration files |
+| `pnpm run check:ports` | Checks availability of ports 5001 (API) and 5173 (Web) |
+
+---
+
+## 📍 Facility Locations & Contact
+
+- **Retail Workshop & Counter**: Miraj Road, Near Railway Gate, Sangola, Maharashtra – 413307
+  - Phone: `+91 96897 88734`
+- **Wholesale Godown**: Shriram Autoparts, Near Adarsh School, White House, Sangola – 413307
+  - Phone: `+91 77097 37256`
+- **Services**: Retail Spare Parts, Wholesale Distribution, Two-Wheeler Servicing, Computerized Diagnostics, and Helmet & Riding Gear Retailing.
 
 ---
 
