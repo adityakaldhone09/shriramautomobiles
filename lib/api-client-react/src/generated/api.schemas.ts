@@ -5,6 +5,93 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
+export interface RegisterRequest {
+  /** @minLength 2 */
+  name: string;
+  /** @minLength 10 */
+  phone: string;
+  email: string;
+  /** @minLength 8 */
+  password: string;
+}
+
+export interface LoginRequest {
+  identifier: string;
+  password: string;
+}
+
+export type AuthResponseData = { [key: string]: unknown };
+
+export interface AuthResponse {
+  success?: boolean;
+  data?: AuthResponseData;
+}
+
+export interface User {
+  id?: number;
+  name?: string;
+  phone?: string;
+  email?: string;
+  role?: string;
+}
+
+export interface ProfileRequest {
+  name: string;
+  phone: string;
+  email: string;
+}
+
+export interface VehicleRequest {
+  brand: string;
+  model: string;
+  vehicleType: string;
+  registrationNumber: string;
+  vehicleAge?: number;
+}
+
+export type Vehicle = VehicleRequest & {
+  id?: number;
+};
+
+export interface CartItemRequest {
+  productId: number;
+  /** @minimum 1 */
+  quantity: number;
+}
+
+export type OrderRequestDeliveryMethod = typeof OrderRequestDeliveryMethod[keyof typeof OrderRequestDeliveryMethod];
+
+
+export const OrderRequestDeliveryMethod = {
+  PICKUP: 'PICKUP',
+  DELIVERY: 'DELIVERY',
+} as const;
+
+export type OrderRequestPaymentMethod = typeof OrderRequestPaymentMethod[keyof typeof OrderRequestPaymentMethod];
+
+
+export const OrderRequestPaymentMethod = {
+  CASH: 'CASH',
+  COD: 'COD',
+  ONLINE: 'ONLINE',
+} as const;
+
+export interface OrderRequest {
+  items: CartItemRequest[];
+  deliveryMethod?: OrderRequestDeliveryMethod;
+  paymentMethod?: OrderRequestPaymentMethod;
+}
+
+export type WholesaleQuoteRequestRequiredProductsItem = { [key: string]: unknown };
+
+export interface WholesaleQuoteRequest {
+  name: string;
+  phone: string;
+  businessName?: string;
+  requiredProducts: WholesaleQuoteRequestRequiredProductsItem[];
+  message?: string;
+}
+
 export interface HealthStatus {
   status: string;
 }
@@ -80,5 +167,19 @@ search?: string;
 brand?: string;
 vehicleType?: string;
 category?: string;
+};
+
+export type ForgotPasswordBody = {
+  email: string;
+};
+
+export type ResetPasswordBody = {
+  token: string;
+  /** @minLength 8 */
+  password: string;
+};
+
+export type ListVehicleModelsParams = {
+brandId?: number;
 };
 
