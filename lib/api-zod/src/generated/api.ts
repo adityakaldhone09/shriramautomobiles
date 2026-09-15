@@ -5,7 +5,7 @@
  * API specification
  * OpenAPI spec version: 0.1.0
  */
-import * as zod from 'zod';
+import * as zod from 'zod/v4';
 
 
 /**
@@ -154,6 +154,182 @@ export const ListBookingsResponseItem = zod.object({
   "createdAt": zod.string()
 }))
 export const ListBookingsResponse = zod.array(ListBookingsResponseItem)
+
+
+export const registerBodyNameMin = 2;
+
+export const registerBodyPhoneMin = 10;
+
+export const registerBodyPasswordMin = 8;
+
+
+
+export const RegisterBody = zod.object({
+  "name": zod.string().min(registerBodyNameMin),
+  "phone": zod.string().min(registerBodyPhoneMin),
+  "email": zod.email(),
+  "password": zod.string().min(registerBodyPasswordMin)
+})
+
+export const RegisterResponse = zod.object({
+  "success": zod.boolean().optional(),
+  "data": zod.looseObject({
+
+}).optional()
+})
+
+
+export const LoginBody = zod.object({
+  "identifier": zod.string(),
+  "password": zod.string()
+})
+
+export const LoginResponse = zod.object({
+  "success": zod.boolean().optional(),
+  "data": zod.looseObject({
+
+}).optional()
+})
+
+
+export const LogoutResponse = zod.unknown()
+
+
+export const RefreshResponse = zod.unknown()
+
+
+export const ForgotPasswordBody = zod.object({
+  "email": zod.email()
+})
+
+export const ForgotPasswordResponse = zod.unknown()
+
+
+export const resetPasswordBodyPasswordMin = 8;
+
+
+
+export const ResetPasswordBody = zod.object({
+  "token": zod.string(),
+  "password": zod.string().min(resetPasswordBodyPasswordMin)
+})
+
+export const ResetPasswordResponse = zod.unknown()
+
+
+export const GetProfileResponse = zod.object({
+  "id": zod.int().optional(),
+  "name": zod.string().optional(),
+  "phone": zod.string().optional(),
+  "email": zod.string().optional(),
+  "role": zod.string().optional()
+})
+
+
+export const UpdateProfileBody = zod.object({
+  "name": zod.string(),
+  "phone": zod.string(),
+  "email": zod.email()
+})
+
+export const UpdateProfileResponse = zod.unknown()
+
+
+export const ListVehiclesResponseItem = zod.object({
+  "brand": zod.string(),
+  "model": zod.string(),
+  "vehicleType": zod.string(),
+  "registrationNumber": zod.string(),
+  "vehicleAge": zod.int().optional()
+}).and(zod.object({
+  "id": zod.int().optional()
+}))
+export const ListVehiclesResponse = zod.array(ListVehiclesResponseItem)
+
+
+export const CreateVehicleBody = zod.object({
+  "brand": zod.string(),
+  "model": zod.string(),
+  "vehicleType": zod.string(),
+  "registrationNumber": zod.string(),
+  "vehicleAge": zod.int().optional()
+})
+
+export const CreateVehicleResponse = zod.void()
+
+
+export const ListVehicleBrandsResponse = zod.unknown()
+
+
+export const ListVehicleModelsQueryParams = zod.object({
+  "brandId": zod.coerce.number().int().optional()
+})
+
+export const ListVehicleModelsResponse = zod.unknown()
+
+
+export const ListMechanicsResponse = zod.unknown()
+
+
+export const GetCartResponse = zod.unknown()
+
+
+
+
+
+export const AddCartItemBody = zod.object({
+  "productId": zod.int(),
+  "quantity": zod.int().min(1)
+})
+
+export const AddCartItemResponse = zod.void()
+
+
+
+
+
+export const CreateOrderBody = zod.object({
+  "items": zod.array(zod.object({
+  "productId": zod.int(),
+  "quantity": zod.int().min(1)
+})),
+  "deliveryMethod": zod.enum(['PICKUP', 'DELIVERY']).optional(),
+  "paymentMethod": zod.enum(['CASH', 'COD', 'ONLINE']).optional()
+})
+
+export const CreateOrderResponse = zod.void()
+
+
+export const ListOrdersResponse = zod.unknown()
+
+
+export const ListAccountBookingsResponse = zod.unknown()
+
+
+export const ListNotificationsResponse = zod.unknown()
+
+
+export const CreateWholesaleQuoteBody = zod.object({
+  "name": zod.string(),
+  "phone": zod.string(),
+  "businessName": zod.string().optional(),
+  "requiredProducts": zod.array(zod.looseObject({
+
+})),
+  "message": zod.string().optional()
+})
+
+export const CreateWholesaleQuoteResponse = zod.void()
+
+
+export const ListPartCategoriesResponse = zod.unknown()
+
+
+export const ListCompatiblePartsParams = zod.object({
+  "vehicleId": zod.coerce.number().int()
+})
+
+export const ListCompatiblePartsResponse = zod.unknown()
 
 
 /**
