@@ -35,7 +35,8 @@ minimumReleaseAgeExclude:
   - stripe-replit-sync
 
 packages:
-  - "apps/*"
+  - "backend"
+  - "frontend"
   - "packages/*"
   - "scripts"
 

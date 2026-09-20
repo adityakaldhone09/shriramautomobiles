@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -26,10 +26,10 @@
       "@services/*": ["src/services/*"],
       "@hooks/*": ["src/hooks/*"],
       "@types/*": ["src/types/*"],
-      "@shriram/shared": ["../../packages/shared/src/index.ts"],
-      "@shriram/shared/*": ["../../packages/shared/src/*"],
-      "@shriram/api-client": ["../../packages/api-client/src/index.ts"],
-      "@workspace/api-client-react": ["../../packages/api-client/src/index.ts"]
+      "@shriram/shared": ["../packages/shared/src/index.ts"],
+      "@shriram/shared/*": ["../packages/shared/src/*"],
+      "@shriram/api-client": ["../packages/api-client/src/index.ts"],
+      "@workspace/api-client-react": ["../packages/api-client/src/index.ts"]
     }
   },
   "include": ["src"]
