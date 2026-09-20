@@ -1,6 +1,6 @@
 # Database Schema Documentation
 
-The database layer is managed using **Drizzle ORM** with PostgreSQL. Schemas are modularized into domain files inside `apps/api/src/db/schema/`:
+The database layer is managed using **Drizzle ORM** with PostgreSQL. Schemas are modularized into domain files inside `backend/src/db/schema/`:
 
 | Module Schema | Primary Tables | Purpose |
 |---|---|---|

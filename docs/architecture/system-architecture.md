@@ -2,9 +2,9 @@
 
 ## Architectural Philosophy
 The Shriram Automobiles platform follows a modern, scalable, domain-driven monorepo architecture. It cleanly separates:
-1. **Frontend (`apps/web`)**: A high-performance, reactive React 19 single-page application localized in English, Marathi, and Hindi.
-2. **Backend (`apps/api`)**: A modular Express + TypeScript REST API organized into self-contained domain modules with dedicated controllers, services, routes, and schemas.
-3. **Database Layer (`apps/api/src/db`)**: Drizzle ORM schemas split per domain with support for live PostgreSQL as well as an in-memory `pg-mem` emulation layer for instant local developer bootstrapping.
+1. **Frontend (`frontend`)**: A high-performance, reactive React 19 single-page application localized in English, Marathi, and Hindi.
+2. **Backend (`backend`)**: A modular Express + TypeScript REST API organized into self-contained domain modules with dedicated controllers, services, routes, and schemas.
+3. **Database Layer (`backend/src/db`)**: Drizzle ORM schemas split per domain with support for live PostgreSQL as well as an in-memory `pg-mem` emulation layer for instant local developer bootstrapping.
 4. **Shared Packages (`packages/*`)**:
    - `@shriram/shared`: Universal domain types, Zod validation schemas, business constants, and utilities.
    - `@shriram/api-client`: Generated React Query hooks and type-safe HTTP client.

@@ -17,7 +17,7 @@ services:
   api:
     build:
       context: .
-      dockerfile: apps/api/Dockerfile
+      dockerfile: backend/Dockerfile
     container_name: shriram-api
     restart: unless-stopped
     ports:
@@ -33,7 +33,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: frontend/Dockerfile
     container_name: shriram-web
     restart: unless-stopped
     ports:

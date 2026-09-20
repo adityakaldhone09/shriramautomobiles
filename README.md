@@ -21,24 +21,23 @@ This monorepo contains the entire digital platform: a React 19 customer-facing w
 ```text
 shriram-automobiles/
 │
-├── apps/
-│   ├── web/                     # Customer Web Application (React 19, Vite, TailwindCSS, Radix UI)
-│   │   ├── src/
-│   │   │   ├── components/      # UI components (booking wizard, parts shop, garage dashboard)
-│   │   │   ├── pages/           # Modular route pages (home, shop, booking, contact, admin)
-│   │   │   ├── i18n/            # Localization (English, Hindi, Marathi)
-│   │   │   └── services/        # Client API integration layer
-│   │   └── vite.config.ts
-│   │
-│   └── api/                     # Backend REST API (Node.js, Express, TypeScript, Drizzle ORM)
-│       ├── src/
-│       │   ├── config/          # Environment and database configuration
-│       │   ├── db/              # Client, bootstrap data, migrations, and modular seeders
-│       │   │   └── schema/      # Modular database domain schemas (vehicles, parts, services, etc.)
-│       │   ├── middleware/      # Auth, error handling, rate limiting, and validation
-│       │   ├── modules/         # Domain modules (auth, vehicles, parts, bookings, helmets, wholesale)
-│       │   └── routes/          # Centralized route orchestration
-│       └── package.json
+├── frontend/                  # Customer Web Application (React 19, Vite, TailwindCSS, Radix UI)
+│   ├── src/
+│   │   ├── components/        # UI components (booking wizard, parts shop, garage dashboard)
+│   │   ├── pages/             # Modular route pages (home, shop, booking, contact, admin)
+│   │   ├── i18n/              # Localization (English, Hindi, Marathi)
+│   │   └── services/          # Client API integration layer
+│   └── vite.config.ts
+│
+├── backend/                   # Backend REST API (Node.js, Express, TypeScript, Drizzle ORM)
+│   ├── src/
+│   │   ├── config/            # Environment and database configuration
+│   │   ├── db/                # Client, bootstrap data, migrations, and modular seeders
+│   │   │   └── schema/        # Modular database domain schemas (vehicles, parts, services, etc.)
+│   │   ├── middleware/        # Auth, error handling, rate limiting, and validation
+│   │   ├── modules/           # Domain modules (auth, vehicles, parts, bookings, helmets, wholesale)
+│   │   └── routes/            # Centralized route orchestration
+│   └── package.json
 │
 ├── packages/
 │   ├── shared/                  # Shared TypeScript types, Zod schemas, constants, and utilities
@@ -79,8 +78,8 @@ shriram-automobiles/
 
 ## 💻 Tech Stack
 
-- **Frontend (`apps/web`)**: React 19, TypeScript, Vite, TailwindCSS, Radix UI, TanStack Query v5, Wouter, Lucide Icons, i18next
-- **Backend (`apps/api`)**: Node.js, Express, TypeScript, Zod validation, CORS, Cookie-session auth
+- **Frontend (`frontend`)**: React 19, TypeScript, Vite, TailwindCSS, Radix UI, TanStack Query v5, Wouter, Lucide Icons, i18next
+- **Backend (`backend`)**: Node.js, Express, TypeScript, Zod validation, CORS, Cookie-session auth
 - **Database & ORM**: PostgreSQL, Drizzle ORM, Drizzle Kit, `pg-mem` (instant in-memory fallback for zero-dependency local development)
 - **Shared Packages (`packages/*`)**: `@shriram/shared`, `@shriram/api-client`, `@shriram/config`
 - **Package Manager**: `pnpm` (Workspace configured)
@@ -140,8 +139,8 @@ pnpm run db:seed:helmets
 pnpm run dev
 
 # Or start individually:
-pnpm run dev:api    # Starts apps/api
-pnpm run dev:web    # Starts apps/web
+pnpm run dev:api    # Starts backend
+pnpm run dev:web    # Starts frontend
 ```
 
 ---
