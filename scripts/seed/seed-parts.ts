@@ -1,4 +1,4 @@
-import { seedParts } from '../../apps/api/src/db/seed/seed-parts';
+import { seedParts } from '../../backend/src/db/seed/seed-parts';
 
 async function main() {
   console.log('Running parts seeding script...');

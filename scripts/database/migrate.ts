@@ -1,4 +1,4 @@
-import { ensureDbInitialized } from '../../apps/api/src/db/client';
+import { ensureDbInitialized } from '../../backend/src/db/client';
 
 async function migrate() {
   console.log('Verifying database schema initialization and migrations...');

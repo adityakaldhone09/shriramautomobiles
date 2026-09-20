@@ -1,4 +1,4 @@
-import { seedVehicles } from '../../apps/api/src/db/seed/seed-vehicles';
+import { seedVehicles } from '../../backend/src/db/seed/seed-vehicles';
 
 async function main() {
   console.log('Running vehicle seeding script...');

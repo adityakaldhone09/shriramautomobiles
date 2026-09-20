@@ -1,4 +1,4 @@
-import { seedHelmets } from '../../apps/api/src/db/seed/seed-helmets';
+import { seedHelmets } from '../../backend/src/db/seed/seed-helmets';
 
 async function main() {
   console.log('Running helmets seeding script...');

@@ -1,4 +1,4 @@
-import { seedServices } from '../../apps/api/src/db/seed/seed-services';
+import { seedServices } from '../../backend/src/db/seed/seed-services';
 
 async function main() {
   console.log('Running services seeding script...');

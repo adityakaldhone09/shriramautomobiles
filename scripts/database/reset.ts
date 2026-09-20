@@ -1,4 +1,4 @@
-import { ensureDbInitialized, db } from '../../apps/api/src/db/client';
+import { ensureDbInitialized, db } from '../../backend/src/db/client';
 
 async function reset() {
   console.log('Resetting local in-memory database cache...');
