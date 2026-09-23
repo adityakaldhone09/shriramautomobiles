@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm run dev:api & pnpm run dev:web",
+    "dev": "pnpm --filter @shriram/scripts exec tsx ./development/cleanup-ports.ts && concurrently -k -n api,web -c cyan,magenta \"pnpm run dev:api\" \"pnpm run dev:web\"",
     "dev:web": "pnpm --filter @shriram/web run dev",
     "dev:api": "pnpm --filter @shriram/api run dev",
+    "dev:cleanup": "pnpm --filter @shriram/scripts exec tsx ./development/cleanup-ports.ts",
     "build": "pnpm --filter @shriram/shared run build && pnpm --filter @shriram/api-client run build && pnpm -r --if-present run build",
     "typecheck": "pnpm -r run typecheck",
     "lint": "prettier --check .",
@@ -23,6 +24,7 @@
     "validate:helmets": "pnpm --filter @shriram/scripts run validate:helmets"
   },
   "devDependencies": {
+    "concurrently": "^10.0.5",
     "prettier": "^3.9.6",
     "typescript": "~5.9.3"
   }
