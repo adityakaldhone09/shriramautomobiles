@@ -4,8 +4,8 @@ import { Bike, Menu, MessageSquare, Phone, ShoppingCart, X } from 'lucide-react'
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 
-export const businessPhone = '9689788734';
-export const wholesalePhone = '7709737256';
+export const businessPhone = '9689788724';
+export const wholesalePhone = '9689788724';
 export const inputClass =
   'mt-1.5 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-3 text-sm outline-none transition-all placeholder:text-[hsl(var(--muted-foreground))] focus:border-[hsl(var(--accent))] focus:ring-2 focus:ring-[hsl(var(--accent)/.18)]';
 
@@ -42,13 +42,14 @@ export function BusinessNav() {
   const links = [
     ['/', t('navbar.home', 'Home')],
     ['/shop', t('shop.nav', 'Shop Parts')],
+    ['/helmets', 'Helmets'],
     ['/book-service', t('navbar.bookService', 'Book Service')],
     ['/account/dashboard', t('account.nav', 'My Garage')],
     ['/contact', t('navbar.contact', 'Contact')],
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.92)] backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-[hsl(var(--border))] bg-[hsl(var(--background)/.92)] backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 lg:px-8">
         <Logo />
         <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
@@ -183,7 +184,7 @@ export function Shell({ children }: { children: ReactNode }) {
   return (
     <div className="grain min-h-[100dvh] bg-[hsl(var(--background))] pb-12 text-[hsl(var(--foreground))] md:pb-0">
       <BusinessNav />
-      {children}
+      <div className="pt-20 md:pt-[4.75rem]">{children}</div>
       <BusinessFooter />
       <MobileActions />
     </div>
