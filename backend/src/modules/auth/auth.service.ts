@@ -10,27 +10,38 @@ export class AuthService {
     const cleanPhone = data.phone.replace(/[\s\-+]/g, '');
     const cleanEmail = data.email.trim().toLowerCase();
 
-    const existing = await db.select().from(usersTable).where(eq(usersTable.phone, cleanPhone));
-    if (existing.length) {
+    const existingPhone = await db.select().from(usersTable).where(eq(usersTable.phone, cleanPhone));
+    if (existingPhone.length) {
       throw new Error('An account already exists for this phone number');
     }
 
-    const [customer] = await db.insert(customersTable).values({
-      name: data.name.trim(),
-      phone: cleanPhone,
-      email: cleanEmail,
-    }).returning();
+    const existingEmail = await db.select().from(usersTable).where(eq(usersTable.email, cleanEmail));
+    if (existingEmail.length) {
+      throw new Error('An account already exists for this email address');
+    }
 
-    const [user] = await db.insert(usersTable).values({
-      customerId: customer.id,
-      name: data.name.trim(),
-      phone: cleanPhone,
-      email: cleanEmail,
-      passwordHash: hashPassword(data.password),
-    }).returning();
+    return await db.transaction(async (tx) => {
+      let [customer] = await tx.select().from(customersTable).where(eq(customersTable.phone, cleanPhone));
+      if (!customer) {
+        [customer] = await tx.insert(customersTable).values({
+          name: data.name.trim(),
+          phone: cleanPhone,
+          email: cleanEmail,
+        }).returning();
+      }
 
-    return user;
+      const [user] = await tx.insert(usersTable).values({
+        customerId: customer.id,
+        name: data.name.trim(),
+        phone: cleanPhone,
+        email: cleanEmail,
+        passwordHash: hashPassword(data.password),
+      }).returning();
+
+      return user;
+    });
   }
+
 
   async login(data: LoginDTO) {
     const isEmail = data.identifier.includes('@');

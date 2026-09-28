@@ -5,9 +5,16 @@ import { mechanicsTable, availableSlotsTable } from '../../db/schema';
 import { createResponse } from '../../utils/helpers';
 
 export class MechanicsController {
-  async getMechanics(_req: Request, res: Response) {
+  async getMechanics(req: Request, res: Response) {
+    const user = (req as any).user;
+    const isAdmin = user && (user.role === 'ADMIN' || user.role === 'STAFF');
     const mechanics = await db.select().from(mechanicsTable).where(eq(mechanicsTable.isAvailable, true));
-    return res.json(createResponse(true, 'Mechanics fetched', mechanics));
+    const sanitized = mechanics.map((m) => {
+      if (isAdmin) return m;
+      const { phone, ...publicData } = m;
+      return publicData;
+    });
+    return res.json(createResponse(true, 'Mechanics fetched', sanitized));
   }
 
   async getAvailableSlots(_req: Request, res: Response) {
@@ -15,5 +22,6 @@ export class MechanicsController {
     return res.json(createResponse(true, 'Available slots fetched', slots));
   }
 }
+
 
 export const mechanicsController = new MechanicsController();

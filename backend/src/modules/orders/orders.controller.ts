@@ -81,6 +81,46 @@ export class OrdersController {
     const orders = await db.select().from(ordersTable).where(eq(ordersTable.userId, getAuthUser(req).id));
     return res.json(createResponse(true, 'Orders fetched', orders));
   }
+
+  async getOrderById(req: Request, res: Response) {
+    const user = getAuthUser(req);
+    const identifier = req.params.id;
+    const isNum = /^\d+$/.test(identifier);
+
+    const condition = isNum
+      ? eq(ordersTable.id, parseInt(identifier, 10))
+      : eq(ordersTable.orderNumber, identifier);
+
+    const [order] = await db.select().from(ordersTable).where(condition);
+    if (!order) {
+      return res.status(404).json(createResponse(false, 'Order not found', undefined, 'NOT_FOUND'));
+    }
+
+    if (user.role !== 'ADMIN' && user.role !== 'STAFF' && order.userId !== user.id) {
+      return res.status(403).json(createResponse(false, 'Unauthorized to view this order', undefined, 'FORBIDDEN'));
+    }
+
+    const items = await db
+      .select({
+        id: orderItemsTable.id,
+        productId: orderItemsTable.productId,
+        quantity: orderItemsTable.quantity,
+        price: orderItemsTable.price,
+        product: {
+          id: sparePartsTable.id,
+          name: sparePartsTable.name,
+          sku: sparePartsTable.sku,
+          brand: sparePartsTable.brand,
+          category: sparePartsTable.category,
+        },
+      })
+      .from(orderItemsTable)
+      .leftJoin(sparePartsTable, eq(orderItemsTable.productId, sparePartsTable.id))
+      .where(eq(orderItemsTable.orderId, order.id));
+
+    return res.json(createResponse(true, 'Order fetched', { ...order, items }));
+  }
 }
 
 export const ordersController = new OrdersController();
+

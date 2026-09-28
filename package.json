@@ -11,7 +11,9 @@
     "build": "pnpm --filter @shriram/shared run build && pnpm --filter @shriram/api-client run build && pnpm -r --if-present run build",
     "typecheck": "pnpm -r run typecheck",
     "lint": "prettier --check .",
-    "test": "pnpm --filter @shriram/scripts exec tsx ../tests/unit/shared.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/health.test.ts && pnpm --filter @shriram/scripts run validate:csv && pnpm --filter @shriram/scripts run validate:helmets",
+    "test": "pnpm --filter @shriram/scripts exec tsx ../tests/unit/shared.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/health.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/security-audit.test.ts && pnpm --filter @shriram/scripts run validate:csv && pnpm --filter @shriram/scripts run validate:helmets",
+    "test:security": "pnpm --filter @shriram/scripts exec tsx ../tests/api/security-audit.test.ts",
+
     "check:env": "pnpm --filter @shriram/scripts run check:env",
     "check:ports": "pnpm --filter @shriram/scripts run check:ports",
     "db:migrate": "pnpm --filter @shriram/scripts run db:migrate",
@@ -29,3 +31,5 @@
     "typescript": "~5.9.3"
   }
 }
+
+

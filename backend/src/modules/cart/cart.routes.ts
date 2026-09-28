@@ -8,4 +8,7 @@ cartRouter.use(requireAuth);
 cartRouter.get('/', (req, res) => cartController.getCart(req, res));
 cartRouter.post('/items', (req, res) => cartController.addCartItem(req, res));
 cartRouter.patch('/items/:id', (req, res) => cartController.updateCartItem(req, res));
+cartRouter.put('/items/:id', (req, res) => cartController.updateCartItem(req, res));
 cartRouter.delete('/items/:id', (req, res) => cartController.deleteCartItem(req, res));
+cartRouter.delete('/', (req, res) => cartController.clearCart(req, res));
+
