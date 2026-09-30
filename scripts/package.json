@@ -7,6 +7,7 @@
     "@shriram/api": "workspace:*",
     "@shriram/shared": "workspace:*",
     "drizzle-orm": "catalog:",
+    "pg": "^8.22.0",
     "zod": "catalog:"
   },
   "scripts": {
@@ -16,6 +17,7 @@
     "seed:helmets": "tsx ./seed/seed-helmets.ts",
     "seed:all": "tsx ./seed/seed-vehicles.ts && tsx ./seed/seed-parts.ts && tsx ./seed/seed-services.ts && tsx ./seed/seed-helmets.ts",
     "db:migrate": "tsx ./database/migrate.ts",
+    "db:secure-rls": "tsx ./database/secure-rls.ts",
     "db:reset": "tsx ./database/reset.ts",
     "validate:csv": "tsx ./data/validate-csv.ts",
     "validate:helmets": "tsx ./data/validate-helmets.ts",
@@ -25,6 +27,7 @@
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/pg": "^8.11.11",
     "tsx": "catalog:",
     "typescript": "~5.9.3"
   }

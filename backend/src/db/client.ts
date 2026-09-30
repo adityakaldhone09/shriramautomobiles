@@ -434,10 +434,63 @@ async function initializeDatabase(pool: any) {
   }
 }
 
+async function enableRowLevelSecurity(pool: any) {
+  try {
+    const publicCatalogTables = [
+      'brands',
+      'vehicle_models',
+      'part_categories',
+      'services',
+      'service_symptoms',
+      'symptom_service_mapping',
+      'symptom_part_mapping',
+      'vehicle_part_compatibility',
+      'available_slots',
+      'helmet_brands',
+      'helmet_types',
+      'helmet_products',
+      'helmet_variants',
+      'helmet_sizes',
+    ];
+
+    const res = await pool.query(
+      "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';"
+    );
+    for (const { tablename, rowsecurity } of res.rows) {
+      try {
+        if (!rowsecurity) {
+          await pool.query(`ALTER TABLE public."${tablename}" ENABLE ROW LEVEL SECURITY;`);
+        }
+        await pool.query(
+          `DROP POLICY IF EXISTS "service_role_all_${tablename}" ON public."${tablename}";`
+        );
+        await pool.query(
+          `CREATE POLICY "service_role_all_${tablename}" ON public."${tablename}" FOR ALL TO service_role USING (true) WITH CHECK (true);`
+        );
+
+        if (publicCatalogTables.includes(tablename)) {
+          await pool.query(
+            `DROP POLICY IF EXISTS "public_read_${tablename}" ON public."${tablename}";`
+          );
+          await pool.query(
+            `CREATE POLICY "public_read_${tablename}" ON public."${tablename}" FOR SELECT TO anon, authenticated USING (true);`
+          );
+        }
+      } catch (tableErr) {
+        // Continue processing other tables if an individual policy or table lock fails
+        console.warn(`RLS configuration warning for ${tablename}:`, (tableErr as any)?.message);
+      }
+    }
+  } catch (err) {
+    console.warn('RLS configuration check warning:', (err as any)?.message);
+  }
+}
+
 if (poolInstance) {
   initDbPromise = (async () => {
     try {
       await initializeDatabase(poolInstance);
+      await enableRowLevelSecurity(poolInstance);
       await bootstrapDatabaseData(poolInstance);
     } catch (error) {
       console.error('Error initializing database:', error);
@@ -878,4 +931,5 @@ export async function ensureDbInitialized() {
   }
 }
 export { isInMemory };
+export { sql } from 'drizzle-orm';
 export * from './schema';

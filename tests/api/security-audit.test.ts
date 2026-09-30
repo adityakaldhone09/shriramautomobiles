@@ -2,7 +2,7 @@ import http from 'node:http';
 import assert from 'node:assert/strict';
 import { app } from '../../backend/src/app';
 import { createToken, hashPassword, verifyPassword, readToken } from '../../backend/src/middleware/auth';
-import { db } from '../../backend/src/db/client';
+import { db, sql, isInMemory } from '../../backend/src/db/client';
 import {
   usersTable,
   customersTable,
@@ -396,6 +396,66 @@ async function runSecuritySuite() {
       assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
       assert.equal(res.headers.get('x-frame-options'), 'SAMEORIGIN');
       assert.equal(res.headers.get('referrer-policy'), 'strict-origin-when-cross-origin');
+    });
+
+    // -------------------------------------------------------------
+    // PHASE 21: DATABASE ROW LEVEL SECURITY (RLS) & SCHEMA HYGIENE
+    // -------------------------------------------------------------
+    console.log('\n--- Phase 21: Database Row Level Security (RLS) & Schema Hygiene ---');
+
+    await test('All public database tables have Row Level Security enabled (zero tables without RLS)', async () => {
+      if (isInMemory) {
+        return;
+      }
+      const rawUrl = process.env.DATABASE_URL || '';
+      if (!rawUrl || rawUrl.includes('dummy') || rawUrl.includes('[YOUR-PASSWORD]')) {
+        return;
+      }
+
+      const unsecuredRes = (await db.execute(
+        sql`SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = false;`
+      )) as any;
+      const unsecRows = Array.isArray(unsecuredRes?.rows)
+        ? unsecuredRes.rows
+        : Array.isArray(unsecuredRes)
+          ? unsecuredRes
+          : [];
+      assert.equal(
+        unsecRows.length,
+        0,
+        `Found public tables with RLS disabled: ${unsecRows.map((r: any) => r.tablename).join(', ')}`
+      );
+
+      const securedRes = (await db.execute(
+        sql`SELECT tablename FROM pg_tables WHERE schemaname = 'public' AND rowsecurity = true;`
+      )) as any;
+      const secRows = Array.isArray(securedRes?.rows)
+        ? securedRes.rows
+        : Array.isArray(securedRes)
+          ? securedRes
+          : [];
+      assert.ok(secRows.length >= 35, `Expected at least 35 secured tables, found ${secRows.length}`);
+    });
+
+    await test('Service role security policies exist for protected tables', async () => {
+      if (isInMemory) {
+        return;
+      }
+      const rawUrl = process.env.DATABASE_URL || '';
+      if (!rawUrl || rawUrl.includes('dummy') || rawUrl.includes('[YOUR-PASSWORD]')) {
+        return;
+      }
+
+      const res = (await db.execute(
+        sql`SELECT COUNT(DISTINCT tablename) as count FROM pg_policies WHERE schemaname = 'public';`
+      )) as any;
+      const countRows = Array.isArray(res?.rows)
+        ? res.rows
+        : Array.isArray(res)
+          ? res
+          : [];
+      const count = Number(countRows[0]?.count ?? 0);
+      assert.ok(count >= 30, `Expected policies on >= 30 tables, found ${count}`);
     });
 
     console.log(`\n====================================================`);

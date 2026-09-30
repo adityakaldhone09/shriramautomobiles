@@ -5,8 +5,8 @@
 - Application: Shriram Automobiles E-Commerce & Two-Wheeler Service Platform
 - Stack: PostgreSQL/Supabase, Drizzle ORM, Node.js/Express, React/Vite, TypeScript, TailwindCSS
 - Environment reviewed: Local Development, Staging & Production Configuration Definitions
-- Date: 2026-09-28
-- Overall status: SECURITY AUDIT COMPLETED — 13 vulnerabilities identified and remediated; 22 automated security regression tests created and passing.
+- Date: 2026-09-30
+- Overall status: SECURITY AUDIT COMPLETED — 14 vulnerabilities identified and remediated; 24 automated security regression tests created and passing.
 - Remaining manual checks: Cloud production environment variable rotation, Supabase Storage bucket RLS policies, Payment gateway webhook HMAC validation in live production, and production DNS / SSL certificates.
 
 ## Attack Surface
@@ -284,10 +284,28 @@
 - Residual risk: None.
 - Manual action: None.
 
+### [SEC-014]
+
+- Severity: High
+- Category: Database Row Level Security (RLS) Disabled & PostgREST Data Exposure
+- Component: PostgreSQL / Supabase `public` schema (`brands`, `vehicle_models`, `customers`, `customer_vehicles`, `part_categories`, `service_parts`, `vehicle_part_compatibility`, `service_symptoms`, `symptom_service_mapping`, `services`, `symptom_part_mapping`, `available_slots`, `service_bookings`, `mechanics`, `booking_services`, `booking_inspections`, `service_estimates`, `service_estimate_items`, `users`, `addresses`, `carts`, `cart_items`, `orders`, `order_items`, `contact_inquiries`, `sessions`, `password_reset_tokens`, `notifications`, `wholesale_quotes`, `helmet_brands`, `helmet_products`, `helmet_types`, `helmet_variants`, `helmet_inventory`, `helmet_sizes`, `test_foo`)
+- Evidence: Supabase Database Advisor flagged error code `0013_rls_disabled_in_public` on 36 tables in the `public` schema. When RLS is disabled in Supabase, tables are directly accessible via PostgREST endpoints using the public anonymous (`anon`) API key. Unauthenticated callers could directly query or mutate sensitive tables (`users`, `sessions`, `orders`, `customers`, etc.), completely bypassing Node.js/Express authorization controls.
+- Risk: Direct database exfiltration of user credentials, customer PII, customer vehicles, financial orders, and wholesale quotes via public Supabase PostgREST endpoints.
+- Fix implemented:
+  1. Dynamically enabled Row Level Security on all 36 public tables (`ALTER TABLE public."<table>" ENABLE ROW LEVEL SECURITY;`).
+  2. Defined explicit full access security policies for the backend `service_role` on all tables (`CREATE POLICY "service_role_all_<table>" ON public."<table>" FOR ALL TO service_role USING (true) WITH CHECK (true);`).
+  3. Defined explicit read-only policies for public catalog tables (`brands`, `vehicle_models`, `part_categories`, `services`, `service_symptoms`, `helmet_brands`, `helmet_types`, `helmet_products`, `helmet_variants`, `helmet_sizes`, `symptom_service_mapping`, `symptom_part_mapping`, `vehicle_part_compatibility`, `available_slots`).
+  4. Enforced strict default-deny isolation on sensitive data stores (`users`, `sessions`, `password_reset_tokens`, `customers`, `customer_vehicles`, `orders`, `order_items`, `service_bookings`, `service_estimates`, `service_parts`, etc.).
+  5. Implemented a PostgreSQL event trigger (`pgrst_auto_enable_rls` on `CREATE TABLE`) ensuring any future tables created in `public` automatically have RLS enabled.
+  6. Added automated RLS verification in `backend/src/db/client.ts`, created migration `0001_enable_rls_security_policies.sql`, and added `pnpm run db:secure-rls`.
+- Verification: Database linter query verified 0 tables with RLS disabled and 50 security policies created. Automated security regression test suite verified zero public tables without RLS and service role policies.
+- Residual risk: None.
+- Manual action: None.
+
 ## Verification
 
 - Build: `pnpm build` completed with 0 errors across `@shriram/shared`, `@shriram/api-client`, `backend`, and `frontend`.
-- Tests: `pnpm test` executed and PASSED 100% (shared utility unit tests, health check, CSV dataset validations, helmet dataset validations, and 22 master security regression tests).
+- Tests: `pnpm test` executed and PASSED 100% (shared utility unit tests, health check, CSV dataset validations, helmet dataset validations, and 24 master security regression tests including Phase 21 Database RLS verification).
 - Dependency audit: `pnpm audit` completed with 0 high/critical vulnerabilities.
 - Static/security checks: `pnpm typecheck` passed with 0 errors across all 6 workspace projects.
 - Re-scan: Re-scanned repository attack surfaces, verified CORS origin filtering, token tamper resistance, rate limiter lifecycle, and error sanitization.

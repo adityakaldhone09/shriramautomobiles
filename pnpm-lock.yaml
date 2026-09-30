@@ -436,6 +436,9 @@ importers:
       drizzle-orm:
         specifier: 'catalog:'
         version: 0.45.2(@types/pg@8.20.0)(gel@2.2.1(supports-color@10.2.2))(pg@8.22.0)
+      pg:
+        specifier: ^8.22.0
+        version: 8.22.0
       zod:
         specifier: 'catalog:'
         version: 3.25.76
@@ -443,6 +446,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.9.5
+      '@types/pg':
+        specifier: ^8.11.11
+        version: 8.20.0
       tsx:
         specifier: 'catalog:'
         version: 4.23.1

@@ -17,6 +17,7 @@
     "check:env": "pnpm --filter @shriram/scripts run check:env",
     "check:ports": "pnpm --filter @shriram/scripts run check:ports",
     "db:migrate": "pnpm --filter @shriram/scripts run db:migrate",
+    "db:secure-rls": "pnpm --filter @shriram/scripts run db:secure-rls",
     "db:seed": "pnpm --filter @shriram/scripts run seed:all",
     "db:seed:vehicles": "pnpm --filter @shriram/scripts run seed:vehicles",
     "db:seed:parts": "pnpm --filter @shriram/scripts run seed:parts",
