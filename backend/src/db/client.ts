@@ -51,6 +51,15 @@ if (hasValidUrl) {
 let initDbPromise: Promise<void> | null = null;
 
 async function initializeDatabase(pool: any) {
+  try {
+    const check = await pool.query(
+      "SELECT count(*) as count FROM pg_tables WHERE schemaname = 'public';"
+    );
+    if (Number(check.rows[0]?.count ?? 0) >= 30) {
+      return;
+    }
+  } catch {}
+
   const createTablesSql = `
     CREATE TABLE IF NOT EXISTS brands (
       id SERIAL PRIMARY KEY,
@@ -456,6 +465,11 @@ async function enableRowLevelSecurity(pool: any) {
     const res = await pool.query(
       "SELECT tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';"
     );
+    const unsecured = res.rows.filter((r: any) => !r.rowsecurity);
+    if (unsecured.length === 0) {
+      return;
+    }
+
     for (const { tablename, rowsecurity } of res.rows) {
       try {
         if (!rowsecurity) {

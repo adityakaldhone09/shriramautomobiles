@@ -53,6 +53,11 @@ const slugify = (t: string) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').repla
 
 export async function bootstrapDatabaseData(pool: any) {
   try {
+    const existing = await pool.query('SELECT count(*) as count FROM brands;');
+    if (Number(existing?.rows?.[0]?.count ?? 0) > 0) {
+      return;
+    }
+
     // 1. Vehicles & Brands
     const vPath = resolveCsvSync('vehicle_models.csv');
     if (vPath) {
