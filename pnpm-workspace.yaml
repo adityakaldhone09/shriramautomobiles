@@ -27,6 +27,8 @@
 # ============================================================================
 minimumReleaseAge: 1440
 
+minimumReleaseAgeExclude:
+
 packages:
   - "backend"
   - "frontend"
@@ -59,7 +61,7 @@ catalog:
 autoInstallPeers: false
 
 overrides:
-  # Keep optional esbuild binaries only for supported local and deployment platforms.
+  # Exclude unused platform-specific optional binaries to keep installs reproducible.
   "esbuild>@esbuild/freebsd-arm64": "-"
   "esbuild>@esbuild/freebsd-x64": "-"
   "esbuild>@esbuild/linux-arm": "-"
