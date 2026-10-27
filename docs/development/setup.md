@@ -14,6 +14,19 @@ cd ShriramAutomobiles
 pnpm install
 ```
 
+## Optional local PostgreSQL
+The API uses in-memory PostgreSQL when `DATABASE_URL` is unset. To use a local
+PostgreSQL container, copy `.env.example` to `.env`, set a local-only
+`POSTGRES_PASSWORD`, and run:
+
+```bash
+docker compose up -d postgres
+```
+
+Set `DATABASE_URL` in `backend/.env` to the local database connection. Run
+`pnpm db:migrate` explicitly before using the database. Compose starts only the
+database; the API and frontend run with the pnpm development commands below.
+
 ## Seeding Datasets
 When `DATABASE_URL` is configured, migrate the selected database explicitly before seeding it. Omitting `DATABASE_URL` uses the in-memory database for local development.
 

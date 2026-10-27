@@ -25,7 +25,8 @@ const envSchema = z
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .default(process.env.VERCEL === '1' ? 'production' : 'development'),
-    PORT: z.string().default('5001'),
+    PORT: z.string().regex(/^\d+$/).default('5001'),
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
     DATABASE_URL: z.string().optional(),
     AUTH_SECRET: z.string().default('shriram-automobiles-secret-key-2026'),
     SUPABASE_URL: z.string().optional(),

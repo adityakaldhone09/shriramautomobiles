@@ -103,6 +103,12 @@ cd ShriramAutomobiles
 pnpm install
 ```
 
+For local PostgreSQL development, copy `.env.example` to `.env`, set a local-only
+`POSTGRES_PASSWORD`, and start the database with `docker compose up -d postgres`.
+The Compose file starts only PostgreSQL; run the API and frontend with the pnpm
+commands below. Set `DATABASE_URL` in `backend/.env` and run migrations
+explicitly before using that database.
+
 ### 2. Verify Environment & Datasets
 
 ```bash
@@ -135,7 +141,9 @@ pnpm run db:seed:services
 pnpm run db:seed:helmets
 ```
 
-See [the Vercel deployment guide](./docs/deployment/vercel.md) before deploying.
+See the [Render deployment guide](./docs/deployment/render.md) for the preferred
+single-service deployment. The existing [Vercel guide](./docs/deployment/vercel.md)
+remains available as an alternative.
 
 ### 4. Start Development Servers
 

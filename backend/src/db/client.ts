@@ -952,6 +952,11 @@ export async function ensureDbInitialized() {
 
   await initDbPromise;
 }
+export async function closeDatabasePool() {
+  if (poolInstance && typeof poolInstance.end === 'function') {
+    await poolInstance.end();
+  }
+}
 export { isInMemory };
 export { sql } from 'drizzle-orm';
 export * from './schema';

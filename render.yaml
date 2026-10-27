@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: shriram-automobiles
+    runtime: node
+    plan: free
+    rootDir: .
+    autoDeployTrigger: 'off'
+    buildCommand: corepack enable && pnpm install --frozen-lockfile --prod=false && pnpm run build
+    startCommand: pnpm --filter @shriram/api start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: NODE_ENV
+        value: production
+      - key: SERVE_FRONTEND
+        value: 'true'
+      - key: TRUST_PROXY_HOPS
+        value: '1'
+      - key: VITE_API_URL
+        value: /api
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false

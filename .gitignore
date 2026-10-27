@@ -1,9 +1,11 @@
 node_modules/
 dist/
 build/
+# Keep example files, but ignore all environment-specific values.
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!**/.env.example
 *.log
 .DS_Store
 coverage/
