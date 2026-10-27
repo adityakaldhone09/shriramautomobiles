@@ -6,8 +6,13 @@ import { authConfig } from '../config/auth';
 export type AuthUser = { id: number; customerId?: number | null; role: string; phone: string };
 
 export function createToken(user: AuthUser): string {
-  const payload = Buffer.from(JSON.stringify({ ...user, exp: Date.now() + 1000 * 60 * 60 * 24 * 7 })).toString('base64url');
-  const signature = crypto.createHmac('sha256', authConfig.secret).update(payload).digest('base64url');
+  const payload = Buffer.from(
+    JSON.stringify({ ...user, exp: Date.now() + 1000 * 60 * 60 * 24 * 7 })
+  ).toString('base64url');
+  const signature = crypto
+    .createHmac('sha256', authConfig.secret)
+    .update(payload)
+    .digest('base64url');
   return `${payload}.${signature}`;
 }
 
@@ -19,11 +24,17 @@ export function readToken(token: string): AuthUser | null {
     const [payload, signature] = parts;
     if (!payload || !signature) return null;
 
-    const expected = crypto.createHmac('sha256', authConfig.secret).update(payload).digest('base64url');
+    const expected = crypto
+      .createHmac('sha256', authConfig.secret)
+      .update(payload)
+      .digest('base64url');
     const signatureBuffer = Buffer.from(signature, 'utf8');
     const expectedBuffer = Buffer.from(expected, 'utf8');
 
-    if (signatureBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(signatureBuffer, expectedBuffer)) {
+    if (
+      signatureBuffer.length !== expectedBuffer.length ||
+      !crypto.timingSafeEqual(signatureBuffer, expectedBuffer)
+    ) {
       return null;
     }
 
@@ -40,14 +51,18 @@ export function readToken(token: string): AuthUser | null {
   }
 }
 
-export function extractAuthToken(req: Request): string | null {
+export function extractAuthToken(req: Pick<Request, 'header'>): string | null {
   const header = req.header('authorization');
   if (header?.startsWith('Bearer ')) {
     return header.slice(7).trim();
   }
-  const cookies = (req as Request & { cookies?: Record<string, string> }).cookies;
-  if (cookies?.shriram_session) {
-    return cookies.shriram_session;
+
+  const cookieHeader = req.header('cookie');
+  for (const cookie of cookieHeader?.split(';') ?? []) {
+    const separator = cookie.indexOf('=');
+    if (separator > 0 && cookie.slice(0, separator).trim() === 'shriram_session') {
+      return cookie.slice(separator + 1).trim() || null;
+    }
   }
   return null;
 }
@@ -56,7 +71,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
   const token = extractAuthToken(req);
   const user = token ? readToken(token) : null;
   if (!user) {
-    return res.status(401).json(createResponse(false, 'Authentication required', undefined, 'UNAUTHORIZED'));
+    return res
+      .status(401)
+      .json(createResponse(false, 'Authentication required', undefined, 'UNAUTHORIZED'));
   }
   (req as Request & { user: AuthUser }).user = user;
   return next();
@@ -93,7 +110,11 @@ export function verifyPassword(password: string, stored: string): boolean {
     const actualBuffer = Buffer.from(actual, 'hex');
     const expectedBuffer = Buffer.from(expected, 'hex');
 
-    if (actualBuffer.length === 0 || expectedBuffer.length === 0 || actualBuffer.length !== expectedBuffer.length) {
+    if (
+      actualBuffer.length === 0 ||
+      expectedBuffer.length === 0 ||
+      actualBuffer.length !== expectedBuffer.length
+    ) {
       return false;
     }
 
@@ -102,4 +123,3 @@ export function verifyPassword(password: string, stored: string): boolean {
     return false;
   }
 }
-

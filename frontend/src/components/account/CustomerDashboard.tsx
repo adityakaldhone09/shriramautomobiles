@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { Shell, SectionKicker, inputClass, businessPhone } from '../layout/Shell';
 import { useTranslation } from 'react-i18next';
+import { apiUrl } from '@/services/api/client';
 
 export function CustomerDashboard() {
   const { t } = useTranslation();
@@ -57,27 +58,27 @@ export function CustomerDashboard() {
     setLoading(true);
     try {
       // 1. Check profile / auth
-      const profRes = await fetch('/api/account/profile', { credentials: 'include' });
+      const profRes = await fetch(apiUrl('/api/account/profile'), { credentials: 'include' });
       if (profRes.ok) {
         const prof = await profRes.json();
         setUserProfile(prof.data);
       }
 
       // 2. Fetch vehicles
-      const vRes = await fetch('/api/account/vehicles', { credentials: 'include' });
+      const vRes = await fetch(apiUrl('/api/account/vehicles'), { credentials: 'include' });
       if (vRes.ok) {
         const vData = await vRes.json();
         setVehicles(vData.data || []);
       }
 
       // 3. Fetch bookings
-      const bRes = await fetch('/api/account/bookings', { credentials: 'include' });
+      const bRes = await fetch(apiUrl('/api/account/bookings'), { credentials: 'include' });
       if (bRes.ok) {
         const bData = await bRes.json();
         setBookings(bData.data || []);
       } else {
         // Fallback: list bookings by phone if stored or public list
-        const publicB = await fetch('/api/bookings');
+        const publicB = await fetch(apiUrl('/api/bookings'));
         if (publicB.ok) {
           const pbData = await publicB.json();
           setBookings(pbData.data || []);
@@ -85,7 +86,7 @@ export function CustomerDashboard() {
       }
 
       // 4. Vehicle models for adding
-      const mRes = await fetch('/api/vehicle-models');
+      const mRes = await fetch(apiUrl('/api/vehicle-models'));
       if (mRes.ok) {
         const mData = await mRes.json();
         setAllModels(mData.data || []);
@@ -108,7 +109,7 @@ export function CustomerDashboard() {
 
     try {
       const selectedModel = allModels.find((m) => m.id === Number(addForm.vehicleModelId));
-      const res = await fetch('/api/account/vehicles', {
+      const res = await fetch(apiUrl('/api/account/vehicles'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

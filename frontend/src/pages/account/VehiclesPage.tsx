@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Bike } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Shell, SectionKicker, inputClass } from '@/components/layout/Shell';
+import { apiUrl } from '@/services/api/client';
 
 interface Vehicle {
   id: number;
@@ -23,7 +24,7 @@ export function VehiclesPage() {
   const [message, setMessage] = useState('');
 
   const load = () => {
-    fetch('/api/account/vehicles', { credentials: 'include' })
+    fetch(apiUrl('/api/account/vehicles'), { credentials: 'include' })
       .then((res) => res.json())
       .then((result) => setVehicles(result.data || []))
       .catch(() => {});
@@ -35,7 +36,7 @@ export function VehiclesPage() {
 
   const add = async () => {
     try {
-      const response = await fetch('/api/account/vehicles', {
+      const response = await fetch(apiUrl('/api/account/vehicles'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

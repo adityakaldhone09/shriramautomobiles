@@ -10,13 +10,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
+          // Keep the primary border visible without a separate hover treatment.
           'bg-primary text-primary-foreground border border-primary-border',
         destructive:
           'bg-destructive text-destructive-foreground shadow-sm border-destructive-border',
         outline:
-          // Inherits the current text color. Uses shadow-xs. no shadow on active
+          // Inherit surrounding text color and avoid an active shadow or hover state.
           ' border [border-color:var(--button-outline)] shadow-xs active:shadow-none ',
         secondary:
+          // Use a secondary border without additional hover or shadow effects.
           'border bg-secondary text-secondary-foreground border border-secondary-border ',
         ghost: 'border border-transparent',
         link: 'text-primary underline-offset-4 hover:underline',

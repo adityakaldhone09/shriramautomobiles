@@ -10,10 +10,13 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
+          // Use hover-elevate for hover styling and shadow-xs for the resting state.
           'border-transparent bg-primary text-primary-foreground shadow-xs',
         secondary:
+          // hover-elevate provides the hover treatment.
           'border-transparent bg-secondary text-secondary-foreground',
         destructive:
+          // Use hover-elevate for hover styling and shadow-xs for the resting state.
           'border-transparent bg-destructive text-destructive-foreground shadow-xs',
         outline: 'text-foreground border [border-color:var(--badge-outline)]',
       },

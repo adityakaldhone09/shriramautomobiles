@@ -8,10 +8,17 @@ export function errorHandler(
   res: Response,
   _next: NextFunction
 ) {
-  logger.error(`${req.method} ${req.path} - Error:`, err);
-
   const status = Number(err.status || err.statusCode || 500);
   const isProd = process.env.NODE_ENV === 'production';
+  if (isProd) {
+    logger.error(`${req.method} ${req.path} - Request failed`, {
+      status,
+      code: typeof err.code === 'string' ? err.code : 'INTERNAL_SERVER_ERROR',
+    });
+  } else {
+    logger.error(`${req.method} ${req.path} - Error:`, err);
+  }
+
   const message =
     status >= 500 && isProd
       ? 'An unexpected error occurred. Please try again later.'
@@ -26,4 +33,3 @@ export function errorHandler(
     )
   );
 }
-

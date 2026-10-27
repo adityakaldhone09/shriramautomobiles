@@ -28,7 +28,6 @@ if (!rawUrl || rawUrl.includes('dummy') || rawUrl.includes('[YOUR-PASSWORD]')) {
 const pool = new Pool({
   connectionString: rawUrl,
   connectionTimeoutMillis: 5000,
-  ssl: /supabase|pooler/i.test(rawUrl) ? { rejectUnauthorized: false } : undefined,
   max: 1,
 });
 
