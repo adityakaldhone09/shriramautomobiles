@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "pnpm --filter @shriram/scripts exec tsx ./development/cleanup-ports.ts && concurrently -k -n api,web -c cyan,magenta \"pnpm run dev:api\" \"pnpm run dev:web\"",
     "dev:web": "pnpm --filter @shriram/web run dev",
@@ -11,7 +15,7 @@
     "build": "pnpm --filter @shriram/shared run build && pnpm --filter @shriram/api-client run build && pnpm -r --if-present run build",
     "typecheck": "pnpm -r run typecheck",
     "lint": "prettier --check .",
-    "test": "pnpm --filter @shriram/scripts exec tsx ../tests/unit/shared.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/health.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/security-audit.test.ts && pnpm --filter @shriram/scripts run validate:csv && pnpm --filter @shriram/scripts run validate:helmets",
+    "test": "pnpm --filter @shriram/scripts exec tsx ../tests/unit/shared.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/unit/api-client.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/health.test.ts && pnpm --filter @shriram/scripts exec tsx ../tests/api/security-audit.test.ts && pnpm --filter @shriram/scripts run validate:csv && pnpm --filter @shriram/scripts run validate:helmets",
     "test:security": "pnpm --filter @shriram/scripts exec tsx ../tests/api/security-audit.test.ts",
 
     "check:env": "pnpm --filter @shriram/scripts run check:env",
@@ -32,5 +36,3 @@
     "typescript": "~5.9.3"
   }
 }
-
-

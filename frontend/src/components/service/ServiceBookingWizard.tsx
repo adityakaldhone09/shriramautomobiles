@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Shell, SectionKicker, inputClass, businessPhone } from '../layout/Shell';
 import { useTranslation } from 'react-i18next';
+import { apiUrl } from '@/services/api/client';
 
 export interface VehicleModelItem {
   id: number;
@@ -147,7 +148,7 @@ export function ServiceBookingWizard() {
   // Load initial datasets
   useEffect(() => {
     // 1. Fetch vehicle models
-    fetch('/api/vehicle-models')
+    fetch(apiUrl('/api/vehicle-models'))
       .then((res) => res.json())
       .then((res) => {
         if (res.data) setAllModels(res.data);
@@ -155,7 +156,7 @@ export function ServiceBookingWizard() {
       .catch(console.error);
 
     // 2. Fetch symptoms
-    fetch('/api/service-symptoms')
+    fetch(apiUrl('/api/service-symptoms'))
       .then((res) => res.json())
       .then((res) => {
         if (res.data) setSymptoms(res.data);
@@ -163,7 +164,7 @@ export function ServiceBookingWizard() {
       .catch(console.error);
 
     // 3. Fetch mechanics
-    fetch('/api/mechanics/available')
+    fetch(apiUrl('/api/mechanics/available'))
       .then((res) => res.json())
       .then((res) => {
         if (res.data) setMechanics(res.data);
@@ -171,7 +172,7 @@ export function ServiceBookingWizard() {
       .catch(console.error);
 
     // 4. Check if user is logged in & fetch customer vehicles
-    fetch('/api/account/vehicles', { credentials: 'include' })
+    fetch(apiUrl('/api/account/vehicles'), { credentials: 'include' })
       .then((res) => (res.ok ? res.json() : null))
       .then((res) => {
         if (res?.data?.length) {
@@ -274,7 +275,7 @@ export function ServiceBookingWizard() {
     setAiDiagnosing(true);
     setAiDiagnosisResult(null);
     try {
-      const res = await fetch('/api/ai/diagnose-symptoms', {
+      const res = await fetch(apiUrl('/api/ai/diagnose-symptoms'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -327,7 +328,7 @@ export function ServiceBookingWizard() {
     };
 
     try {
-      const res = await fetch('/api/bookings', {
+      const res = await fetch(apiUrl('/api/bookings'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

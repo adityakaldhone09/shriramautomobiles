@@ -1,8 +1,8 @@
 # Local Development Setup Guide
 
 ## Prerequisites
-- **Node.js**: v20.x or higher
-- **pnpm**: v9.x or higher
+- **Node.js**: v24.x
+- **pnpm**: v11.24.0 (the version pinned in the root package manifest)
 
 ## Installation
 ```bash
@@ -15,7 +15,12 @@ pnpm install
 ```
 
 ## Seeding Datasets
+When `DATABASE_URL` is configured, migrate the selected database explicitly before seeding it. Omitting `DATABASE_URL` uses the in-memory database for local development.
+
 ```bash
+# Migrate the selected PostgreSQL database (does not run automatically at API startup)
+pnpm db:migrate
+
 # Seed all datasets (vehicles, parts, services, helmets)
 pnpm db:seed
 

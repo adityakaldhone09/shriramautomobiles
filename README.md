@@ -89,8 +89,8 @@ shriram-automobiles/
 ## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js**: `v20.x` or higher
-- **pnpm**: `v9.x` or higher (`corepack enable pnpm` or `npm i -g pnpm`)
+- **Node.js**: `v24.x` (pinned in `package.json`)
+- **pnpm**: `v11.24.0` (pinned in `package.json`, enabled with Corepack)
 
 ### 1. Installation
 
@@ -117,9 +117,12 @@ pnpm run validate:helmets
 
 ### 3. Seed Database
 
-The platform automatically falls back to in-memory PostgreSQL (`pg-mem`) if an external database is not running, enabling zero-config development out of the box:
+When `DATABASE_URL` is omitted, local development uses in-memory PostgreSQL (`pg-mem`). A configured PostgreSQL database is never silently replaced when it is unavailable. Apply schema migrations explicitly before using a configured database:
 
 ```bash
+# If DATABASE_URL selects PostgreSQL, migrate it explicitly first
+pnpm run db:migrate
+
 # Seed all datasets (vehicles, parts, services, helmets)
 pnpm run db:seed
 ```
@@ -131,6 +134,8 @@ pnpm run db:seed:parts
 pnpm run db:seed:services
 pnpm run db:seed:helmets
 ```
+
+See [the Vercel deployment guide](./docs/deployment/vercel.md) before deploying.
 
 ### 4. Start Development Servers
 

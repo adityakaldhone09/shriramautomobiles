@@ -1,16 +1,29 @@
-import type { NextFunction, Request, Response } from 'express';
-import type { AnyZodObject } from 'zod';
-import { createResponse } from '../utils/helpers';
+import type { NextFunction, Request, Response } from "express";
+import { ZodError, type ZodType } from "zod";
+import { createResponse } from "../utils/helpers";
 
-export function validateBody(schema: AnyZodObject) {
+export function validateBody(schema: ZodType) {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       req.body = await schema.parseAsync(req.body);
       return next();
-    } catch (error: any) {
-      return res.status(400).json(
-        createResponse(false, 'Validation failed', error.errors || error.message, 'VALIDATION_ERROR')
-      );
+    } catch (error) {
+      const details =
+        error instanceof ZodError
+          ? error.issues
+          : error instanceof Error
+            ? error.message
+            : String(error);
+      return res
+        .status(400)
+        .json(
+          createResponse(
+            false,
+            "Validation failed",
+            details,
+            "VALIDATION_ERROR",
+          ),
+        );
     }
   };
 }

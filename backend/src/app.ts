@@ -3,6 +3,7 @@ import cors from 'cors';
 import { apiRouter } from './routes/index';
 import { errorHandler } from './middleware/error';
 import { standardLimiter } from './middleware/rateLimit';
+import { ensureDbInitialized } from './db/client';
 
 export function createApp() {
   const app = express();
@@ -27,12 +28,15 @@ export function createApp() {
   });
 
   // 2. Controlled Origin CORS (avoiding arbitrary reflection)
-  const allowedOrigins = [
-    'http://localhost:5173',
-    'http://127.0.0.1:5173',
-    'http://localhost:5001',
-    'http://127.0.0.1:5001',
-  ];
+  const allowedOrigins =
+    process.env.NODE_ENV === 'production'
+      ? []
+      : [
+          'http://localhost:5173',
+          'http://127.0.0.1:5173',
+          'http://localhost:5001',
+          'http://127.0.0.1:5001',
+        ];
   if (process.env.APP_URL) allowedOrigins.push(process.env.APP_URL.trim());
   if (process.env.CORS_ORIGIN) allowedOrigins.push(process.env.CORS_ORIGIN.trim());
 
@@ -63,6 +67,19 @@ export function createApp() {
   // 4. Rate Limiting
   app.use(standardLimiter);
 
+  app.use('/api', async (req, _res, next) => {
+    if (req.path === '/health' || req.path === '/healthz') {
+      return next();
+    }
+
+    try {
+      await ensureDbInitialized();
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  });
+
   // 5. Mount API Routes
   app.use('/api', apiRouter);
 
@@ -73,4 +90,3 @@ export function createApp() {
 }
 
 export const app = createApp();
-

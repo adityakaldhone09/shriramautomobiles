@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Shell, SectionKicker, inputClass } from '@/components/layout/Shell';
 import { cartKey, partPrice, type CartLine } from '@/pages/cart/CartPage';
+import { apiUrl } from '@/services/api/client';
 
 export function CheckoutPage() {
   const { t } = useTranslation();
@@ -19,7 +20,7 @@ export function CheckoutPage() {
 
   const submit = async () => {
     try {
-      const response = await fetch('/api/orders', {
+      const response = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
