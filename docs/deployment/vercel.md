@@ -23,12 +23,16 @@ The SPA rewrites deliberately exclude `/api` and `/api/*`. The catch-all Functio
 - **Root Directory:** repository root (`.`)
 - **Framework Preset:** Other (the repository runs its own monorepo build)
 - **Node.js Version:** `24.x`
-- **Install Command:** `pnpm install --frozen-lockfile`
-- **Build Command:** `pnpm run build`
+- **Install Command:** `pnpm install --frozen-lockfile --prod=false`
+- **Build Command:** `pnpm --filter @shriram/web run build`
 - **Output Directory:** `frontend/dist`
 - **Package manager:** pinned to `pnpm@11.24.0` in the root `package.json`
 
-The install/build/output settings are also in the root [vercel.json](../../vercel.json). Do not set `frontend/` or `backend/` as the project root: workspace packages and the lockfile live at the repository root. No Vercel deployment or account-level validation was performed in this repository.
+The install/build/output settings are also in the root [vercel.json](../../vercel.json). The Vercel Project Root Directory is an account-level setting and must be `.`; `vercel.json` cannot change it. Setting it to `frontend/` makes output paths and the API Function outside that directory unavailable to the deployment. Keep the framework preset as **Other** and do not override the commands or output directory in the dashboard. The filtered build runs Vite from the frontend workspace while leaving the deployment output path relative to the repository root.
+
+The reported `vite build --config vite.config.ts` line is the frontend package's underlying build process, not proof by itself that the Vercel Root Directory is correct. The decisive configuration is that the repository-root build creates `frontend/dist/index.html`, while Vercel's configured output directory is `frontend/dist`. A deployment error expecting only `dist` indicates that Vercel is using a different Root Directory or a dashboard override rather than this repository-root configuration. Verify those project settings before retrying.
+
+The Root Directory, install/build/output settings and SPA rewrites must match the repository-root deployment described above. No Vercel deployment or account-level validation was performed in this repository.
 
 ## Environment variables
 
