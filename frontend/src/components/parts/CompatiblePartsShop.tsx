@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { Shell, SectionKicker, inputClass, businessPhone, wholesalePhone } from '../layout/Shell';
 import { useTranslation } from 'react-i18next';
+import { apiUrl } from '@/services/api/client';
 
 export interface VehicleModelOption {
   id: number;
@@ -94,7 +95,7 @@ export function CompatiblePartsShop() {
 
   // 1. Fetch all vehicle models
   useEffect(() => {
-    fetch('/api/vehicle-models')
+    fetch(apiUrl('/api/vehicle-models'))
       .then((res) => res.json())
       .then((json) => {
         if (json.success && Array.isArray(json.data)) {
@@ -106,7 +107,7 @@ export function CompatiblePartsShop() {
 
   // 2. Fetch all parts catalog
   useEffect(() => {
-    fetch('/api/parts')
+    fetch(apiUrl('/api/parts'))
       .then((res) => res.json())
       .then((json) => {
         if (json.success && Array.isArray(json.data)) {

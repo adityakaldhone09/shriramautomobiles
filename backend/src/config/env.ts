@@ -22,8 +22,11 @@ for (const envPath of possibleEnvPaths) {
 
 const envSchema = z
   .object({
-    NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-    PORT: z.string().default('5001'),
+    NODE_ENV: z
+      .enum(['development', 'production', 'test'])
+      .default(process.env.VERCEL === '1' ? 'production' : 'development'),
+    PORT: z.string().regex(/^\d+$/).default('5001'),
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
     DATABASE_URL: z.string().optional(),
     AUTH_SECRET: z.string().default('shriram-automobiles-secret-key-2026'),
     SUPABASE_URL: z.string().optional(),
@@ -34,7 +37,7 @@ const envSchema = z
   })
   .refine(
     (data) => {
-      if (data.NODE_ENV === 'production') {
+      if (data.NODE_ENV === 'production' || process.env.VERCEL === '1') {
         return (
           data.AUTH_SECRET &&
           data.AUTH_SECRET !== 'shriram-automobiles-secret-key-2026' &&
@@ -48,7 +51,35 @@ const envSchema = z
         'In production, AUTH_SECRET must be set to a strong random secret of at least 32 characters and cannot use the default placeholder',
       path: ['AUTH_SECRET'],
     }
-  );
+  )
+  .refine(
+    (data) => {
+      if (data.NODE_ENV !== 'production' && process.env.VERCEL !== '1') {
+        return true;
+      }
+
+      try {
+        const databaseUrl = new URL(data.DATABASE_URL || '');
+        return (
+          ['postgres:', 'postgresql:'].includes(databaseUrl.protocol) &&
+          ['require', 'verify-ca', 'verify-full'].includes(
+            databaseUrl.searchParams.get('sslmode') || ''
+          ) &&
+          !/dummy|\[YOUR-PASSWORD\]/i.test(data.DATABASE_URL || '')
+        );
+      } catch {
+        return false;
+      }
+    },
+    {
+      message: 'In production, DATABASE_URL must be a PostgreSQL connection URL with SSL enabled',
+      path: ['DATABASE_URL'],
+    }
+  )
+  .refine((data) => process.env.VERCEL !== '1' || data.NODE_ENV === 'production', {
+    message: 'Vercel deployments must use NODE_ENV=production',
+    path: ['NODE_ENV'],
+  });
 
 export const env = envSchema.parse(process.env);
-
+process.env.NODE_ENV = env.NODE_ENV;

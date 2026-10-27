@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import type { Request, Response } from 'express';
 import { authRouter } from '../modules/auth/auth.routes';
 import { vehiclesRouter } from '../modules/vehicles/vehicles.routes';
 import { vehiclesController } from '../modules/vehicles/vehicles.controller';
@@ -21,8 +22,17 @@ import { createResponse } from '../utils/helpers';
 
 export const apiRouter = Router();
 
-apiRouter.get('/health', (_req, res) => {
-  return res.json(createResponse(true, 'Shriram Automobiles API is healthy', { timestamp: new Date() }));
+const healthHandler = (_req: Request, res: Response) => {
+  return res.json(
+    createResponse(true, 'Shriram Automobiles API is healthy', { timestamp: new Date() })
+  );
+};
+
+apiRouter.get('/health', healthHandler);
+apiRouter.get('/healthz', healthHandler);
+
+apiRouter.get('/health/ready', (_req, res) => {
+  return res.json(createResponse(true, 'Shriram Automobiles API is ready'));
 });
 
 apiRouter.use('/auth', authRouter);
@@ -45,4 +55,3 @@ apiRouter.use('/admin', adminRouter);
 apiRouter.get('/vehicle-models', (req, res) => vehiclesController.listModels(req, res));
 apiRouter.get('/slots', (req, res) => mechanicsController.getAvailableSlots(req, res));
 apiRouter.get('/service-recommendations', (req, res) => getRecommendations(req, res));
-

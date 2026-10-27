@@ -43,7 +43,6 @@ async function runSecondaryAudit() {
   const pool = new Pool({
     connectionString: rawUrl,
     connectionTimeoutMillis: 5000,
-    ssl: /supabase|pooler/i.test(rawUrl) ? { rejectUnauthorized: false } : undefined,
     max: 1,
   });
 

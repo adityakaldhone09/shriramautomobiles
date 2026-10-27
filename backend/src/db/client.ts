@@ -35,17 +35,22 @@ const hasValidUrl =
   !rawUrl.includes('[YOUR-PASSWORD]') &&
   !rawUrl.includes('dummy');
 
+if (rawUrl && !hasValidUrl) {
+  throw new Error('DATABASE_URL must be a PostgreSQL connection URL');
+}
+
+const isProductionRuntime = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+
+if (isProductionRuntime && !hasValidUrl) {
+  throw new Error('Production requires a PostgreSQL DATABASE_URL; in-memory storage is unavailable');
+}
+
 if (hasValidUrl) {
-  try {
-    const isSupabaseUrl = /supabase|pooler/i.test(rawUrl);
-    poolInstance = new Pool({
-      connectionString: rawUrl,
-      connectionTimeoutMillis: 3000,
-      ...(isSupabaseUrl ? { ssl: { rejectUnauthorized: false } } : {}),
-    });
-  } catch {
-    poolInstance = null;
-  }
+  poolInstance = new Pool({
+    connectionString: rawUrl,
+    connectionTimeoutMillis: 5000,
+    max: isProductionRuntime ? 5 : 10,
+  });
 }
 
 let initDbPromise: Promise<void> | null = null;
@@ -500,18 +505,6 @@ async function enableRowLevelSecurity(pool: any) {
   }
 }
 
-if (poolInstance) {
-  initDbPromise = (async () => {
-    try {
-      await initializeDatabase(poolInstance);
-      await enableRowLevelSecurity(poolInstance);
-      await bootstrapDatabaseData(poolInstance);
-    } catch (error) {
-      console.error('Error initializing database:', error);
-    }
-  })();
-}
-
 if (!poolInstance) {
   isInMemory = true;
   const mem = newDb();
@@ -940,8 +933,28 @@ if (!poolInstance) {
 
 export const db = drizzle(poolInstance, { schema });
 export async function ensureDbInitialized() {
-  if (initDbPromise) {
-    await initDbPromise;
+  if (isInMemory) {
+    if (initDbPromise) {
+      await initDbPromise;
+    }
+    return;
+  }
+
+  if (!initDbPromise) {
+    initDbPromise = poolInstance
+      .query('SELECT 1')
+      .then(() => undefined)
+      .catch((error: unknown) => {
+        initDbPromise = null;
+        throw error;
+      });
+  }
+
+  await initDbPromise;
+}
+export async function closeDatabasePool() {
+  if (poolInstance && typeof poolInstance.end === 'function') {
+    await poolInstance.end();
   }
 }
 export { isInMemory };
