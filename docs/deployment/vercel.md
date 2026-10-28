@@ -1,58 +1,46 @@
-# Vercel deployment
+# Vercel deployment (Frontend)
 
-## Selected architecture
+## Architecture
 
-Use one Vercel project rooted at the repository root. The React/Vite app is built as static files in `frontend/dist`; `api/[...path].ts` exports the existing Express app as one Node.js Function. The Function receives `/api/*`, and Express continues to mount its router at `/api`.
+Deploy the React/Vite frontend on Vercel as a static SPA. The backend Express API remains deployed separately on Render (`https://shriram-automobiles.onrender.com`).
 
 The public routes are:
 
-| Route                       | Destination                               |
-| --------------------------- | ----------------------------------------- |
-| `/` and other non-API paths | `frontend/dist/index.html` (SPA fallback) |
-| `/api/*`                    | `api/[...path].ts` → Express              |
-| Existing static assets      | `frontend/dist` files                     |
+| Route                       | Destination                                                |
+| --------------------------- | ---------------------------------------------------------- |
+| `/` and client SPA paths    | `frontend/dist/index.html` (SPA fallback)                  |
+| `/api/(.*)`                 | Proxied to `https://shriram-automobiles.onrender.com/api/$1`|
+| Built static assets         | `frontend/dist` files (`assets/`, `favicon.svg`, etc.)     |
 
-This uses Vercel's standard Functions and static output rather than the Services configuration, which is currently documented as beta. There are no Vercel service names or service bindings: browser requests use same-origin `/api` URLs, and the API talks directly to PostgreSQL.
-
-The SPA rewrites deliberately exclude `/api` and `/api/*`. The catch-all Function serves API paths; static files are served from the configured output directory.
+Client-side requests target the Render backend directly when `VITE_API_URL` is set to `https://shriram-automobiles.onrender.com/api`. The Vercel `/api/(.*)` rewrite acts as a same-origin fallback.
 
 ## Vercel project settings
 
 - **Project name:** `shriramautomobiles`
 - **Production branch:** `main`
 - **Root Directory:** repository root (`.`)
-- **Framework Preset:** Other (the repository runs its own monorepo build)
+- **Framework Preset:** `Vite` (defined in `vercel.json`)
 - **Node.js Version:** `24.x`
 - **Install Command:** `pnpm install --frozen-lockfile --prod=false`
 - **Build Command:** `pnpm --filter @shriram/web run build`
 - **Output Directory:** `frontend/dist`
 - **Package manager:** pinned to `pnpm@11.24.0` in the root `package.json`
 
-The install/build/output settings are also in the root [vercel.json](../../vercel.json). The Vercel Project Root Directory is an account-level setting and must be `.`; `vercel.json` cannot change it. Setting it to `frontend/` makes output paths and the API Function outside that directory unavailable to the deployment. Keep the framework preset as **Other** and do not override the commands or output directory in the dashboard. The filtered build runs Vite from the frontend workspace while leaving the deployment output path relative to the repository root.
-
-The reported `vite build --config vite.config.ts` line is the frontend package's underlying build process, not proof by itself that the Vercel Root Directory is correct. The decisive configuration is that the repository-root build creates `frontend/dist/index.html`, while Vercel's configured output directory is `frontend/dist`. A deployment error expecting only `dist` indicates that Vercel is using a different Root Directory or a dashboard override rather than this repository-root configuration. Verify those project settings before retrying.
-
-The Root Directory, install/build/output settings and SPA rewrites must match the repository-root deployment described above. No Vercel deployment or account-level validation was performed in this repository.
+The root [vercel.json](../../vercel.json) configures these settings. If configuring through the Vercel Dashboard, ensure the **Output Directory** is set to `frontend/dist` (or left to `vercel.json` without overriding to `dist`), and the **Root Directory** is `.`.
 
 ## Environment variables
 
-Configure these in Vercel's Environment Variables settings. Never commit their values.
+Configure these in Vercel's Environment Variables settings (Production and Preview scopes):
 
-| Variable                  | Required                                 | Scope                                   | Purpose                                                                                                                                 |
-| ------------------------- | ---------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `DATABASE_URL`            | Yes                                      | Preview and Production, backend runtime | PostgreSQL/Supabase pooled connection URL with `sslmode=require` (or stronger verification). Use a non-production database for Preview. |
-| `AUTH_SECRET`             | Yes                                      | Preview and Production, backend runtime | Random secret of at least 32 characters. Use different secrets in Preview and Production.                                               |
-| `NODE_ENV`                | Set to `production` for deployed runtime | Preview and Production, backend runtime | Enables production validation and safe error responses.                                                                                 |
-| `APP_URL`                 | Optional                                 | Preview and Production, backend runtime | Exact frontend origin if cross-origin requests are required.                                                                            |
-| `CORS_ORIGIN`             | Optional                                 | Preview and Production, backend runtime | Exact allowed browser origin if it differs from `APP_URL`.                                                                              |
-| `SUPABASE_URL`            | Optional                                 | Backend runtime                         | Used by storage configuration when that integration is enabled.                                                                         |
-| `SUPABASE_STORAGE_BUCKET` | Optional                                 | Backend runtime                         | Storage bucket name; defaults in code when omitted.                                                                                     |
-| `GEMINI_API_KEY`          | Optional                                 | Backend runtime                         | Enables the existing Gemini integration.                                                                                                |
-| `VITE_API_URL`            | Optional                                 | Preview and Production build            | Public API base URL; keep it `/api` for the one-domain deployment. It is not a secret.                                                  |
+| Variable       | Required | Scope                        | Purpose                                                                                                                                                 |
+| -------------- | -------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_API_URL` | Yes      | Production & Preview (Build) | Public API base URL including the `/api` prefix: `https://shriram-automobiles.onrender.com/api`. (Do not set to localhost or omit the `/api` suffix). |
 
-`PORT` is only for local development. `VITE_API_PROXY_TARGET` is also local-development-only; it points Vite's `/api` proxy at the local API and must not be used as a production browser URL. No Supabase service-role key is read by the application code and none should be added to frontend variables. Vercel provides environment variables to the backend Function at runtime; only `VITE_*` values are exposed to the browser build.
+**Render backend configuration:**
+On Render, configure `APP_URL` or `CORS_ORIGIN` to include the deployed Vercel domain (e.g. `https://shriramautomobiles.vercel.app`) so that cross-origin authenticated requests and cookies are permitted.
 
-For the same-domain setup, leave `APP_URL` and `CORS_ORIGIN` unset unless another trusted web origin needs API access. Production CORS does not include localhost by default.
+Backend secrets (`DATABASE_URL`, `AUTH_SECRET`, etc.) stay strictly on Render and must NEVER be added to Vercel environment variables.
+
 
 ## Database preparation and migrations
 
