@@ -68,3 +68,71 @@ export const bookingInspectionsTable = pgTable('booking_inspections', {
   index('idx_inspections_booking_id').on(table.bookingId),
 ]);
 export type BookingInspection = typeof bookingInspectionsTable.$inferSelect;
+
+// ================= JOB CARDS & LIFECYCLE =================
+export const serviceJobCardsTable = pgTable('service_job_cards', {
+  id: serial('id').primaryKey(),
+  bookingId: integer('booking_id').notNull().references(() => serviceBookingsTable.id, { onDelete: 'cascade' }),
+  jobNumber: varchar('job_number', { length: 50 }).notNull().unique(),
+  mechanicId: integer('mechanic_id').references(() => mechanicsTable.id),
+  odometerReading: integer('odometer_reading'),
+  fuelLevel: varchar('fuel_level', { length: 30 }).notNull().default('HALF'),
+  status: varchar('status', { length: 40 }).notNull().default('CHECKED_IN'),
+  customerComplaints: text('customer_complaints'),
+  inspectionNotes: text('inspection_notes'),
+  workPerformed: text('work_performed'),
+  labourCharges: decimal('labour_charges', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  partsTotal: decimal('parts_total', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  totalAmount: decimal('total_amount', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  startedAt: timestamp('started_at'),
+  completedAt: timestamp('completed_at'),
+  deliveredAt: timestamp('delivered_at'),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+}, (table) => [
+  index('idx_job_cards_booking_id').on(table.bookingId),
+  index('idx_job_cards_job_number').on(table.jobNumber),
+  index('idx_job_cards_mechanic_id').on(table.mechanicId),
+  index('idx_job_cards_status').on(table.status),
+]);
+export type ServiceJobCard = typeof serviceJobCardsTable.$inferSelect;
+
+export const jobCardPartsTable = pgTable('job_card_parts', {
+  id: serial('id').primaryKey(),
+  jobCardId: integer('job_card_id').notNull().references(() => serviceJobCardsTable.id, { onDelete: 'cascade' }),
+  partId: integer('part_id').references(() => servicePartsTable.id),
+  partName: text('part_name').notNull(),
+  quantity: integer('quantity').notNull().default(1),
+  unitPrice: decimal('unit_price', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  totalPrice: decimal('total_price', { precision: 10, scale: 2 }).notNull().default('0.00'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (table) => [
+  index('idx_job_card_parts_card_id').on(table.jobCardId),
+]);
+export type JobCardPart = typeof jobCardPartsTable.$inferSelect;
+
+export const jobCardInspectionsTable = pgTable('job_card_inspections', {
+  id: serial('id').primaryKey(),
+  jobCardId: integer('job_card_id').notNull().references(() => serviceJobCardsTable.id, { onDelete: 'cascade' }),
+  item: varchar('item', { length: 100 }).notNull(),
+  condition: varchar('condition', { length: 30 }).notNull().default('OK'), // OK, ATTENTION_NEEDED, CRITICAL, REPLACED
+  notes: text('notes'),
+  inspectedAt: timestamp('inspected_at').defaultNow(),
+}, (table) => [
+  index('idx_job_card_inspections_card_id').on(table.jobCardId),
+]);
+export type JobCardInspection = typeof jobCardInspectionsTable.$inferSelect;
+
+export const serviceStatusHistoryTable = pgTable('service_status_history', {
+  id: serial('id').primaryKey(),
+  bookingId: integer('booking_id').notNull().references(() => serviceBookingsTable.id, { onDelete: 'cascade' }),
+  jobCardId: integer('job_card_id'),
+  fromStatus: varchar('from_status', { length: 40 }).notNull(),
+  toStatus: varchar('to_status', { length: 40 }).notNull(),
+  changedByUserId: integer('changed_by_user_id'),
+  notes: text('notes'),
+  createdAt: timestamp('created_at').defaultNow(),
+}, (table) => [
+  index('idx_status_history_booking_id').on(table.bookingId),
+]);
+export type ServiceStatusHistory = typeof serviceStatusHistoryTable.$inferSelect;

@@ -15,6 +15,7 @@ import CheckoutPage from '@/pages/checkout/CheckoutPage';
 import LoginPage from '@/pages/auth/LoginPage';
 import DashboardPage from '@/pages/account/DashboardPage';
 import VehiclesPage from '@/pages/account/VehiclesPage';
+import MechanicJobsPage from '@/pages/mechanic/MechanicJobsPage';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient({
@@ -47,6 +48,8 @@ function Router() {
         <Route path="/admin/vehicles" component={AdminPage} />
         <Route path="/admin/inventory" component={AdminPage} />
         <Route path="/admin/mechanics" component={AdminPage} />
+        <Route path="/mechanic/jobs" component={MechanicJobsPage} />
+        <Route path="/mechanic/dashboard" component={MechanicJobsPage} />
         <Route component={NotFound} />
       </Switch>
     </ErrorBoundary>

@@ -77,3 +77,21 @@ export const adminApi = {
       body: JSON.stringify({ status, notes }),
     }),
 };
+
+export const mechanicApi = {
+  getMyJobs: () => apiClient<any[]>('/mechanics/my-jobs'),
+  getJobCard: (bookingId: number) => apiClient<any>(`/bookings/${bookingId}/job-card`),
+  createJobCard: (bookingId: number, data: any) =>
+    apiClient<any>(`/bookings/${bookingId}/job-card`, { method: 'POST', body: JSON.stringify(data) }),
+  recordInspection: (bookingId: number, data: { item: string; condition: string; notes?: string }) =>
+    apiClient<any>(`/bookings/${bookingId}/job-card/inspections`, { method: 'POST', body: JSON.stringify(data) }),
+  addJobCardPart: (bookingId: number, data: { partName: string; quantity: number; unitPrice: number; partId?: number }) =>
+    apiClient<any>(`/bookings/${bookingId}/job-card/parts`, { method: 'POST', body: JSON.stringify(data) }),
+  updateJobCard: (bookingId: number, data: any) =>
+    apiClient<any>(`/bookings/${bookingId}/job-card`, { method: 'PATCH', body: JSON.stringify(data) }),
+  updateStatus: (bookingId: number, status: string, notes?: string) =>
+    apiClient<any>(`/bookings/${bookingId}/status`, { method: 'PATCH', body: JSON.stringify({ status, notes }) }),
+  getTimeline: (bookingId: number) => apiClient<any[]>(`/bookings/${bookingId}/timeline`),
+};
+
+

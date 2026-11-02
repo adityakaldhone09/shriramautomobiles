@@ -58,9 +58,9 @@ let initDbPromise: Promise<void> | null = null;
 async function initializeDatabase(pool: any) {
   try {
     const check = await pool.query(
-      "SELECT count(*) as count FROM pg_tables WHERE schemaname = 'public';"
+      "SELECT count(*) as count FROM pg_tables WHERE schemaname = 'public' AND tablename = 'service_job_cards';"
     );
-    if (Number(check.rows[0]?.count ?? 0) >= 30) {
+    if (Number(check.rows[0]?.count ?? 0) > 0) {
       return;
     }
   } catch {}
@@ -253,6 +253,54 @@ async function initializeDatabase(pool: any) {
       status VARCHAR(30) NOT NULL DEFAULT 'CHECKED',
       notes TEXT,
       inspected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS service_job_cards (
+      id SERIAL PRIMARY KEY,
+      booking_id INTEGER NOT NULL REFERENCES service_bookings(id),
+      job_number VARCHAR(50) NOT NULL UNIQUE,
+      mechanic_id INTEGER REFERENCES mechanics(id),
+      odometer_reading INTEGER,
+      fuel_level VARCHAR(30) NOT NULL DEFAULT 'HALF',
+      status VARCHAR(40) NOT NULL DEFAULT 'CHECKED_IN',
+      customer_complaints TEXT,
+      inspection_notes TEXT,
+      work_performed TEXT,
+      labour_charges NUMERIC NOT NULL DEFAULT 0.00,
+      parts_total NUMERIC NOT NULL DEFAULT 0.00,
+      total_amount NUMERIC NOT NULL DEFAULT 0.00,
+      started_at TIMESTAMP,
+      completed_at TIMESTAMP,
+      delivered_at TIMESTAMP,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS job_card_parts (
+      id SERIAL PRIMARY KEY,
+      job_card_id INTEGER NOT NULL REFERENCES service_job_cards(id),
+      part_id INTEGER REFERENCES service_parts(id),
+      part_name TEXT NOT NULL,
+      quantity INTEGER NOT NULL DEFAULT 1,
+      unit_price NUMERIC NOT NULL DEFAULT 0.00,
+      total_price NUMERIC NOT NULL DEFAULT 0.00,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS job_card_inspections (
+      id SERIAL PRIMARY KEY,
+      job_card_id INTEGER NOT NULL REFERENCES service_job_cards(id),
+      item VARCHAR(100) NOT NULL,
+      condition VARCHAR(30) NOT NULL DEFAULT 'OK',
+      notes TEXT,
+      inspected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS service_status_history (
+      id SERIAL PRIMARY KEY,
+      booking_id INTEGER NOT NULL REFERENCES service_bookings(id),
+      job_card_id INTEGER,
+      from_status VARCHAR(40) NOT NULL,
+      to_status VARCHAR(40) NOT NULL,
+      changed_by_user_id INTEGER,
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS service_estimates (
       id SERIAL PRIMARY KEY,
@@ -740,6 +788,54 @@ if (!poolInstance) {
           status VARCHAR(30) NOT NULL DEFAULT 'CHECKED',
           notes TEXT,
           inspected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS service_job_cards (
+          id SERIAL PRIMARY KEY,
+          booking_id INTEGER NOT NULL REFERENCES service_bookings(id),
+          job_number VARCHAR(50) NOT NULL UNIQUE,
+          mechanic_id INTEGER REFERENCES mechanics(id),
+          odometer_reading INTEGER,
+          fuel_level VARCHAR(30) NOT NULL DEFAULT 'HALF',
+          status VARCHAR(40) NOT NULL DEFAULT 'CHECKED_IN',
+          customer_complaints TEXT,
+          inspection_notes TEXT,
+          work_performed TEXT,
+          labour_charges NUMERIC NOT NULL DEFAULT 0.00,
+          parts_total NUMERIC NOT NULL DEFAULT 0.00,
+          total_amount NUMERIC NOT NULL DEFAULT 0.00,
+          started_at TIMESTAMP,
+          completed_at TIMESTAMP,
+          delivered_at TIMESTAMP,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS job_card_parts (
+          id SERIAL PRIMARY KEY,
+          job_card_id INTEGER NOT NULL REFERENCES service_job_cards(id),
+          part_id INTEGER REFERENCES service_parts(id),
+          part_name TEXT NOT NULL,
+          quantity INTEGER NOT NULL DEFAULT 1,
+          unit_price NUMERIC NOT NULL DEFAULT 0.00,
+          total_price NUMERIC NOT NULL DEFAULT 0.00,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS job_card_inspections (
+          id SERIAL PRIMARY KEY,
+          job_card_id INTEGER NOT NULL REFERENCES service_job_cards(id),
+          item VARCHAR(100) NOT NULL,
+          condition VARCHAR(30) NOT NULL DEFAULT 'OK',
+          notes TEXT,
+          inspected_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS service_status_history (
+          id SERIAL PRIMARY KEY,
+          booking_id INTEGER NOT NULL REFERENCES service_bookings(id),
+          job_card_id INTEGER,
+          from_status VARCHAR(40) NOT NULL,
+          to_status VARCHAR(40) NOT NULL,
+          changed_by_user_id INTEGER,
+          notes TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         CREATE TABLE IF NOT EXISTS service_estimates (
           id SERIAL PRIMARY KEY,
