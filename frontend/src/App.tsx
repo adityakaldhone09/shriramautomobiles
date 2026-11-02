@@ -41,7 +41,12 @@ function Router() {
         <Route path="/book-service" component={BookingPage} />
         <Route path="/service/book" component={BookingPage} />
         <Route path="/contact" component={ContactPage} />
+        <Route path="/admin" component={AdminPage} />
         <Route path="/admin/bookings" component={AdminPage} />
+        <Route path="/admin/customers" component={AdminPage} />
+        <Route path="/admin/vehicles" component={AdminPage} />
+        <Route path="/admin/inventory" component={AdminPage} />
+        <Route path="/admin/mechanics" component={AdminPage} />
         <Route component={NotFound} />
       </Switch>
     </ErrorBoundary>

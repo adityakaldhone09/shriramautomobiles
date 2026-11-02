@@ -49,3 +49,31 @@ export const ordersApi = {
   create: (data: any) => apiClient('/orders', { method: 'POST', body: JSON.stringify(data) }),
   getMyOrders: () => apiClient('/orders'),
 };
+
+export const adminApi = {
+  getOverview: () => apiClient<any>('/admin/overview'),
+  getCustomers: (q?: string) => apiClient<any[]>(`/admin/customers${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  getCustomerById: (id: number) => apiClient<any>(`/admin/customers/${id}`),
+  createCustomer: (data: any) => apiClient<any>('/admin/customers', { method: 'POST', body: JSON.stringify(data) }),
+  updateCustomer: (id: number, data: any) => apiClient<any>(`/admin/customers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  getVehicles: (q?: string) => apiClient<any[]>(`/admin/vehicles${q ? `?q=${encodeURIComponent(q)}` : ''}`),
+  createVehicle: (data: any) => apiClient<any>('/admin/vehicles', { method: 'POST', body: JSON.stringify(data) }),
+  getInventory: () => apiClient<any[]>('/admin/inventory'),
+  getLowStock: () => apiClient<any[]>('/admin/inventory/low-stock'),
+  getMechanics: () => apiClient<any[]>('/admin/mechanics'),
+  assignMechanic: (bookingId: number, mechanicId: number) =>
+    apiClient<any>(`/admin/bookings/${bookingId}/assign-mechanic`, {
+      method: 'POST',
+      body: JSON.stringify({ mechanicId }),
+    }),
+  updateOrderStatus: (orderId: number, status: string) =>
+    apiClient<any>(`/admin/orders/${orderId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    }),
+  updateBookingStatus: (bookingId: number, status: string, notes?: string) =>
+    apiClient<any>(`/bookings/${bookingId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, notes }),
+    }),
+};
