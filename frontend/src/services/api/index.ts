@@ -188,5 +188,14 @@ export const aiApi = {
   askAssistant: (question: string) => apiClient<any>('/ai/assistant/chat', { method: 'POST', body: JSON.stringify({ question }) }),
 };
 
+export const notificationsApi = {
+  getNotifications: (limit = 20) => apiClient<any[]>(`/notifications?limit=${limit}`),
+  getUnreadCount: () => apiClient<{ unreadCount: number }>('/notifications/unread-count'),
+  markAsRead: (id: number) => apiClient<any>(`/notifications/${id}/read`, { method: 'PATCH' }),
+  markAllAsRead: () => apiClient<any>('/notifications/read-all', { method: 'PATCH' }),
+  dispatchTest: (data: any) => apiClient<any>('/notifications/dispatch-test', { method: 'POST', body: JSON.stringify(data) }),
+  runAutomation: () => apiClient<any>('/notifications/run-automation', { method: 'POST' }),
+};
+
 
 

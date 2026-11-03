@@ -125,3 +125,4 @@ def analyze_helmet_image(req: HelmetVisionRequest) -> HelmetVisionResponse:
         advisory="Visual observation based on automated camera stream inspection. Riders must ensure chin strap micro-metric buckle is audibly locked before vehicle departure.",
         dataset_attribution="HelmetML: A dataset of helmet images for machine learning applications (Patil, Jadhav, Suryawanshi et al., Data in Brief 56, Elsevier 2024, Pune, India, CC BY-NC 4.0).",
     )
+

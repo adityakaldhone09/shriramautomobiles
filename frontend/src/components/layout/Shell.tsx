@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { Bike, Menu, MessageSquare, Phone, ShoppingCart, X } from 'lucide-react';
 import { LanguageSwitcher } from './LanguageSwitcher';
+import { ThemeToggle } from './ThemeToggle';
 import { useTranslation } from 'react-i18next';
 
 export const businessPhone = '9689788724';
@@ -66,6 +67,7 @@ export function BusinessNav() {
           ))}
         </nav>
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <LanguageSwitcher />
           <Link
             href="/cart"
