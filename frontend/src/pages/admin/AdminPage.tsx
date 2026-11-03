@@ -1146,7 +1146,7 @@ export function AdminPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[hsl(var(--border))]">
-                    {(bookingsQuery.data || []).map((booking: any) => (
+                    {((bookingsQuery.data as any[]) || []).map((booking: any) => (
                       <tr key={booking.id} className="hover:bg-[hsl(var(--muted)/.4)]">
                         <td className="py-3.5 px-4 font-mono font-bold text-xs">{booking.bookingNumber || `BK-${booking.id}`}</td>
                         <td className="py-3.5 px-4">

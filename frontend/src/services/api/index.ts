@@ -1,4 +1,4 @@
-import { apiClient } from './client';
+import { apiClient, apiUrl } from './client';
 
 export const authApi = {
   login: (data: any) => apiClient('/auth/login', { method: 'POST', body: JSON.stringify(data) }),
@@ -33,9 +33,9 @@ export const servicesApi = {
 };
 
 export const bookingsApi = {
-  create: (data: any) => apiClient('/bookings', { method: 'POST', body: JSON.stringify(data) }),
-  getAll: () => apiClient('/bookings'),
-  getById: (id: number) => apiClient(`/bookings/${id}`),
+  create: (data: any) => apiClient<any>('/bookings', { method: 'POST', body: JSON.stringify(data) }),
+  getAll: () => apiClient<any[]>('/bookings'),
+  getById: (id: number) => apiClient<any>(`/bookings/${id}`),
 };
 
 export const helmetsApi = {
@@ -54,7 +54,7 @@ export const adminApi = {
   getOverview: () => apiClient<any>('/admin/overview'),
   getAnalyticsSummary: () => apiClient<any>('/admin/analytics/summary'),
   getAnalyticsTrends: (months = 6) => apiClient<any[]>(`/admin/analytics/trends?months=${months}`),
-  getExportCsvUrl: () => `${apiClient.getBaseUrl ? apiClient.getBaseUrl() : '/api'}/admin/analytics/export`,
+  getExportCsvUrl: () => apiUrl('/admin/analytics/export'),
   getCustomers: (q?: string) => apiClient<any[]>(`/admin/customers${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   getCustomerById: (id: number) => apiClient<any>(`/admin/customers/${id}`),
   createCustomer: (data: any) => apiClient<any>('/admin/customers', { method: 'POST', body: JSON.stringify(data) }),
