@@ -156,5 +156,30 @@ export const invoicesApi = {
     apiClient<any>(`/invoices/${id}/payment`, { method: 'POST', body: JSON.stringify(data) }),
 };
 
+export const aiApi = {
+  getHealth: () => apiClient<any>('/ai/health'),
+  recommendMaintenance: (data: {
+    brand: string;
+    model: string;
+    mileage: number;
+    year?: number;
+    customerReportedProblem?: string;
+  }) => apiClient<any>('/ai/recommend/maintenance', { method: 'POST', body: JSON.stringify(data) }),
+  recommendParts: (data: {
+    modelSlug: string;
+    serviceCategory?: string;
+    symptomKeywords?: string[];
+  }) => apiClient<any>('/ai/recommend/parts', { method: 'POST', body: JSON.stringify(data) }),
+  predictMaintenance: (data: {
+    model: string;
+    currentMileage: number;
+    lastServiceMileage?: number;
+    lastServiceDate?: string;
+    avgMonthlyKm?: number;
+  }) => apiClient<any>('/ai/predict/maintenance', { method: 'POST', body: JSON.stringify(data) }),
+  forecastInventory: () => apiClient<any>('/ai/forecast/inventory', { method: 'POST' }),
+  analyzeCustomerIntelligence: () => apiClient<any>('/ai/intelligence/customers', { method: 'POST' }),
+};
+
 
 

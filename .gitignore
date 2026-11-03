@@ -20,3 +20,6 @@ coverage/
 out/
 .cache/
 *.tsbuildinfo
+__pycache__/
+*.pyc
+.pytest_cache/
