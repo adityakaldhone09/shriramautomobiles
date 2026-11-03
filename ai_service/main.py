@@ -33,6 +33,11 @@ from engine.customer_intelligence import (
     CustomerIntelligenceResponse,
     analyze_customer_intelligence,
 )
+from engine.helmet_vision import (
+    HelmetVisionRequest,
+    HelmetVisionResponse,
+    analyze_helmet_image,
+)
 
 app = FastAPI(
     title="Shriram Automobiles AI Engine",
@@ -99,7 +104,15 @@ def endpoint_customer_intelligence(customers: List[CustomerProfileInput]):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to calculate customer intelligence: {str(e)}")
 
+@app.post("/api/v1/vision/classify-helmet", response_model=HelmetVisionResponse)
+def endpoint_classify_helmet(req: HelmetVisionRequest):
+    try:
+        return analyze_helmet_image(req)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to classify helmet vision: {str(e)}")
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", os.environ.get("AI_SERVICE_PORT", 8000)))
     uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
+

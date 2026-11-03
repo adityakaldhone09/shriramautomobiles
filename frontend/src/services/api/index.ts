@@ -179,6 +179,13 @@ export const aiApi = {
   }) => apiClient<any>('/ai/predict/maintenance', { method: 'POST', body: JSON.stringify(data) }),
   forecastInventory: () => apiClient<any>('/ai/forecast/inventory', { method: 'POST' }),
   analyzeCustomerIntelligence: () => apiClient<any>('/ai/intelligence/customers', { method: 'POST' }),
+  classifyHelmet: (data: {
+    imageBase64?: string;
+    imageUrl?: string;
+    vehicleType?: string;
+    lightingCondition?: string;
+  }) => apiClient<any>('/ai/vision/classify-helmet', { method: 'POST', body: JSON.stringify(data) }),
+  askAssistant: (question: string) => apiClient<any>('/ai/assistant/chat', { method: 'POST', body: JSON.stringify({ question }) }),
 };
 
 

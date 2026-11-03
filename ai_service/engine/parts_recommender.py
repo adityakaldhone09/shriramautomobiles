@@ -155,3 +155,4 @@ def recommend_parts(req: PartsRecommendationRequest) -> PartsRecommendationRespo
         non_compatible_filtered_count=filtered_count,
         safety_advisory="All recommended spare parts are verified against authorized manufacturer compatibility specifications. Never install unverified non-compatible spares.",
     )
+

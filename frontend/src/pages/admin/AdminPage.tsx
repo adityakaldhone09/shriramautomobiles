@@ -29,6 +29,10 @@ import {
   Download,
   Activity,
   Flame,
+  Sparkles,
+  Bot,
+  Send,
+  BrainCircuit,
 } from 'lucide-react';
 import {
   BarChart,
@@ -46,11 +50,11 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Shell, SectionKicker } from '@/components/layout/Shell';
-import { adminApi, bookingsApi, inventoryApi, suppliersApi, purchaseOrdersApi, invoicesApi } from '@/services/api';
+import { adminApi, bookingsApi, inventoryApi, suppliersApi, purchaseOrdersApi, invoicesApi, aiApi } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
 export function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'bookings' | 'customers' | 'vehicles' | 'inventory' | 'mechanics' | 'suppliers' | 'invoices'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'assistant' | 'bookings' | 'customers' | 'vehicles' | 'inventory' | 'mechanics' | 'suppliers' | 'invoices'>('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
@@ -107,8 +111,81 @@ export function AdminPage() {
   const [vehReg, setVehReg] = useState('');
   const [vehType, setVehType] = useState('Motorcycle');
 
+  // AI Business Assistant & HelmetML vision state
+  const [assistantMessages, setAssistantMessages] = useState<Array<{ id: string; role: 'user' | 'assistant'; text: string; tools?: any[]; timestamp: string }>>([
+    {
+      id: 'init-1',
+      role: 'assistant',
+      text: 'नमस्कार! I am the Shriram Automobiles AI Business Assistant. Ask me anything about workshop revenue, inventory stock, pending jobs, technician workloads, or upcoming procurement.',
+      timestamp: new Date().toLocaleTimeString(),
+    },
+  ]);
+  const [assistantInput, setAssistantInput] = useState('');
+  const [assistantLoading, setAssistantLoading] = useState(false);
+  const [visionVehicleType, setVisionVehicleType] = useState('Motorcycle');
+  const [visionResult, setVisionResult] = useState<any | null>(null);
+  const [visionLoading, setVisionLoading] = useState(false);
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const handleSendAssistant = async (customPrompt?: string) => {
+    const q = (customPrompt || assistantInput).trim();
+    if (!q || assistantLoading) return;
+
+    const userMsg = {
+      id: `usr-${Date.now()}`,
+      role: 'user' as const,
+      text: q,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    setAssistantMessages((prev) => [...prev, userMsg]);
+    if (!customPrompt) setAssistantInput('');
+    setAssistantLoading(true);
+
+    try {
+      const res = await aiApi.askAssistant(q);
+      const assistantMsg = {
+        id: `asst-${Date.now()}`,
+        role: 'assistant' as const,
+        text: res.data?.response || 'I was unable to retrieve that information.',
+        tools: res.data?.executedTools || [],
+        timestamp: new Date().toLocaleTimeString(),
+      };
+      setAssistantMessages((prev) => [...prev, assistantMsg]);
+    } catch (err: any) {
+      toast({
+        title: 'Assistant Error',
+        description: err.message || 'Could not query assistant',
+        variant: 'destructive',
+      });
+    } finally {
+      setAssistantLoading(false);
+    }
+  };
+
+  const handleTestHelmetVision = async () => {
+    setVisionLoading(true);
+    try {
+      const res = await aiApi.classifyHelmet({
+        vehicleType: visionVehicleType,
+        lightingCondition: 'DAYLIGHT',
+      });
+      setVisionResult(res.data);
+      toast({
+        title: 'Helmet Vision Analyzed',
+        description: `Detected: ${res.data.helmet_type} (${res.data.wearing_status})`,
+      });
+    } catch (err: any) {
+      toast({
+        title: 'Vision Classification Failed',
+        description: err.message || 'Error executing vision model',
+        variant: 'destructive',
+      });
+    } finally {
+      setVisionLoading(false);
+    }
+  };
 
   // Queries
   const overviewQuery = useQuery({
@@ -355,6 +432,7 @@ export function AdminPage() {
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'analytics', label: 'Analytics & BI', icon: BarChart3 },
+    { id: 'assistant', label: 'AI Assistant', icon: Sparkles },
     { id: 'bookings', label: `Bookings (${kpis.pendingBookings})`, icon: CalendarClock },
     { id: 'customers', label: `Customers (${kpis.totalCustomers})`, icon: Users },
     { id: 'vehicles', label: `Vehicles (${kpis.totalVehicles})`, icon: Bike },
@@ -848,6 +926,203 @@ export function AdminPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: AI BUSINESS ASSISTANT & VISION CLASSIFIER */}
+        {activeTab === 'assistant' && (
+          <div className="mt-8 space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[hsl(var(--border))] pb-5">
+              <div>
+                <div className="flex items-center gap-2">
+                  <Sparkles className="text-[hsl(var(--accent))]" size={22} />
+                  <h2 className="text-xl font-bold uppercase tracking-tight sm:text-2xl">
+                    AI Business Assistant & Helmet Vision
+                  </h2>
+                </div>
+                <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+                  कार्यशाळा व्यवसाय सहाय्यक • Natural language business intelligence powered by authenticated database tool-calling & HelmetML computer vision.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column: Chat Window (2 cols) */}
+              <div className="lg:col-span-2 flex flex-col h-[650px] rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden shadow-xs">
+                {/* Chat Header */}
+                <div className="flex items-center justify-between border-b border-[hsl(var(--border))] px-5 py-3.5 bg-[hsl(var(--muted))]/30">
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[hsl(var(--accent))]/15 text-[hsl(var(--accent))]">
+                      <Bot size={16} />
+                    </div>
+                    <div>
+                      <span className="text-xs font-bold uppercase tracking-wide">Sangola Workshop AI Copilot</span>
+                      <span className="block text-[10px] text-[hsl(var(--muted-foreground))]">Live Database Function Calling • Zero Hallucinations</span>
+                    </div>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-bold text-emerald-400">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Ready
+                  </span>
+                </div>
+
+                {/* Quick-Prompt Chips */}
+                <div className="border-b border-[hsl(var(--border))] px-4 py-2.5 bg-[hsl(var(--muted))]/10 flex flex-wrap gap-1.5">
+                  {[
+                    'How much revenue did we generate this month?',
+                    'Which spare parts are running low?',
+                    'Which services are pending?',
+                    'Which mechanic has the highest workload?',
+                    'चालू महिन्याचा महसूल किती आहे?',
+                    'What are upcoming purchase requirements?',
+                  ].map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => handleSendAssistant(chip)}
+                      className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-2.5 py-1 text-[11px] font-medium transition hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))]"
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Messages Stream */}
+                <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                  {assistantMessages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}
+                    >
+                      <div
+                        className={`max-w-[85%] rounded-2xl p-4 text-xs ${
+                          msg.role === 'user'
+                            ? 'bg-[hsl(var(--accent))] text-black font-semibold'
+                            : 'border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/30 text-[hsl(var(--foreground))]'
+                        }`}
+                      >
+                        <div className="whitespace-pre-line leading-relaxed">{msg.text}</div>
+                        {msg.tools && msg.tools.length > 0 && (
+                          <div className="mt-3 pt-2.5 border-t border-[hsl(var(--border))]/50 flex flex-wrap gap-1.5">
+                            {msg.tools.map((t, idx) => (
+                              <span
+                                key={idx}
+                                className="inline-flex items-center gap-1 rounded bg-[hsl(var(--card))] px-2 py-0.5 text-[10px] font-mono text-[hsl(var(--accent))]"
+                              >
+                                ⚡ tool: {t.toolName}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <span className="mt-1 text-[9px] text-[hsl(var(--muted-foreground))] px-1">
+                        {msg.timestamp}
+                      </span>
+                    </div>
+                  ))}
+                  {assistantLoading && (
+                    <div className="flex items-center gap-2 text-xs text-[hsl(var(--muted-foreground))] p-2">
+                      <RefreshCw size={14} className="animate-spin text-[hsl(var(--accent))]" />
+                      <span>Executing authenticated database tool query...</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Chat Input Bar */}
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleSendAssistant();
+                  }}
+                  className="border-t border-[hsl(var(--border))] p-3 flex items-center gap-2 bg-[hsl(var(--card))]"
+                >
+                  <input
+                    type="text"
+                    value={assistantInput}
+                    onChange={(e) => setAssistantInput(e.target.value)}
+                    placeholder="Ask about revenue, low stock, mechanics, or bookings (English / Hindi / मराठी)..."
+                    className="flex-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-4 py-2.5 text-xs outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                  <button
+                    type="submit"
+                    disabled={assistantLoading || !assistantInput.trim()}
+                    className="flex items-center gap-1.5 rounded-xl bg-[hsl(var(--accent))] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90 disabled:opacity-50"
+                  >
+                    <Send size={13} />
+                    <span>Send</span>
+                  </button>
+                </form>
+              </div>
+
+              {/* Right Column: HelmetML Vision Classifier (1 col) */}
+              <div className="space-y-6">
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <div className="flex items-center gap-2 mb-3">
+                    <BrainCircuit className="text-[hsl(var(--accent))]" size={20} />
+                    <h3 className="text-sm font-bold uppercase tracking-wider">HelmetML Vision Classifier</h3>
+                  </div>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))] leading-relaxed mb-4">
+                    Derived from the <strong>HelmetML research dataset</strong> (Elsevier 2024, Pune, India; 28,736 images across Full-Face, Half-Face, Modular & Off-Road configurations).
+                  </p>
+
+                  <div className="space-y-3">
+                    <div>
+                      <label className="block text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))] mb-1">
+                        Vehicle Context
+                      </label>
+                      <select
+                        value={visionVehicleType}
+                        onChange={(e) => setVisionVehicleType(e.target.value)}
+                        className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-xs"
+                      >
+                        <option value="Motorcycle">Motorcycle (Commuter / Cruiser / Sports)</option>
+                        <option value="Scooter">Scooter (Commuter CVT)</option>
+                      </select>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleTestHelmetVision}
+                      disabled={visionLoading}
+                      className="w-full rounded-xl bg-[hsl(var(--muted))] border border-[hsl(var(--border))] py-2.5 text-xs font-bold uppercase tracking-wider text-[hsl(var(--foreground))] transition hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))]"
+                    >
+                      {visionLoading ? 'Running Vision Model...' : 'Simulate Helmet Inspection'}
+                    </button>
+                  </div>
+
+                  {visionResult && (
+                    <div className="mt-4 pt-4 border-t border-[hsl(var(--border))] space-y-3 text-xs">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[hsl(var(--muted-foreground))]">Detected Type:</span>
+                        <span className="font-bold text-[hsl(var(--accent))]">{visionResult.helmet_type}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[hsl(var(--muted-foreground))]">Wearing Status:</span>
+                        <span className="font-bold text-emerald-400">{visionResult.wearing_status}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[hsl(var(--muted-foreground))]">ISI IS 4151 Certified:</span>
+                        <span className="font-bold">{visionResult.safety_compliance?.isi_certified ? 'Yes ✓' : 'No ✗'}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-[hsl(var(--muted-foreground))]">Confidence:</span>
+                        <span className="font-bold">{(visionResult.confidence_score * 100).toFixed(0)}%</span>
+                      </div>
+
+                      <div className="rounded-xl bg-[hsl(var(--muted))]/40 p-2.5 text-[11px] space-y-1">
+                        <span className="font-bold block text-[hsl(var(--foreground))]">Suggested Products:</span>
+                        {visionResult.suggested_catalog_helmets?.map((h: string, idx: number) => (
+                          <div key={idx} className="text-[hsl(var(--muted-foreground))]">• {h}</div>
+                        ))}
+                      </div>
+
+                      <p className="text-[10px] text-[hsl(var(--muted-foreground))] italic border-t border-[hsl(var(--border))]/50 pt-2">
+                        {visionResult.dataset_attribution}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

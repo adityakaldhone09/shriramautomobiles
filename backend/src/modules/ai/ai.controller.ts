@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import { aiService } from './ai.service';
+import { assistantService } from './assistant.service';
 import { createResponse } from '../../utils/helpers';
 
 export class AiController {
@@ -108,6 +109,38 @@ export class AiController {
       return res.status(500).json(createResponse(false, error.message || 'Failed to analyze customer intelligence', undefined, 'INTERNAL_ERROR'));
     }
   }
+
+  async classifyHelmet(req: Request, res: Response) {
+    try {
+      const { imageBase64, imageUrl, vehicleType, lightingCondition } = req.body;
+      const result = await aiService.classifyHelmetVision({
+        imageBase64,
+        imageUrl,
+        vehicleType,
+        lightingCondition,
+      });
+      return res.json(createResponse(true, 'Helmet vision classification completed', result));
+    } catch (error: any) {
+      return res.status(500).json(createResponse(false, error.message || 'Failed to classify helmet vision', undefined, 'INTERNAL_ERROR'));
+    }
+  }
+
+  async askAssistant(req: Request, res: Response) {
+    try {
+      const { question } = req.body;
+      if (!question || typeof question !== 'string') {
+        return res
+          .status(400)
+          .json(createResponse(false, 'Missing required field: question is mandatory', undefined, 'BAD_REQUEST'));
+      }
+
+      const result = await assistantService.askAssistant(question);
+      return res.json(createResponse(true, 'Assistant response generated', result));
+    } catch (error: any) {
+      return res.status(500).json(createResponse(false, error.message || 'Failed to process assistant query', undefined, 'INTERNAL_ERROR'));
+    }
+  }
 }
 
 export const aiController = new AiController();
+

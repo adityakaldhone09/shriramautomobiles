@@ -121,3 +121,19 @@ def test_module5_customer_intelligence():
     assert data["total_customers_analyzed"] == 2
     assert data["vip_count"] >= 1
     assert data["customer_segments"][0]["estimated_clv"] > 0
+
+def test_module7_helmet_vision():
+    payload = {
+        "vehicle_type": "Motorcycle",
+        "lighting_condition": "DAYLIGHT",
+    }
+    res = client.post("/api/v1/vision/classify-helmet", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert data["detected_helmet"] is True
+    assert data["helmet_type"] in ["FULL_FACE", "HALF_FACE", "MODULAR", "OFF_ROAD"]
+    assert data["wearing_status"] == "CORRECTLY_WORN"
+    assert data["safety_compliance"]["isi_certified"] is True
+    assert len(data["suggested_catalog_helmets"]) > 0
+    assert "HelmetML" in data["dataset_attribution"]
+

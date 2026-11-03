@@ -153,3 +153,4 @@ def forecast_inventory(parts: List[PartDemandInput]) -> InventoryForecastRespons
         forecasts=results,
         methodology="Adaptive Exponential Smoothing with Lead-Time Safety Buffering and WAPE evaluation.",
     )
+

@@ -147,3 +147,4 @@ def get_maintenance_recommendations(req: MaintenanceRequest) -> MaintenanceRecom
         reasoning="; ".join(reasons),
         disclaimer="Probabilistic recommendation based on OEM schedule and reported conditions. Must be physically verified by a certified mechanic before disassembly.",
     )
+
