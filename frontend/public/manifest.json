@@ -1,0 +1,21 @@
+{
+  "name": "Shriram Automobiles - Service & Spares",
+  "short_name": "Shriram Auto",
+  "description": "Two-wheeler spare parts, authorized vehicle servicing, and AI-powered maintenance in Sangola, Maharashtra.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#09090b",
+  "theme_color": "#f97316",
+  "lang": "mr-IN",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["automotive", "business", "utilities"]
+}

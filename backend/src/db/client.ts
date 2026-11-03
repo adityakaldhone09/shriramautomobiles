@@ -1243,13 +1243,22 @@ export async function ensureDbInitialized() {
   }
 
   if (!initDbPromise) {
-    initDbPromise = poolInstance
-      .query('SELECT 1')
-      .then(() => undefined)
-      .catch((error: unknown) => {
-        initDbPromise = null;
-        throw error;
-      });
+    const attemptQuery = async (retries = 3, delay = 1000): Promise<void> => {
+      try {
+        await poolInstance.query('SELECT 1');
+      } catch (err) {
+        if (retries > 0) {
+          await new Promise((r) => setTimeout(r, delay));
+          return attemptQuery(retries - 1, delay * 1.5);
+        }
+        throw err;
+      }
+    };
+
+    initDbPromise = attemptQuery().catch((error: unknown) => {
+      initDbPromise = null;
+      throw error;
+    });
   }
 
   await initDbPromise;

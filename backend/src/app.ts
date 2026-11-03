@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { randomUUID } from 'node:crypto';
 import express from 'express';
 import cors from 'cors';
 import { apiRouter } from './routes/index';
@@ -23,13 +24,22 @@ export function createApp(options: AppOptions = {}) {
   app.disable('x-powered-by');
   app.set('trust proxy', trustProxyHops);
 
-  // 1. Security Headers
+  // 1. Request Tracing & Correlation ID
+  app.use((req, res, next) => {
+    const incomingId = req.headers['x-request-id'];
+    const reqId = typeof incomingId === 'string' && incomingId.length > 0 ? incomingId : randomUUID();
+    res.setHeader('X-Request-Id', reqId);
+    (req as any).id = reqId;
+    next();
+  });
+
+  // 2. Security Headers
   app.use((_req, res, next) => {
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'SAMEORIGIN');
     res.setHeader('X-XSS-Protection', '0');
     res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(), payment=()');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=(self), payment=()');
     if (process.env.NODE_ENV === 'production') {
       res.setHeader(
         'Content-Security-Policy',
@@ -39,7 +49,7 @@ export function createApp(options: AppOptions = {}) {
     next();
   });
 
-  // 2. Controlled Origin CORS (avoiding arbitrary reflection)
+  // 3. Controlled Origin CORS (avoiding arbitrary reflection)
   const allowedOrigins =
     process.env.NODE_ENV === 'production'
       ? []
