@@ -70,3 +70,4 @@ export class SuppliersController {
 }
 
 export const suppliersController = new SuppliersController();
+

@@ -9,3 +9,4 @@ suppliersRouter.get('/', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) 
 suppliersRouter.post('/', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => suppliersController.createSupplier(req, res));
 suppliersRouter.get('/:id', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => suppliersController.getSupplier(req, res));
 suppliersRouter.put('/:id', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => suppliersController.updateSupplier(req, res));
+

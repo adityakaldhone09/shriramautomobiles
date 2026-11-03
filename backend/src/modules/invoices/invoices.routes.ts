@@ -10,3 +10,4 @@ invoicesRouter.get('/:id', requireAuth, (req, res) => invoicesController.getInvo
 invoicesRouter.post('/generate-from-booking', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => invoicesController.generateFromBooking(req, res));
 invoicesRouter.post('/direct-sale', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => invoicesController.createDirectSale(req, res));
 invoicesRouter.post('/:id/payment', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => invoicesController.recordPayment(req, res));
+

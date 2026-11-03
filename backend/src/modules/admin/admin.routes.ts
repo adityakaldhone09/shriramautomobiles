@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { adminController } from './admin.controller';
+import { analyticsController } from './analytics.controller';
 import { inventoryRouter } from '../inventory/inventory.routes';
 import { suppliersRouter } from '../suppliers/suppliers.routes';
 import { purchaseOrdersRouter } from '../purchase-orders/purchase-orders.routes';
@@ -14,6 +15,9 @@ adminRouter.use(requireAuth, requireRole('ADMIN', 'STAFF'));
 
 // 1. Overview & Analytics
 adminRouter.get('/overview', (req, res) => adminController.getOverview(req, res));
+adminRouter.get('/analytics/summary', (req, res) => analyticsController.getSummary(req, res));
+adminRouter.get('/analytics/trends', (req, res) => analyticsController.getTrends(req, res));
+adminRouter.get('/analytics/export', (req, res) => analyticsController.exportCsv(req, res));
 
 // 2. Customer Management
 adminRouter.get('/customers', (req, res) => adminController.listCustomers(req, res));

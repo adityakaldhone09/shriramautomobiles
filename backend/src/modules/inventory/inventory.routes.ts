@@ -11,3 +11,4 @@ inventoryRouter.get('/movements', requireAuth, requireRole('ADMIN', 'STAFF'), (r
 
 // Adjust stock is restricted to admin & staff
 inventoryRouter.post('/adjust', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => inventoryController.adjustStock(req, res));
+

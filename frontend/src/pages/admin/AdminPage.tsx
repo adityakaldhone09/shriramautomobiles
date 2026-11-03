@@ -24,13 +24,33 @@ import {
   FileText,
   Printer,
   History,
+  BarChart3,
+  TrendingUp,
+  Download,
+  Activity,
+  Flame,
 } from 'lucide-react';
+import {
+  BarChart,
+  Bar,
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import { Shell, SectionKicker } from '@/components/layout/Shell';
 import { adminApi, bookingsApi, inventoryApi, suppliersApi, purchaseOrdersApi, invoicesApi } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
 export function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'customers' | 'vehicles' | 'inventory' | 'mechanics' | 'suppliers' | 'invoices'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analytics' | 'bookings' | 'customers' | 'vehicles' | 'inventory' | 'mechanics' | 'suppliers' | 'invoices'>('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
@@ -94,6 +114,16 @@ export function AdminPage() {
   const overviewQuery = useQuery({
     queryKey: ['admin-overview'],
     queryFn: () => adminApi.getOverview(),
+  });
+
+  const analyticsSummaryQuery = useQuery({
+    queryKey: ['admin-analytics-summary'],
+    queryFn: () => adminApi.getAnalyticsSummary(),
+  });
+
+  const analyticsTrendsQuery = useQuery({
+    queryKey: ['admin-analytics-trends'],
+    queryFn: () => adminApi.getAnalyticsTrends(6),
   });
 
   const bookingsQuery = useQuery({
@@ -324,6 +354,7 @@ export function AdminPage() {
 
   const navItems = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
+    { id: 'analytics', label: 'Analytics & BI', icon: BarChart3 },
     { id: 'bookings', label: `Bookings (${kpis.pendingBookings})`, icon: CalendarClock },
     { id: 'customers', label: `Customers (${kpis.totalCustomers})`, icon: Users },
     { id: 'vehicles', label: `Vehicles (${kpis.totalVehicles})`, icon: Bike },
@@ -542,6 +573,281 @@ export function AdminPage() {
                     ))
                   )}
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: ANALYTICS & BUSINESS INTELLIGENCE */}
+        {activeTab === 'analytics' && (
+          <div className="mt-8 space-y-8">
+            {/* Header & Export Action */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-[hsl(var(--border))] pb-5">
+              <div>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="text-[hsl(var(--accent))]" size={22} />
+                  <h2 className="text-xl font-bold uppercase tracking-tight sm:text-2xl">
+                    Executive Analytics & Workshop BI
+                  </h2>
+                </div>
+                <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+                  कार्यशाळा व्यवसाय विश्लेषण • Real-time operational throughput, revenue streams, brand distribution, and inventory forecasting.
+                </p>
+              </div>
+              <div>
+                <a
+                  href="/api/admin/analytics/export"
+                  download
+                  className="inline-flex items-center gap-2 rounded-xl bg-[hsl(var(--accent))] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90"
+                >
+                  <Download size={15} /> Export Operations CSV
+                </a>
+              </div>
+            </div>
+
+            {/* Trilingual Executive KPI Cards */}
+            {analyticsSummaryQuery.data?.financial && (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <span className="mono-font text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))] block">
+                    Daily Sales
+                  </span>
+                  <p className="display-font mt-2 text-2xl font-bold sm:text-3xl text-emerald-500">
+                    ₹{analyticsSummaryQuery.data.financial.dailySales}
+                  </p>
+                  <span className="mt-1 block text-[10px] text-[hsl(var(--muted-foreground))]">
+                    दैनिक विक्री / आज की बिक्री
+                  </span>
+                </div>
+
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <span className="mono-font text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))] block">
+                    Monthly Revenue
+                  </span>
+                  <p className="display-font mt-2 text-2xl font-bold sm:text-3xl text-[hsl(var(--accent))]">
+                    ₹{analyticsSummaryQuery.data.financial.monthlyRevenue}
+                  </p>
+                  <span className="mt-1 block text-[10px] text-[hsl(var(--muted-foreground))]">
+                    मासिक महसूल / मासिक राजस्व
+                  </span>
+                </div>
+
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <span className="mono-font text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))] block">
+                    Completion Rate
+                  </span>
+                  <p className="display-font mt-2 text-2xl font-bold sm:text-3xl text-emerald-500">
+                    {analyticsSummaryQuery.data.operations.serviceCompletionRate}%
+                  </p>
+                  <span className="mt-1 block text-[10px] text-[hsl(var(--muted-foreground))]">
+                    दुरुस्ती पूर्णता दर
+                  </span>
+                </div>
+
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <span className="mono-font text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))] block">
+                    Avg Turnaround
+                  </span>
+                  <p className="display-font mt-2 text-2xl font-bold sm:text-3xl text-blue-500">
+                    {analyticsSummaryQuery.data.operations.avgTurnaroundHours} <span className="text-sm font-normal">hrs</span>
+                  </p>
+                  <span className="mt-1 block text-[10px] text-[hsl(var(--muted-foreground))]">
+                    सरासरी वेळ / औसत समय
+                  </span>
+                </div>
+
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <span className="mono-font text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))] block">
+                    Outstanding Due
+                  </span>
+                  <p className={`display-font mt-2 text-2xl font-bold sm:text-3xl ${Number(analyticsSummaryQuery.data.financial.outstandingPayments) > 0 ? 'text-amber-500' : 'text-emerald-500'}`}>
+                    ₹{analyticsSummaryQuery.data.financial.outstandingPayments}
+                  </p>
+                  <span className="mt-1 block text-[10px] text-[hsl(var(--muted-foreground))]">
+                    थकीत रक्कम / बकाया
+                  </span>
+                </div>
+
+                <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+                  <span className="mono-font text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--muted-foreground))] block">
+                    GST Tax (18%)
+                  </span>
+                  <p className="display-font mt-2 text-2xl font-bold sm:text-3xl">
+                    ₹{(Number(analyticsSummaryQuery.data.financial.cgstCollected) + Number(analyticsSummaryQuery.data.financial.sgstCollected)).toFixed(2)}
+                  </p>
+                  <span className="mt-1 block text-[10px] text-[hsl(var(--muted-foreground))]">
+                    9% CGST + 9% SGST
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {/* Interactive Charts Grid */}
+            <div className="grid gap-8 lg:grid-cols-2">
+              {/* Chart 1: Monthly Revenue & Completed Bookings Trend */}
+              <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="text-[hsl(var(--accent))]" size={18} />
+                    <h3 className="text-sm font-bold uppercase tracking-wider">Revenue & Job Volume Trend (6 Months)</h3>
+                  </div>
+                  <span className="text-[11px] font-bold text-[hsl(var(--muted-foreground))]">Financial Growth</span>
+                </div>
+                <div className="mt-6 h-64 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={analyticsTrendsQuery.data || []}>
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.15} />
+                      <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                      <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'hsl(var(--card))',
+                          borderColor: 'hsl(var(--border))',
+                          borderRadius: '0.75rem',
+                          fontSize: '12px',
+                        }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: '11px', paddingTop: '8px' }} />
+                      <Bar dataKey="revenue" name="Revenue (₹)" fill="hsl(var(--accent))" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="completed" name="Completed Services" fill="#3B82F6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+
+              {/* Chart 2: Two-Wheeler Brand Market Share */}
+              <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xs">
+                <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-4">
+                  <div className="flex items-center gap-2">
+                    <Bike className="text-emerald-500" size={18} />
+                    <h3 className="text-sm font-bold uppercase tracking-wider">Two-Wheeler Brand Distribution</h3>
+                  </div>
+                  <span className="text-[11px] font-bold text-[hsl(var(--muted-foreground))]">Sangola Riders</span>
+                </div>
+                <div className="mt-6 h-64 w-full flex items-center justify-center">
+                  {(analyticsSummaryQuery.data?.brandDistribution || []).length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={analyticsSummaryQuery.data?.brandDistribution || []}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={50}
+                          outerRadius={80}
+                          paddingAngle={4}
+                          dataKey="count"
+                          nameKey="brand"
+                          label={(entry) => `${entry.brand} (${entry.percentage}%)`}
+                        >
+                          {(analyticsSummaryQuery.data?.brandDistribution || []).map((_: any, index: number) => {
+                            const colors = ['#E11D48', '#3B82F6', '#10B981', '#F59E0B', '#8B5CF6', '#06B6D4', '#EC4899'];
+                            return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />;
+                          })}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="text-center text-xs text-[hsl(var(--muted-foreground))]">
+                      No brand servicing data recorded yet.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Section: Inventory Depletion Velocity & Restock Forecast */}
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xs">
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-4">
+                <div className="flex items-center gap-2">
+                  <Flame className="text-amber-500" size={18} />
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-wider">Inventory Depletion Velocity & Restock Projections</h3>
+                    <p className="text-xs text-[hsl(var(--muted-foreground))]">30-day burn rate and estimated days until warehouse stockout.</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-[hsl(var(--accent))]">Predictive Logistics</span>
+              </div>
+
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--border))] text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      <th className="py-2.5 px-3">SKU</th>
+                      <th className="py-2.5 px-3">Spare Part Name</th>
+                      <th className="py-2.5 px-3">Current Stock</th>
+                      <th className="py-2.5 px-3">30-Day Outflow</th>
+                      <th className="py-2.5 px-3">Daily Burn Rate</th>
+                      <th className="py-2.5 px-3">Days to Stockout</th>
+                      <th className="py-2.5 px-3">Health Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[hsl(var(--border))] text-xs">
+                    {(analyticsSummaryQuery.data?.inventoryVelocity || []).map((item: any) => (
+                      <tr key={item.partId} className="hover:bg-[hsl(var(--muted)/.4)]">
+                        <td className="py-2.5 px-3 font-mono font-bold text-[hsl(var(--accent))]">{item.sku}</td>
+                        <td className="py-2.5 px-3 font-semibold">{item.name}</td>
+                        <td className="py-2.5 px-3 font-mono font-bold">{item.currentStock}</td>
+                        <td className="py-2.5 px-3 font-mono text-[hsl(var(--muted-foreground))]">{item.unitsConsumed30d} units</td>
+                        <td className="py-2.5 px-3 font-mono">{item.dailyConsumption}/day</td>
+                        <td className="py-2.5 px-3 font-mono font-bold">
+                          {item.daysUntilStockout >= 999 ? '90+ days' : `${item.daysUntilStockout} days`}
+                        </td>
+                        <td className="py-2.5 px-3">
+                          <span
+                            className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                              item.status === 'CRITICAL'
+                                ? 'bg-red-500/15 text-red-500'
+                                : item.status === 'WARNING'
+                                ? 'bg-amber-500/15 text-amber-500'
+                                : 'bg-emerald-500/15 text-emerald-500'
+                            }`}
+                          >
+                            {item.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Section: Mechanic Productivity Matrix */}
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xs">
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-4">
+                <div className="flex items-center gap-2">
+                  <Activity className="text-blue-500" size={18} />
+                  <div>
+                    <h3 className="text-sm font-bold uppercase tracking-wider">Technician Bay Productivity & Efficiency Matrix</h3>
+                    <p className="text-xs text-[hsl(var(--muted-foreground))]">Job card completion statistics accounting for service workload.</p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold text-[hsl(var(--accent))]">Floor Operations</span>
+              </div>
+
+              <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {(analyticsSummaryQuery.data?.mechanicProductivity || []).map((m: any) => (
+                  <div key={m.id} className="rounded-xl border border-[hsl(var(--border))] p-4 bg-[hsl(var(--background))]">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h4 className="font-bold text-sm">{m.name}</h4>
+                        <span className="text-xs text-[hsl(var(--muted-foreground))]">{m.specialization}</span>
+                      </div>
+                      <span className="text-xs font-bold text-emerald-500 font-mono">{m.efficiencyPercent}% Eff.</span>
+                    </div>
+                    <div className="mt-3 flex justify-between text-xs border-t border-[hsl(var(--border))] pt-2">
+                      <div>
+                        <span className="text-[hsl(var(--muted-foreground))]">Assigned:</span>{' '}
+                        <span className="font-bold">{m.assignedJobs} jobs</span>
+                      </div>
+                      <div>
+                        <span className="text-[hsl(var(--muted-foreground))]">Completed:</span>{' '}
+                        <span className="font-bold text-[hsl(var(--accent))]">{m.completedJobs} jobs</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

@@ -10,3 +10,4 @@ purchaseOrdersRouter.post('/', requireAuth, requireRole('ADMIN', 'STAFF'), (req,
 purchaseOrdersRouter.get('/:id', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => purchaseOrdersController.getPurchaseOrder(req, res));
 purchaseOrdersRouter.post('/:id/receive', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => purchaseOrdersController.receivePurchaseOrder(req, res));
 purchaseOrdersRouter.patch('/:id/status', requireAuth, requireRole('ADMIN', 'STAFF'), (req, res) => purchaseOrdersController.updateStatus(req, res));
+

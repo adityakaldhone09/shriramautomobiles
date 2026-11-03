@@ -61,3 +61,4 @@ export const purchaseOrderItemsTable = pgTable('purchase_order_items', {
   index('idx_po_items_po_id').on(table.purchaseOrderId),
 ]);
 export type PurchaseOrderItem = typeof purchaseOrderItemsTable.$inferSelect;
+

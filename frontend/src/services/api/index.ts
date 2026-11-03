@@ -52,6 +52,9 @@ export const ordersApi = {
 
 export const adminApi = {
   getOverview: () => apiClient<any>('/admin/overview'),
+  getAnalyticsSummary: () => apiClient<any>('/admin/analytics/summary'),
+  getAnalyticsTrends: (months = 6) => apiClient<any[]>(`/admin/analytics/trends?months=${months}`),
+  getExportCsvUrl: () => `${apiClient.getBaseUrl ? apiClient.getBaseUrl() : '/api'}/admin/analytics/export`,
   getCustomers: (q?: string) => apiClient<any[]>(`/admin/customers${q ? `?q=${encodeURIComponent(q)}` : ''}`),
   getCustomerById: (id: number) => apiClient<any>(`/admin/customers/${id}`),
   createCustomer: (data: any) => apiClient<any>('/admin/customers', { method: 'POST', body: JSON.stringify(data) }),

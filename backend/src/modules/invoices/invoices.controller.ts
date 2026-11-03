@@ -105,3 +105,4 @@ export class InvoicesController {
 }
 
 export const invoicesController = new InvoicesController();
+

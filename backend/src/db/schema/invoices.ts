@@ -58,3 +58,4 @@ export const invoiceItemsTable = pgTable('invoice_items', {
   index('idx_invoice_items_invoice_id').on(table.invoiceId),
 ]);
 export type InvoiceItem = typeof invoiceItemsTable.$inferSelect;
+
