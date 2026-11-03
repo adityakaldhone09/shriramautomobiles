@@ -18,6 +18,10 @@ import { wholesaleRouter } from '../modules/wholesale/wholesale.routes';
 import { notificationsRouter } from '../modules/notifications/notifications.routes';
 import { adminRouter } from '../modules/admin/admin.routes';
 import { accountRouter } from '../modules/account/account.routes';
+import { inventoryRouter } from '../modules/inventory/inventory.routes';
+import { suppliersRouter } from '../modules/suppliers/suppliers.routes';
+import { purchaseOrdersRouter } from '../modules/purchase-orders/purchase-orders.routes';
+import { invoicesRouter } from '../modules/invoices/invoices.routes';
 import { createResponse } from '../utils/helpers';
 
 export const apiRouter = Router();
@@ -50,6 +54,10 @@ apiRouter.use('/helmets', helmetsRouter);
 apiRouter.use('/wholesale', wholesaleRouter);
 apiRouter.use('/notifications', notificationsRouter);
 apiRouter.use('/admin', adminRouter);
+apiRouter.use('/inventory', inventoryRouter);
+apiRouter.use('/suppliers', suppliersRouter);
+apiRouter.use('/purchase-orders', purchaseOrdersRouter);
+apiRouter.use('/invoices', invoicesRouter);
 
 // Frontend wizard and backward-compatibility aliases
 apiRouter.get('/vehicle-models', (req, res) => vehiclesController.listModels(req, res));

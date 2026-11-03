@@ -58,7 +58,7 @@ let initDbPromise: Promise<void> | null = null;
 async function initializeDatabase(pool: any) {
   try {
     const check = await pool.query(
-      "SELECT count(*) as count FROM pg_tables WHERE schemaname = 'public' AND tablename = 'service_job_cards';"
+      "SELECT count(*) as count FROM pg_tables WHERE schemaname = 'public' AND tablename = 'inventory_movements';"
     );
     if (Number(check.rows[0]?.count ?? 0) > 0) {
       return;
@@ -379,6 +379,109 @@ async function initializeDatabase(pool: any) {
       product_id INTEGER NOT NULL REFERENCES service_parts(id),
       quantity INTEGER NOT NULL,
       price NUMERIC NOT NULL
+    );
+    CREATE TABLE IF NOT EXISTS suppliers (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      code VARCHAR(50) NOT NULL UNIQUE,
+      contact_person VARCHAR(100),
+      phone VARCHAR(20) NOT NULL,
+      email VARCHAR(255),
+      gstin VARCHAR(50),
+      address TEXT,
+      city VARCHAR(100) DEFAULT 'Sangola',
+      state VARCHAR(100) DEFAULT 'Maharashtra',
+      payment_terms VARCHAR(50) DEFAULT 'NET_30',
+      outstanding_balance NUMERIC DEFAULT 0.00,
+      is_active BOOLEAN DEFAULT TRUE,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS purchase_orders (
+      id SERIAL PRIMARY KEY,
+      order_number VARCHAR(50) NOT NULL UNIQUE,
+      supplier_id INTEGER REFERENCES suppliers(id),
+      status VARCHAR(40) NOT NULL DEFAULT 'DRAFT',
+      destination VARCHAR(100) NOT NULL DEFAULT 'Retail Store',
+      subtotal NUMERIC NOT NULL DEFAULT 0.00,
+      tax_amount NUMERIC NOT NULL DEFAULT 0.00,
+      total_amount NUMERIC NOT NULL DEFAULT 0.00,
+      payment_status VARCHAR(30) NOT NULL DEFAULT 'UNPAID',
+      paid_amount NUMERIC DEFAULT 0.00,
+      expected_date TIMESTAMP,
+      received_date TIMESTAMP,
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS purchase_order_items (
+      id SERIAL PRIMARY KEY,
+      purchase_order_id INTEGER NOT NULL REFERENCES purchase_orders(id),
+      part_id INTEGER REFERENCES service_parts(id),
+      part_name TEXT NOT NULL,
+      sku VARCHAR(100),
+      quantity_ordered INTEGER NOT NULL,
+      quantity_received INTEGER NOT NULL DEFAULT 0,
+      unit_cost NUMERIC NOT NULL,
+      total_cost NUMERIC NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS inventory_movements (
+      id SERIAL PRIMARY KEY,
+      part_id INTEGER REFERENCES service_parts(id),
+      movement_type VARCHAR(30) NOT NULL,
+      quantity INTEGER NOT NULL,
+      previous_stock INTEGER,
+      new_stock INTEGER,
+      reference_type VARCHAR(50),
+      reference_id VARCHAR(50),
+      location VARCHAR(100) NOT NULL DEFAULT 'Retail Store',
+      notes TEXT,
+      performed_by_user_id INTEGER,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS invoices (
+      id SERIAL PRIMARY KEY,
+      invoice_number VARCHAR(50) NOT NULL UNIQUE,
+      invoice_type VARCHAR(30) NOT NULL DEFAULT 'SERVICE',
+      booking_id INTEGER REFERENCES service_bookings(id),
+      job_card_id INTEGER REFERENCES service_job_cards(id),
+      order_id INTEGER REFERENCES orders(id),
+      customer_id INTEGER REFERENCES customers(id),
+      customer_name TEXT NOT NULL,
+      customer_phone VARCHAR(20) NOT NULL,
+      gstin VARCHAR(50),
+      subtotal NUMERIC NOT NULL DEFAULT 0.00,
+      labour_total NUMERIC DEFAULT 0.00,
+      parts_total NUMERIC DEFAULT 0.00,
+      discount_amount NUMERIC DEFAULT 0.00,
+      taxable_amount NUMERIC NOT NULL DEFAULT 0.00,
+      cgst_amount NUMERIC NOT NULL DEFAULT 0.00,
+      sgst_amount NUMERIC NOT NULL DEFAULT 0.00,
+      igst_amount NUMERIC NOT NULL DEFAULT 0.00,
+      total_amount NUMERIC NOT NULL,
+      payment_status VARCHAR(30) NOT NULL DEFAULT 'PAID',
+      payment_method VARCHAR(30) NOT NULL DEFAULT 'CASH',
+      payment_reference VARCHAR(100),
+      paid_amount NUMERIC DEFAULT 0.00,
+      notes TEXT,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE IF NOT EXISTS invoice_items (
+      id SERIAL PRIMARY KEY,
+      invoice_id INTEGER NOT NULL REFERENCES invoices(id),
+      item_type VARCHAR(30) NOT NULL DEFAULT 'PART',
+      part_id INTEGER REFERENCES service_parts(id),
+      description TEXT NOT NULL,
+      hsn_sac_code VARCHAR(30) DEFAULT '8714',
+      quantity INTEGER NOT NULL DEFAULT 1,
+      unit_price NUMERIC NOT NULL,
+      discount NUMERIC DEFAULT 0.00,
+      tax_rate_percent NUMERIC DEFAULT 18.00,
+      tax_amount NUMERIC DEFAULT 0.00,
+      total_price NUMERIC NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS contact_inquiries (
       id SERIAL PRIMARY KEY,
@@ -914,6 +1017,109 @@ if (!poolInstance) {
           product_id INTEGER NOT NULL REFERENCES service_parts(id),
           quantity INTEGER NOT NULL,
           price NUMERIC NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS suppliers (
+          id SERIAL PRIMARY KEY,
+          name TEXT NOT NULL,
+          code VARCHAR(50) NOT NULL UNIQUE,
+          contact_person VARCHAR(100),
+          phone VARCHAR(20) NOT NULL,
+          email VARCHAR(255),
+          gstin VARCHAR(50),
+          address TEXT,
+          city VARCHAR(100) DEFAULT 'Sangola',
+          state VARCHAR(100) DEFAULT 'Maharashtra',
+          payment_terms VARCHAR(50) DEFAULT 'NET_30',
+          outstanding_balance NUMERIC DEFAULT 0.00,
+          is_active BOOLEAN DEFAULT TRUE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS purchase_orders (
+          id SERIAL PRIMARY KEY,
+          order_number VARCHAR(50) NOT NULL UNIQUE,
+          supplier_id INTEGER REFERENCES suppliers(id),
+          status VARCHAR(40) NOT NULL DEFAULT 'DRAFT',
+          destination VARCHAR(100) NOT NULL DEFAULT 'Retail Store',
+          subtotal NUMERIC NOT NULL DEFAULT 0.00,
+          tax_amount NUMERIC NOT NULL DEFAULT 0.00,
+          total_amount NUMERIC NOT NULL DEFAULT 0.00,
+          payment_status VARCHAR(30) NOT NULL DEFAULT 'UNPAID',
+          paid_amount NUMERIC DEFAULT 0.00,
+          expected_date TIMESTAMP,
+          received_date TIMESTAMP,
+          notes TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS purchase_order_items (
+          id SERIAL PRIMARY KEY,
+          purchase_order_id INTEGER NOT NULL REFERENCES purchase_orders(id),
+          part_id INTEGER REFERENCES service_parts(id),
+          part_name TEXT NOT NULL,
+          sku VARCHAR(100),
+          quantity_ordered INTEGER NOT NULL,
+          quantity_received INTEGER NOT NULL DEFAULT 0,
+          unit_cost NUMERIC NOT NULL,
+          total_cost NUMERIC NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS inventory_movements (
+          id SERIAL PRIMARY KEY,
+          part_id INTEGER REFERENCES service_parts(id),
+          movement_type VARCHAR(30) NOT NULL,
+          quantity INTEGER NOT NULL,
+          previous_stock INTEGER,
+          new_stock INTEGER,
+          reference_type VARCHAR(50),
+          reference_id VARCHAR(50),
+          location VARCHAR(100) NOT NULL DEFAULT 'Retail Store',
+          notes TEXT,
+          performed_by_user_id INTEGER,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS invoices (
+          id SERIAL PRIMARY KEY,
+          invoice_number VARCHAR(50) NOT NULL UNIQUE,
+          invoice_type VARCHAR(30) NOT NULL DEFAULT 'SERVICE',
+          booking_id INTEGER REFERENCES service_bookings(id),
+          job_card_id INTEGER REFERENCES service_job_cards(id),
+          order_id INTEGER REFERENCES orders(id),
+          customer_id INTEGER REFERENCES customers(id),
+          customer_name TEXT NOT NULL,
+          customer_phone VARCHAR(20) NOT NULL,
+          gstin VARCHAR(50),
+          subtotal NUMERIC NOT NULL DEFAULT 0.00,
+          labour_total NUMERIC DEFAULT 0.00,
+          parts_total NUMERIC DEFAULT 0.00,
+          discount_amount NUMERIC DEFAULT 0.00,
+          taxable_amount NUMERIC NOT NULL DEFAULT 0.00,
+          cgst_amount NUMERIC NOT NULL DEFAULT 0.00,
+          sgst_amount NUMERIC NOT NULL DEFAULT 0.00,
+          igst_amount NUMERIC NOT NULL DEFAULT 0.00,
+          total_amount NUMERIC NOT NULL,
+          payment_status VARCHAR(30) NOT NULL DEFAULT 'PAID',
+          payment_method VARCHAR(30) NOT NULL DEFAULT 'CASH',
+          payment_reference VARCHAR(100),
+          paid_amount NUMERIC DEFAULT 0.00,
+          notes TEXT,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS invoice_items (
+          id SERIAL PRIMARY KEY,
+          invoice_id INTEGER NOT NULL REFERENCES invoices(id),
+          item_type VARCHAR(30) NOT NULL DEFAULT 'PART',
+          part_id INTEGER REFERENCES service_parts(id),
+          description TEXT NOT NULL,
+          hsn_sac_code VARCHAR(30) DEFAULT '8714',
+          quantity INTEGER NOT NULL DEFAULT 1,
+          unit_price NUMERIC NOT NULL,
+          discount NUMERIC DEFAULT 0.00,
+          tax_rate_percent NUMERIC DEFAULT 18.00,
+          tax_amount NUMERIC DEFAULT 0.00,
+          total_price NUMERIC NOT NULL,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         CREATE TABLE IF NOT EXISTS contact_inquiries (
           id SERIAL PRIMARY KEY,

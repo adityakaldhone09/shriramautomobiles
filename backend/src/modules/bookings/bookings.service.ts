@@ -12,6 +12,8 @@ import {
   jobCardPartsTable,
   jobCardInspectionsTable,
   serviceStatusHistoryTable,
+  servicePartsTable,
+  inventoryMovementsTable,
 } from '../../db/schema';
 import type { CreateBookingDTO } from './bookings.types';
 
@@ -290,6 +292,35 @@ export class BookingsService {
         totalPrice,
       })
       .returning();
+
+    // Deduct inventory stock and record movement if linked to a catalog part
+    if (data.partId) {
+      try {
+        const [part] = await db.select().from(servicePartsTable).where(eq(servicePartsTable.id, data.partId));
+        if (part) {
+          const prevStock = Number(part.stockQuantity ?? 0);
+          const newStock = Math.max(0, prevStock - qty);
+          await db
+            .update(servicePartsTable)
+            .set({ stockQuantity: newStock, updatedAt: new Date() })
+            .where(eq(servicePartsTable.id, data.partId));
+
+          await db.insert(inventoryMovementsTable).values({
+            partId: data.partId,
+            movementType: 'JOB_CARD',
+            quantity: -qty,
+            previousStock: prevStock,
+            newStock,
+            referenceType: 'JOB_CARD',
+            referenceId: String(jobCardId),
+            location: 'Retail Store',
+            notes: `Consumed in service Job Card #${jobCardId}`,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to log inventory deduction for job card part:', err);
+      }
+    }
 
     // Recalculate totals on job card
     const allParts = await db.select().from(jobCardPartsTable).where(eq(jobCardPartsTable.jobCardId, jobCardId));

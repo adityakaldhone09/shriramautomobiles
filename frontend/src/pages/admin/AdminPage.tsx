@@ -19,18 +19,61 @@ import {
   Mail,
   ShieldCheck,
   ChevronRight,
+  Truck,
+  Receipt,
+  FileText,
+  Printer,
+  History,
 } from 'lucide-react';
 import { Shell, SectionKicker } from '@/components/layout/Shell';
-import { adminApi, bookingsApi } from '@/services/api';
+import { adminApi, bookingsApi, inventoryApi, suppliersApi, purchaseOrdersApi, invoicesApi } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
 
 export function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'customers' | 'vehicles' | 'inventory' | 'mechanics'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'bookings' | 'customers' | 'vehicles' | 'inventory' | 'mechanics' | 'suppliers' | 'invoices'>('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   const [showAddCustomerModal, setShowAddCustomerModal] = useState(false);
   const [showAddVehicleModal, setShowAddVehicleModal] = useState(false);
   const [assigningBooking, setAssigningBooking] = useState<any | null>(null);
+
+  // Stock Adjustment & Movements Modal state
+  const [showAdjustModal, setShowAdjustModal] = useState(false);
+  const [adjustPart, setAdjustPart] = useState<any | null>(null);
+  const [adjustQty, setAdjustQty] = useState('');
+  const [adjustType, setAdjustType] = useState('ADJUSTMENT');
+  const [adjustNotes, setAdjustNotes] = useState('');
+  const [showMovementsModal, setShowMovementsModal] = useState(false);
+
+  // Supplier state
+  const [showAddSupplierModal, setShowAddSupplierModal] = useState(false);
+  const [supName, setSupName] = useState('');
+  const [supPhone, setSupPhone] = useState('');
+  const [supGstin, setSupGstin] = useState('');
+  const [supContact, setSupContact] = useState('');
+  const [supTerms, setSupTerms] = useState('NET_30');
+
+  // Purchase Order state
+  const [showCreatePoModal, setShowCreatePoModal] = useState(false);
+  const [poSupplierId, setPoSupplierId] = useState('');
+  const [poPartId, setPoPartId] = useState('');
+  const [poQty, setPoQty] = useState('10');
+  const [poCost, setPoCost] = useState('250');
+  const [poNotes, setPoNotes] = useState('');
+
+  // Invoices & Billing state
+  const [showDirectSaleModal, setShowDirectSaleModal] = useState(false);
+  const [saleCustName, setSaleCustName] = useState('');
+  const [saleCustPhone, setSaleCustPhone] = useState('');
+  const [salePartId, setSalePartId] = useState('');
+  const [saleQty, setSaleQty] = useState('1');
+  const [saleMethod, setSaleMethod] = useState('CASH');
+  const [selectedInvoice, setSelectedInvoice] = useState<any | null>(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [paymentInvoice, setPaymentInvoice] = useState<any | null>(null);
+  const [payAmount, setPayAmount] = useState('');
+  const [payMethod, setPayMethod] = useState('UPI');
+  const [payRef, setPayRef] = useState('');
 
   // New customer form state
   const [newCustName, setNewCustName] = useState('');
@@ -71,6 +114,26 @@ export function AdminPage() {
   const inventoryQuery = useQuery({
     queryKey: ['admin-inventory'],
     queryFn: () => adminApi.getInventory(),
+  });
+
+  const suppliersQuery = useQuery({
+    queryKey: ['admin-suppliers', searchQuery],
+    queryFn: () => suppliersApi.getSuppliers(searchQuery),
+  });
+
+  const purchaseOrdersQuery = useQuery({
+    queryKey: ['admin-purchase-orders'],
+    queryFn: () => purchaseOrdersApi.getPurchaseOrders(),
+  });
+
+  const invoicesQuery = useQuery({
+    queryKey: ['admin-invoices'],
+    queryFn: () => invoicesApi.getInvoices(),
+  });
+
+  const movementsQuery = useQuery({
+    queryKey: ['admin-movements'],
+    queryFn: () => inventoryApi.getMovements({ limit: 50 }),
   });
 
   const mechanicsQuery = useQuery({
@@ -139,6 +202,112 @@ export function AdminPage() {
     },
   });
 
+  const adjustStockMutation = useMutation({
+    mutationFn: (data: any) => inventoryApi.adjustStock(data),
+    onSuccess: () => {
+      toast({ title: 'Stock Adjusted', description: 'Inventory quantity and audit movement updated successfully.' });
+      setShowAdjustModal(false);
+      setAdjustQty('');
+      setAdjustNotes('');
+      queryClient.invalidateQueries({ queryKey: ['admin-inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-movements'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-overview'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Adjustment Failed', description: err.message || 'Could not adjust stock', variant: 'destructive' });
+    },
+  });
+
+  const createSupplierMutation = useMutation({
+    mutationFn: (data: any) => suppliersApi.createSupplier(data),
+    onSuccess: () => {
+      toast({ title: 'Supplier Created', description: 'New vendor profile added to procurement roster.' });
+      setShowAddSupplierModal(false);
+      setSupName('');
+      setSupPhone('');
+      setSupGstin('');
+      setSupContact('');
+      queryClient.invalidateQueries({ queryKey: ['admin-suppliers'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Failed to Add Supplier', description: err.message || 'Error creating supplier', variant: 'destructive' });
+    },
+  });
+
+  const createPoMutation = useMutation({
+    mutationFn: (data: any) => purchaseOrdersApi.createPurchaseOrder(data),
+    onSuccess: () => {
+      toast({ title: 'Purchase Order Created', description: 'Procurement order placed with supplier.' });
+      setShowCreatePoModal(false);
+      setPoNotes('');
+      queryClient.invalidateQueries({ queryKey: ['admin-purchase-orders'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Failed to Create PO', description: err.message || 'Error creating PO', variant: 'destructive' });
+    },
+  });
+
+  const receivePoMutation = useMutation({
+    mutationFn: (id: number) => purchaseOrdersApi.receivePurchaseOrder(id),
+    onSuccess: () => {
+      toast({ title: 'PO Received', description: 'Inbound shipment verified and inventory restocked automatically.' });
+      queryClient.invalidateQueries({ queryKey: ['admin-purchase-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-movements'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-overview'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Receiving Failed', description: err.message || 'Could not receive PO', variant: 'destructive' });
+    },
+  });
+
+  const directSaleMutation = useMutation({
+    mutationFn: (data: any) => invoicesApi.createDirectSale(data),
+    onSuccess: (data: any) => {
+      toast({ title: 'Sale Recorded', description: `Invoice #${data.invoiceNumber} generated and parts deducted.` });
+      setShowDirectSaleModal(false);
+      setSaleCustName('');
+      setSaleCustPhone('');
+      setSaleQty('1');
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-inventory'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-movements'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-overview'] });
+      setSelectedInvoice(data);
+    },
+    onError: (err: any) => {
+      toast({ title: 'Sale Failed', description: err.message || 'Could not complete sale', variant: 'destructive' });
+    },
+  });
+
+  const generateBookingInvoiceMutation = useMutation({
+    mutationFn: (bookingId: number) => invoicesApi.generateFromBooking({ bookingId }),
+    onSuccess: (data: any) => {
+      toast({ title: 'Invoice Generated', description: `GST Invoice #${data.invoiceNumber} created for booking.` });
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-bookings'] });
+      setSelectedInvoice(data);
+    },
+    onError: (err: any) => {
+      toast({ title: 'Invoice Error', description: err.message || 'Failed to generate invoice', variant: 'destructive' });
+    },
+  });
+
+  const recordPaymentMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: any }) => invoicesApi.recordPayment(id, data),
+    onSuccess: () => {
+      toast({ title: 'Payment Recorded', description: 'Invoice payment updated.' });
+      setShowPaymentModal(false);
+      setPaymentInvoice(null);
+      setPayAmount('');
+      setPayRef('');
+      queryClient.invalidateQueries({ queryKey: ['admin-invoices'] });
+    },
+    onError: (err: any) => {
+      toast({ title: 'Payment Failed', description: err.message || 'Could not record payment', variant: 'destructive' });
+    },
+  });
+
   const kpis = overviewQuery.data?.kpis || {
     totalCustomers: 0,
     totalVehicles: 0,
@@ -159,6 +328,8 @@ export function AdminPage() {
     { id: 'customers', label: `Customers (${kpis.totalCustomers})`, icon: Users },
     { id: 'vehicles', label: `Vehicles (${kpis.totalVehicles})`, icon: Bike },
     { id: 'inventory', label: `Inventory (${kpis.totalSpareParts})`, icon: Package },
+    { id: 'suppliers', label: `Suppliers & POs (${suppliersQuery.data?.length || 0})`, icon: Truck },
+    { id: 'invoices', label: `Billing & Invoices (${invoicesQuery.data?.length || 0})`, icon: Receipt },
     { id: 'mechanics', label: `Mechanics (${kpis.activeMechanics})`, icon: Wrench },
   ];
 
@@ -594,6 +765,31 @@ export function AdminPage() {
         {/* TAB 5: INVENTORY & STOCK */}
         {activeTab === 'inventory' && (
           <div className="mt-8 space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-bold uppercase tracking-tight">Spare Parts & Warehouse Stock</h2>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">Real-time inventory ledger with audit movement tracking.</p>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                <button
+                  onClick={() => setShowMovementsModal(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-[hsl(var(--foreground))] hover:border-[hsl(var(--accent))]"
+                >
+                  <History size={14} /> Movement Ledger
+                </button>
+                <button
+                  onClick={() => {
+                    const firstPart = (inventoryQuery.data || [])[0];
+                    setAdjustPart(firstPart || null);
+                    setShowAdjustModal(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black hover:opacity-90"
+                >
+                  <Plus size={14} /> Adjust Stock
+                </button>
+              </div>
+            </div>
+
             <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
@@ -606,6 +802,7 @@ export function AdminPage() {
                       <th className="py-3 px-4">Stock Level</th>
                       <th className="py-3 px-4">Price</th>
                       <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[hsl(var(--border))]">
@@ -635,9 +832,249 @@ export function AdminPage() {
                               {isLowStock ? 'Low Stock' : 'In Stock'}
                             </span>
                           </td>
+                          <td className="py-3.5 px-4 text-right">
+                            <button
+                              onClick={() => {
+                                setAdjustPart(part);
+                                setShowAdjustModal(true);
+                              }}
+                              className="rounded-lg border border-[hsl(var(--border))] px-2.5 py-1 text-xs font-bold text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--foreground))]"
+                            >
+                              Adjust
+                            </button>
+                          </td>
                         </tr>
                       );
                     })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: SUPPLIERS & PURCHASE ORDERS */}
+        {activeTab === 'suppliers' && (
+          <div className="mt-8 space-y-8">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-bold uppercase tracking-tight">Suppliers & Procurement Orders</h2>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">Manage spare parts vendors and inbound inventory purchase orders.</p>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                <button
+                  onClick={() => setShowAddSupplierModal(true)}
+                  className="inline-flex items-center gap-1.5 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3.5 py-2 text-xs font-bold uppercase tracking-wider hover:border-[hsl(var(--accent))]"
+                >
+                  <Plus size={14} /> Add Supplier
+                </button>
+                <button
+                  onClick={() => {
+                    const firstSup = (suppliersQuery.data || [])[0];
+                    const firstPart = (inventoryQuery.data || [])[0];
+                    if (firstSup) setPoSupplierId(String(firstSup.id));
+                    if (firstPart) {
+                      setPoPartId(String(firstPart.id));
+                      setPoCost(String(firstPart.purchasePrice || '250'));
+                    }
+                    setShowCreatePoModal(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black hover:opacity-90"
+                >
+                  <Truck size={14} /> Create Purchase Order
+                </button>
+              </div>
+            </div>
+
+            {/* Vendor Directory */}
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--accent))] mb-4">Vendor Directory ({suppliersQuery.data?.length || 0})</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--border))] text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      <th className="py-3 px-4">Code</th>
+                      <th className="py-3 px-4">Supplier Name</th>
+                      <th className="py-3 px-4">Contact</th>
+                      <th className="py-3 px-4">GSTIN</th>
+                      <th className="py-3 px-4">Payment Terms</th>
+                      <th className="py-3 px-4">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[hsl(var(--border))]">
+                    {(suppliersQuery.data || []).map((sup: any) => (
+                      <tr key={sup.id} className="hover:bg-[hsl(var(--muted)/.4)]">
+                        <td className="py-3.5 px-4 font-mono font-bold text-xs text-[hsl(var(--accent))]">{sup.code}</td>
+                        <td className="py-3.5 px-4 font-semibold">{sup.name}</td>
+                        <td className="py-3.5 px-4 text-xs">
+                          <div>{sup.contactPerson || sup.name}</div>
+                          <div className="text-[hsl(var(--muted-foreground))]">{sup.phone}</div>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-xs">{sup.gstin || '—'}</td>
+                        <td className="py-3.5 px-4 text-xs font-semibold">{sup.paymentTerms}</td>
+                        <td className="py-3.5 px-4 font-mono font-bold">₹{sup.outstandingBalance || '0.00'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Purchase Orders */}
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+              <h3 className="text-sm font-bold uppercase tracking-wider text-[hsl(var(--accent))] mb-4">Purchase Orders ({purchaseOrdersQuery.data?.length || 0})</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--border))] text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      <th className="py-3 px-4">Order #</th>
+                      <th className="py-3 px-4">Supplier</th>
+                      <th className="py-3 px-4">Destination</th>
+                      <th className="py-3 px-4">Subtotal</th>
+                      <th className="py-3 px-4">GST (18%)</th>
+                      <th className="py-3 px-4">Total Amount</th>
+                      <th className="py-3 px-4">Status</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[hsl(var(--border))]">
+                    {(purchaseOrdersQuery.data || []).map((po: any) => (
+                      <tr key={po.id} className="hover:bg-[hsl(var(--muted)/.4)]">
+                        <td className="py-3.5 px-4 font-mono font-bold text-xs">{po.orderNumber}</td>
+                        <td className="py-3.5 px-4 font-semibold">{po.supplierName || `Supplier #${po.supplierId}`}</td>
+                        <td className="py-3.5 px-4 text-xs">{po.destination}</td>
+                        <td className="py-3.5 px-4 text-xs">₹{po.subtotal}</td>
+                        <td className="py-3.5 px-4 text-xs">₹{po.taxAmount}</td>
+                        <td className="py-3.5 px-4 font-mono font-bold">₹{po.totalAmount}</td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                              po.status === 'RECEIVED'
+                                ? 'bg-emerald-500/15 text-emerald-500'
+                                : po.status === 'ORDERED'
+                                ? 'bg-blue-500/15 text-blue-500'
+                                : 'bg-gray-500/15 text-gray-500'
+                            }`}
+                          >
+                            {po.status}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          {po.status === 'ORDERED' && (
+                            <button
+                              disabled={receivePoMutation.isPending}
+                              onClick={() => receivePoMutation.mutate(po.id)}
+                              className="rounded-lg bg-emerald-600 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-700 disabled:opacity-50"
+                            >
+                              Receive & Restock
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB: BILLING & INVOICES */}
+        {activeTab === 'invoices' && (
+          <div className="mt-8 space-y-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h2 className="text-lg font-bold uppercase tracking-tight">GST Tax Invoices & Counter Billing</h2>
+                <p className="text-xs text-[hsl(var(--muted-foreground))]">Compliant 18% GST (9% CGST + 9% SGST) billing for workshop service jobs and counter sales.</p>
+              </div>
+              <div className="flex flex-wrap gap-2.5">
+                <button
+                  onClick={() => {
+                    const firstPart = (inventoryQuery.data || [])[0];
+                    if (firstPart) setSalePartId(String(firstPart.id));
+                    setShowDirectSaleModal(true);
+                  }}
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black hover:opacity-90"
+                >
+                  <Receipt size={14} /> New Counter Sale
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5 shadow-xs">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--border))] text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      <th className="py-3 px-4">Invoice #</th>
+                      <th className="py-3 px-4">Date</th>
+                      <th className="py-3 px-4">Type</th>
+                      <th className="py-3 px-4">Customer</th>
+                      <th className="py-3 px-4">Taxable</th>
+                      <th className="py-3 px-4">CGST (9%)</th>
+                      <th className="py-3 px-4">SGST (9%)</th>
+                      <th className="py-3 px-4">Total</th>
+                      <th className="py-3 px-4">Payment</th>
+                      <th className="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[hsl(var(--border))]">
+                    {(invoicesQuery.data || []).map((inv: any) => (
+                      <tr key={inv.id} className="hover:bg-[hsl(var(--muted)/.4)]">
+                        <td className="py-3.5 px-4 font-mono font-bold text-xs text-[hsl(var(--accent))]">{inv.invoiceNumber}</td>
+                        <td className="py-3.5 px-4 text-xs text-[hsl(var(--muted-foreground))]">
+                          {inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '—'}
+                        </td>
+                        <td className="py-3.5 px-4 text-xs font-semibold">{inv.invoiceType}</td>
+                        <td className="py-3.5 px-4">
+                          <div className="font-semibold">{inv.customerName}</div>
+                          <div className="text-xs text-[hsl(var(--muted-foreground))]">{inv.customerPhone}</div>
+                        </td>
+                        <td className="py-3.5 px-4 font-mono text-xs">₹{inv.taxableAmount}</td>
+                        <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground">₹{inv.cgstAmount}</td>
+                        <td className="py-3.5 px-4 font-mono text-xs text-muted-foreground">₹{inv.sgstAmount}</td>
+                        <td className="py-3.5 px-4 font-mono font-bold text-sm">₹{inv.totalAmount}</td>
+                        <td className="py-3.5 px-4">
+                          <span
+                            className={`inline-block rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase ${
+                              inv.paymentStatus === 'PAID'
+                                ? 'bg-emerald-500/15 text-emerald-500'
+                                : inv.paymentStatus === 'PARTIAL'
+                                ? 'bg-amber-500/15 text-amber-500'
+                                : 'bg-red-500/15 text-red-500'
+                            }`}
+                          >
+                            {inv.paymentStatus} ({inv.paymentMethod})
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            <button
+                              onClick={async () => {
+                                const details = await invoicesApi.getInvoice(inv.id);
+                                setSelectedInvoice(details);
+                              }}
+                              className="inline-flex items-center gap-1 rounded-lg border border-[hsl(var(--border))] px-2.5 py-1 text-xs font-semibold hover:border-[hsl(var(--accent))]"
+                            >
+                              <FileText size={12} /> View / Print
+                            </button>
+                            {inv.paymentStatus !== 'PAID' && (
+                              <button
+                                onClick={() => {
+                                  setPaymentInvoice(inv);
+                                  const pending = Math.max(0, Number(inv.totalAmount) - Number(inv.paidAmount || 0));
+                                  setPayAmount(String(pending.toFixed(2)));
+                                  setShowPaymentModal(true);
+                                }}
+                                className="rounded-lg bg-emerald-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-emerald-700"
+                              >
+                                Record Pay
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -938,6 +1375,622 @@ export function AdminPage() {
                     ))}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Adjust Stock */}
+        {showAdjustModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-md rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl">
+              <h3 className="text-lg font-bold uppercase tracking-tight">Adjust Inventory Stock</h3>
+              <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+                Manual stock level correction with automated movement ledger logging.
+              </p>
+
+              <div className="mt-5 space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                    Select Spare Part
+                  </label>
+                  <select
+                    value={adjustPart?.id || ''}
+                    onChange={(e) => {
+                      const p = (inventoryQuery.data || []).find((x: any) => x.id === Number(e.target.value));
+                      setAdjustPart(p || null);
+                    }}
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  >
+                    {(inventoryQuery.data || []).map((p: any) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} (Current Stock: {p.stockQuantity})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      Adjustment Qty
+                    </label>
+                    <input
+                      type="number"
+                      value={adjustQty}
+                      onChange={(e) => setAdjustQty(e.target.value)}
+                      placeholder="+10 or -5"
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      Type
+                    </label>
+                    <select
+                      value={adjustType}
+                      onChange={(e) => setAdjustType(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    >
+                      <option value="ADJUSTMENT">Stock Correction</option>
+                      <option value="DAMAGE">Damaged / Scrap</option>
+                      <option value="RETURN">Customer Return</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                    Reason / Notes
+                  </label>
+                  <input
+                    type="text"
+                    value={adjustNotes}
+                    onChange={(e) => setAdjustNotes(e.target.value)}
+                    placeholder="e.g. Physical inventory count reconciliation"
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                </div>
+
+                {adjustPart && adjustQty && (
+                  <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted)/.4)] p-3 text-xs">
+                    <div>Current Stock: <span className="font-bold">{adjustPart.stockQuantity}</span></div>
+                    <div>Adjustment: <span className="font-bold">{Number(adjustQty) >= 0 ? `+${adjustQty}` : adjustQty}</span></div>
+                    <div className="mt-1 border-t border-[hsl(var(--border))] pt-1 font-bold">
+                      New Calculated Stock:{' '}
+                      <span className={Number(adjustPart.stockQuantity) + Number(adjustQty) < 0 ? 'text-red-500' : 'text-emerald-500'}>
+                        {Number(adjustPart.stockQuantity) + Number(adjustQty)}
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2.5">
+                <button
+                  onClick={() => setShowAdjustModal(false)}
+                  className="rounded-xl border border-[hsl(var(--border))] px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[hsl(var(--muted))]"
+                >
+                  Cancel
+                </button>
+                <button
+                  disabled={
+                    adjustStockMutation.isPending ||
+                    !adjustPart ||
+                    !adjustQty ||
+                    Number(adjustPart.stockQuantity) + Number(adjustQty) < 0
+                  }
+                  onClick={() =>
+                    adjustStockMutation.mutate({
+                      partId: adjustPart.id,
+                      quantityChange: Number(adjustQty),
+                      movementType: adjustType,
+                      notes: adjustNotes,
+                    })
+                  }
+                  className="rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90 disabled:opacity-40"
+                >
+                  {adjustStockMutation.isPending ? 'Adjusting...' : 'Confirm Adjustment'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Movements Ledger */}
+        {showMovementsModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-4xl rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl max-h-[85vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-4">
+                <div>
+                  <h3 className="text-lg font-bold uppercase tracking-tight">Inventory Movement Ledger</h3>
+                  <p className="text-xs text-[hsl(var(--muted-foreground))]">Full immutable audit trail of stock additions, consumption, and adjustments.</p>
+                </div>
+                <button onClick={() => setShowMovementsModal(false)} className="rounded-lg p-1 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]">
+                  ✕
+                </button>
+              </div>
+
+              <div className="mt-4 overflow-x-auto">
+                <table className="w-full text-left text-sm">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--border))] text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      <th className="py-2.5 px-3">Date</th>
+                      <th className="py-2.5 px-3">Part ID</th>
+                      <th className="py-2.5 px-3">Type</th>
+                      <th className="py-2.5 px-3">Quantity</th>
+                      <th className="py-2.5 px-3">Previous</th>
+                      <th className="py-2.5 px-3">New</th>
+                      <th className="py-2.5 px-3">Reference</th>
+                      <th className="py-2.5 px-3">Notes</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[hsl(var(--border))] text-xs">
+                    {(movementsQuery.data || []).map((m: any) => (
+                      <tr key={m.id} className="hover:bg-[hsl(var(--muted)/.4)]">
+                        <td className="py-2.5 px-3 text-[hsl(var(--muted-foreground))]">
+                          {m.createdAt ? new Date(m.createdAt).toLocaleString() : '—'}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono font-semibold">#{m.partId}</td>
+                        <td className="py-2.5 px-3">
+                          <span className="inline-block rounded-md bg-[hsl(var(--muted))] px-2 py-0.5 text-[10px] font-bold">
+                            {m.movementType}
+                          </span>
+                        </td>
+                        <td className={`py-2.5 px-3 font-mono font-bold ${Number(m.quantity) >= 0 ? 'text-emerald-500' : 'text-red-500'}`}>
+                          {Number(m.quantity) >= 0 ? `+${m.quantity}` : m.quantity}
+                        </td>
+                        <td className="py-2.5 px-3 font-mono text-[hsl(var(--muted-foreground))]">{m.previousStock ?? '—'}</td>
+                        <td className="py-2.5 px-3 font-mono font-bold">{m.newStock}</td>
+                        <td className="py-2.5 px-3 font-mono text-[11px] text-[hsl(var(--accent))]">{m.referenceId || m.referenceType || '—'}</td>
+                        <td className="py-2.5 px-3 text-[hsl(var(--muted-foreground))] max-w-[200px] truncate">{m.notes}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Add Supplier */}
+        {showAddSupplierModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-md rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl">
+              <h3 className="text-lg font-bold uppercase tracking-tight">Add Vendor / Supplier</h3>
+              <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">Register automotive parts distributor or OEM supplier profile.</p>
+
+              <div className="mt-5 space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Supplier Name</label>
+                  <input
+                    type="text"
+                    value={supName}
+                    onChange={(e) => setSupName(e.target.value)}
+                    placeholder="e.g. Minda Industries Ltd"
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Phone</label>
+                    <input
+                      type="text"
+                      value={supPhone}
+                      onChange={(e) => setSupPhone(e.target.value)}
+                      placeholder="9822001122"
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Contact Person</label>
+                    <input
+                      type="text"
+                      value={supContact}
+                      onChange={(e) => setSupContact(e.target.value)}
+                      placeholder="e.g. Ramesh"
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">GSTIN (Optional)</label>
+                    <input
+                      type="text"
+                      value={supGstin}
+                      onChange={(e) => setSupGstin(e.target.value)}
+                      placeholder="27AABCS..."
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Payment Terms</label>
+                    <select
+                      value={supTerms}
+                      onChange={(e) => setSupTerms(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    >
+                      <option value="IMMEDIATE">Immediate</option>
+                      <option value="NET_15">Net 15 Days</option>
+                      <option value="NET_30">Net 30 Days</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2.5">
+                <button onClick={() => setShowAddSupplierModal(false)} className="rounded-xl border border-[hsl(var(--border))] px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[hsl(var(--muted))]">
+                  Cancel
+                </button>
+                <button
+                  disabled={createSupplierMutation.isPending || !supName || !supPhone}
+                  onClick={() => createSupplierMutation.mutate({ name: supName, phone: supPhone, contactPerson: supContact, gstin: supGstin, paymentTerms: supTerms })}
+                  className="rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90 disabled:opacity-50"
+                >
+                  {createSupplierMutation.isPending ? 'Saving...' : 'Save Supplier'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Create Purchase Order */}
+        {showCreatePoModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-md rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl">
+              <h3 className="text-lg font-bold uppercase tracking-tight">Create Purchase Order</h3>
+              <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">Issue replenishment PO to supplier with automatic 18% GST calculation.</p>
+
+              <div className="mt-5 space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Select Supplier</label>
+                  <select
+                    value={poSupplierId}
+                    onChange={(e) => setPoSupplierId(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  >
+                    {(suppliersQuery.data || []).map((s: any) => (
+                      <option key={s.id} value={s.id}>{s.name} ({s.code})</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Select Spare Part</label>
+                  <select
+                    value={poPartId}
+                    onChange={(e) => {
+                      setPoPartId(e.target.value);
+                      const p = (inventoryQuery.data || []).find((x: any) => x.id === Number(e.target.value));
+                      if (p) setPoCost(String(p.purchasePrice || '250'));
+                    }}
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  >
+                    {(inventoryQuery.data || []).map((p: any) => (
+                      <option key={p.id} value={p.id}>{p.name} (SKU: {p.sku})</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Quantity Ordered</label>
+                    <input
+                      type="number"
+                      value={poQty}
+                      onChange={(e) => setPoQty(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Unit Cost (₹)</label>
+                    <input
+                      type="number"
+                      value={poCost}
+                      onChange={(e) => setPoCost(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted)/.4)] p-3 text-xs space-y-1">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span className="font-mono">₹{(Number(poQty) * Number(poCost)).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-[hsl(var(--muted-foreground))]">
+                    <span>GST (18%):</span>
+                    <span className="font-mono">₹{(Number(poQty) * Number(poCost) * 0.18).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-bold border-t border-[hsl(var(--border))] pt-1">
+                    <span>Total PO Amount:</span>
+                    <span className="font-mono text-[hsl(var(--accent))]">₹{(Number(poQty) * Number(poCost) * 1.18).toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2.5">
+                <button onClick={() => setShowCreatePoModal(false)} className="rounded-xl border border-[hsl(var(--border))] px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[hsl(var(--muted))]">
+                  Cancel
+                </button>
+                <button
+                  disabled={createPoMutation.isPending || !poSupplierId || !poPartId || Number(poQty) <= 0}
+                  onClick={() => {
+                    const selectedPart = (inventoryQuery.data || []).find((x: any) => x.id === Number(poPartId));
+                    createPoMutation.mutate({
+                      supplierId: Number(poSupplierId),
+                      items: [
+                        {
+                          partId: Number(poPartId),
+                          partName: selectedPart?.name || 'Spare Part',
+                          quantityOrdered: Number(poQty),
+                          unitCost: Number(poCost),
+                        },
+                      ],
+                    });
+                  }}
+                  className="rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90 disabled:opacity-50"
+                >
+                  {createPoMutation.isPending ? 'Submitting...' : 'Issue PO'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Direct Counter Sale */}
+        {showDirectSaleModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-md rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl">
+              <h3 className="text-lg font-bold uppercase tracking-tight">Direct Counter Spare Sale</h3>
+              <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">Issue GST invoice for walk-in customer and automatically deduct stock.</p>
+
+              <div className="mt-5 space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Customer Name</label>
+                  <input
+                    type="text"
+                    value={saleCustName}
+                    onChange={(e) => setSaleCustName(e.target.value)}
+                    placeholder="Walk-in Rider"
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Phone Number</label>
+                  <input
+                    type="text"
+                    value={saleCustPhone}
+                    onChange={(e) => setSaleCustPhone(e.target.value)}
+                    placeholder="98XXXXXXXX"
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Select Part</label>
+                  <select
+                    value={salePartId}
+                    onChange={(e) => setSalePartId(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  >
+                    {(inventoryQuery.data || []).map((p: any) => (
+                      <option key={p.id} value={p.id}>{p.name} — ₹{p.price} ({p.stockQuantity} in stock)</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Quantity</label>
+                    <input
+                      type="number"
+                      value={saleQty}
+                      onChange={(e) => setSaleQty(e.target.value)}
+                      min="1"
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Payment Method</label>
+                    <select
+                      value={saleMethod}
+                      onChange={(e) => setSaleMethod(e.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                    >
+                      <option value="CASH">Cash</option>
+                      <option value="UPI">UPI / QR</option>
+                      <option value="CARD">Card</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2.5">
+                <button onClick={() => setShowDirectSaleModal(false)} className="rounded-xl border border-[hsl(var(--border))] px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[hsl(var(--muted))]">
+                  Cancel
+                </button>
+                <button
+                  disabled={directSaleMutation.isPending || !saleCustName || !saleCustPhone || !salePartId}
+                  onClick={() => {
+                    const selPart = (inventoryQuery.data || []).find((x: any) => x.id === Number(salePartId));
+                    directSaleMutation.mutate({
+                      customerName: saleCustName,
+                      customerPhone: saleCustPhone,
+                      paymentMethod: saleMethod,
+                      items: [
+                        {
+                          partId: Number(salePartId),
+                          quantity: Number(saleQty),
+                          unitPrice: Number(selPart?.price || 0),
+                        },
+                      ],
+                    });
+                  }}
+                  className="rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90 disabled:opacity-50"
+                >
+                  {directSaleMutation.isPending ? 'Processing...' : 'Complete & Print'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Printable GST Tax Invoice */}
+        {selectedInvoice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-2xl rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+              <div className="flex items-center justify-between border-b border-[hsl(var(--border))] pb-3">
+                <span className="mono-font text-xs font-bold text-[hsl(var(--accent))] uppercase tracking-widest">
+                  Official GST Tax Invoice
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => window.print()}
+                    className="inline-flex items-center gap-1 rounded-xl bg-[hsl(var(--accent))] px-3 py-1.5 text-xs font-bold text-black hover:opacity-90"
+                  >
+                    <Printer size={13} /> Print
+                  </button>
+                  <button onClick={() => setSelectedInvoice(null)} className="rounded-lg p-1 text-[hsl(var(--muted-foreground))] hover:bg-[hsl(var(--muted))]">
+                    ✕
+                  </button>
+                </div>
+              </div>
+
+              {/* Printable Invoice Header */}
+              <div className="mt-4 p-4 border border-[hsl(var(--border))] rounded-xl bg-[hsl(var(--background))] space-y-4">
+                <div className="flex justify-between items-start border-b border-[hsl(var(--border))] pb-3">
+                  <div>
+                    <h2 className="text-xl font-black uppercase tracking-tight">Shriram Automobiles</h2>
+                    <p className="text-xs text-[hsl(var(--muted-foreground))]">Main Road, Sangola, Solapur, Maharashtra - 413307</p>
+                    <p className="text-xs font-mono font-semibold">GSTIN: 27AABCS1429B1Z8 • State: Maharashtra (27)</p>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-mono font-bold text-sm text-[hsl(var(--accent))]">{selectedInvoice.invoiceNumber}</div>
+                    <div className="text-xs text-[hsl(var(--muted-foreground))]">Date: {new Date(selectedInvoice.createdAt || Date.now()).toLocaleDateString()}</div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-xs">
+                  <div>
+                    <span className="font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Billed To:</span>
+                    <div className="font-bold text-sm mt-0.5">{selectedInvoice.customerName}</div>
+                    <div>Phone: {selectedInvoice.customerPhone}</div>
+                    {selectedInvoice.customerGstin && <div>GSTIN: {selectedInvoice.customerGstin}</div>}
+                  </div>
+                  <div className="text-right">
+                    <span className="font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Invoice Details:</span>
+                    <div>Type: <span className="font-semibold">{selectedInvoice.invoiceType}</span></div>
+                    <div>Payment: <span className="font-semibold">{selectedInvoice.paymentMethod} ({selectedInvoice.paymentStatus})</span></div>
+                    {selectedInvoice.paymentReference && <div className="font-mono text-[11px]">Ref: {selectedInvoice.paymentReference}</div>}
+                  </div>
+                </div>
+
+                {/* Line Items Table */}
+                <table className="w-full text-left text-xs">
+                  <thead>
+                    <tr className="border-b border-[hsl(var(--border))] text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">
+                      <th className="py-2">Description</th>
+                      <th className="py-2">HSN/SAC</th>
+                      <th className="py-2 text-right">Qty</th>
+                      <th className="py-2 text-right">Rate</th>
+                      <th className="py-2 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-[hsl(var(--border))]">
+                    {(selectedInvoice.items || []).map((item: any, idx: number) => (
+                      <tr key={idx}>
+                        <td className="py-2 font-semibold">{item.description}</td>
+                        <td className="py-2 font-mono text-[hsl(var(--muted-foreground))]">{item.hsnSacCode || '8714'}</td>
+                        <td className="py-2 text-right font-mono">{item.quantity}</td>
+                        <td className="py-2 text-right font-mono">₹{item.unitPrice}</td>
+                        <td className="py-2 text-right font-mono font-bold">₹{item.totalPrice}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {/* Tax Breakdown & Totals */}
+                <div className="border-t border-[hsl(var(--border))] pt-3 space-y-1.5 text-xs">
+                  <div className="flex justify-between">
+                    <span>Taxable Amount:</span>
+                    <span className="font-mono">₹{selectedInvoice.taxableAmount}</span>
+                  </div>
+                  <div className="flex justify-between text-[hsl(var(--muted-foreground))]">
+                    <span>CGST (9%):</span>
+                    <span className="font-mono">₹{selectedInvoice.cgstAmount}</span>
+                  </div>
+                  <div className="flex justify-between text-[hsl(var(--muted-foreground))]">
+                    <span>SGST (9%):</span>
+                    <span className="font-mono">₹{selectedInvoice.sgstAmount}</span>
+                  </div>
+                  <div className="flex justify-between font-bold text-sm border-t border-[hsl(var(--border))] pt-2">
+                    <span>Grand Total:</span>
+                    <span className="font-mono text-[hsl(var(--accent))]">₹{selectedInvoice.totalAmount}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Record Payment */}
+        {showPaymentModal && paymentInvoice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+            <div className="w-full max-w-md rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 shadow-xl">
+              <h3 className="text-lg font-bold uppercase tracking-tight">Record Invoice Payment</h3>
+              <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+                Invoice {paymentInvoice.invoiceNumber} • Total: ₹{paymentInvoice.totalAmount}
+              </p>
+
+              <div className="mt-5 space-y-3.5">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Payment Amount (₹)</label>
+                  <input
+                    type="number"
+                    value={payAmount}
+                    onChange={(e) => setPayAmount(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Payment Method</label>
+                  <select
+                    value={payMethod}
+                    onChange={(e) => setPayMethod(e.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  >
+                    <option value="UPI">UPI / GPay / PhonePe</option>
+                    <option value="CASH">Cash</option>
+                    <option value="CARD">Debit / Credit Card</option>
+                    <option value="CREDIT">Customer Credit Ledger</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--muted-foreground))]">Transaction Reference / UTR</label>
+                  <input
+                    type="text"
+                    value={payRef}
+                    onChange={(e) => setPayRef(e.target.value)}
+                    placeholder="e.g. UPI/123456789/SBIN"
+                    className="mt-1 w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3.5 py-2.5 text-sm outline-none focus:border-[hsl(var(--accent))]"
+                  />
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end gap-2.5">
+                <button onClick={() => setShowPaymentModal(false)} className="rounded-xl border border-[hsl(var(--border))] px-4 py-2 text-xs font-bold uppercase tracking-wider hover:bg-[hsl(var(--muted))]">
+                  Cancel
+                </button>
+                <button
+                  disabled={recordPaymentMutation.isPending || Number(payAmount) <= 0}
+                  onClick={() =>
+                    recordPaymentMutation.mutate({
+                      id: paymentInvoice.id,
+                      data: { paidAmount: Number(payAmount), paymentMethod: payMethod, paymentReference: payRef },
+                    })
+                  }
+                  className="rounded-xl bg-[hsl(var(--accent))] px-4 py-2 text-xs font-bold uppercase tracking-wider text-black transition hover:opacity-90 disabled:opacity-50"
+                >
+                  {recordPaymentMutation.isPending ? 'Recording...' : 'Confirm Payment'}
+                </button>
               </div>
             </div>
           </div>

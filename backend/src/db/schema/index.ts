@@ -3,6 +3,8 @@ export * from './customers';
 export * from './vehicles';
 export * from './parts';
 export * from './inventory';
+export * from './suppliers';
+export * from './invoices';
 export * from './carts';
 export * from './orders';
 export * from './services';

@@ -94,4 +94,64 @@ export const mechanicApi = {
   getTimeline: (bookingId: number) => apiClient<any[]>(`/bookings/${bookingId}/timeline`),
 };
 
+export const inventoryApi = {
+  getInventory: (params?: { search?: string; category?: string; lowStock?: boolean }) => {
+    const q = new URLSearchParams();
+    if (params?.search) q.set('search', params.search);
+    if (params?.category) q.set('category', params.category);
+    if (params?.lowStock) q.set('lowStock', 'true');
+    const qs = q.toString() ? `?${q.toString()}` : '';
+    return apiClient<any[]>(`/inventory${qs}`);
+  },
+  adjustStock: (data: { partId: number; quantityChange: number; movementType?: string; notes?: string; location?: string }) =>
+    apiClient<any>('/inventory/adjust', { method: 'POST', body: JSON.stringify(data) }),
+  getMovements: (params?: { partId?: number; movementType?: string; limit?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.partId) q.set('partId', String(params.partId));
+    if (params?.movementType) q.set('movementType', params.movementType);
+    if (params?.limit) q.set('limit', String(params.limit));
+    const qs = q.toString() ? `?${q.toString()}` : '';
+    return apiClient<any[]>(`/inventory/movements${qs}`);
+  },
+};
+
+export const suppliersApi = {
+  getSuppliers: (search?: string) => apiClient<any[]>(`/suppliers${search ? `?search=${encodeURIComponent(search)}` : ''}`),
+  getSupplier: (id: number) => apiClient<any>(`/suppliers/${id}`),
+  createSupplier: (data: any) => apiClient<any>('/suppliers', { method: 'POST', body: JSON.stringify(data) }),
+  updateSupplier: (id: number, data: any) => apiClient<any>(`/suppliers/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+};
+
+export const purchaseOrdersApi = {
+  getPurchaseOrders: (params?: { status?: string; supplierId?: number }) => {
+    const q = new URLSearchParams();
+    if (params?.status) q.set('status', params.status);
+    if (params?.supplierId) q.set('supplierId', String(params.supplierId));
+    const qs = q.toString() ? `?${q.toString()}` : '';
+    return apiClient<any[]>(`/purchase-orders${qs}`);
+  },
+  getPurchaseOrder: (id: number) => apiClient<any>(`/purchase-orders/${id}`),
+  createPurchaseOrder: (data: any) => apiClient<any>('/purchase-orders', { method: 'POST', body: JSON.stringify(data) }),
+  receivePurchaseOrder: (id: number) => apiClient<any>(`/purchase-orders/${id}/receive`, { method: 'POST' }),
+  updateStatus: (id: number, status: string) => apiClient<any>(`/purchase-orders/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+};
+
+export const invoicesApi = {
+  getInvoices: (params?: { paymentStatus?: string; invoiceType?: string; search?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.paymentStatus) q.set('paymentStatus', params.paymentStatus);
+    if (params?.invoiceType) q.set('invoiceType', params.invoiceType);
+    if (params?.search) q.set('search', params.search);
+    const qs = q.toString() ? `?${q.toString()}` : '';
+    return apiClient<any[]>(`/invoices${qs}`);
+  },
+  getInvoice: (id: number) => apiClient<any>(`/invoices/${id}`),
+  generateFromBooking: (data: { bookingId: number; discountAmount?: number; paymentMethod?: string; paymentReference?: string; paidAmount?: number; notes?: string }) =>
+    apiClient<any>('/invoices/generate-from-booking', { method: 'POST', body: JSON.stringify(data) }),
+  createDirectSale: (data: any) => apiClient<any>('/invoices/direct-sale', { method: 'POST', body: JSON.stringify(data) }),
+  recordPayment: (id: number, data: { paidAmount: number; paymentMethod: string; paymentReference?: string }) =>
+    apiClient<any>(`/invoices/${id}/payment`, { method: 'POST', body: JSON.stringify(data) }),
+};
+
+
 

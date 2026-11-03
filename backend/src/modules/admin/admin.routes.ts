@@ -1,5 +1,9 @@
 import { Router } from 'express';
 import { adminController } from './admin.controller';
+import { inventoryRouter } from '../inventory/inventory.routes';
+import { suppliersRouter } from '../suppliers/suppliers.routes';
+import { purchaseOrdersRouter } from '../purchase-orders/purchase-orders.routes';
+import { invoicesRouter } from '../invoices/invoices.routes';
 import { requireAuth } from '../../middleware/auth';
 import { requireRole } from '../../middleware/roles';
 
@@ -21,13 +25,20 @@ adminRouter.put('/customers/:id', (req, res) => adminController.updateCustomer(r
 adminRouter.get('/vehicles', (req, res) => adminController.listVehicles(req, res));
 adminRouter.post('/vehicles', (req, res) => adminController.createVehicleForCustomer(req, res));
 
-// 4. Inventory & Stock
-adminRouter.get('/inventory', (req, res) => adminController.listInventory(req, res));
+// 4. Inventory, Stock Movements & Adjustments
+adminRouter.use('/inventory', inventoryRouter);
 adminRouter.get('/inventory/low-stock', (req, res) => adminController.listLowStock(req, res));
 
-// 5. Mechanics & Operations
+// 5. Suppliers & Purchase Orders
+adminRouter.use('/suppliers', suppliersRouter);
+adminRouter.use('/purchase-orders', purchaseOrdersRouter);
+
+// 6. Invoices & Billing
+adminRouter.use('/invoices', invoicesRouter);
+
+// 7. Mechanics & Operations
 adminRouter.get('/mechanics', (req, res) => adminController.listMechanics(req, res));
 adminRouter.post('/bookings/:id/assign-mechanic', (req, res) => adminController.assignMechanic(req, res));
 
-// 6. Orders
+// 8. Orders
 adminRouter.patch('/orders/:id/status', (req, res) => adminController.updateOrderStatus(req, res));
